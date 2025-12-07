@@ -26,8 +26,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@Auth/*": ["./src/features/auth/*"],
-      "@Movies/*": ["./src/features/movies/*"]
+      "@features/*": ["./src/features/*"]
     }
   },
   "include": ["src"]
