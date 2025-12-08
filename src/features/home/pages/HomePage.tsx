@@ -1,5 +1,7 @@
+import { Button } from "@antoniobenincasa/ui";
+
 const HomePage = () => {
-    return <h1>Home</h1>;
+    return <Button variant="destructive">Click me</Button>;
 };
 
 export default HomePage;
