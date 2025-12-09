@@ -1,9 +1,112 @@
-const LoginPage = () => {
-    return (
-        <div>
-            <h1>Login</h1>
-        </div>
-    )
-}
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Form,
+  FormField,
+  FormItem,
+  FormControl,
+  FormLabel,
+  FormMessage,
+} from "@antoniobenincasa/ui";
+import { useState } from "react";
+import { login } from "@/lib/api/auth-service";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginSchema } from "../schemas";
+import { useNavigate } from "react-router-dom";
 
-export default LoginPage
+const LoginPage = () => {
+  const form = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    mode: "onBlur",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (data: LoginSchema) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await login(data.email, data.password);
+
+      navigate("/");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An error occurred during login");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <Card className="w-full md:w-1/2">
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
+          <CardDescription>Login to your account</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="flex flex-col gap-2"
+            >
+              {error && <div className="text-red-500 text-sm">{error}</div>}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="email" placeholder="Email" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit" variant="default" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default LoginPage;
