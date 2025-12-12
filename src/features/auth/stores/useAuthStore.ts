@@ -1,14 +1,21 @@
-import { login } from "@/lib/api/auth-service";
+import {
+  login,
+  logout,
+  register,
+} from "@/features/auth/repositories/auth-repository";
 import { create } from "zustand";
 import { onAuthStateChanged, type Unsubscribe } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import type { RegisterRequest } from "../models/register-request";
 
 export const useAuthStore = create<{
   isAuthenticated: boolean;
   isInitialized: boolean;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
   login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
   initializeAuth: () => Unsubscribe;
+  register: (request: RegisterRequest) => Promise<void>;
 }>((set) => ({
   isAuthenticated: false,
   isInitialized: false,
@@ -20,6 +27,21 @@ export const useAuthStore = create<{
     } catch (error) {
       console.error(error);
       set({ isAuthenticated: false });
+    }
+  },
+  logout: async () => {
+    try {
+      await logout();
+      set({ isAuthenticated: false });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  register: async (request: RegisterRequest) => {
+    try {
+      await register(request);
+    } catch (error) {
+      console.error(error);
     }
   },
   initializeAuth: () => {
