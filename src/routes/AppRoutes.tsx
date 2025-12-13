@@ -28,8 +28,12 @@ export const AppRoutes = () => {
         </>
       ) : (
         <>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/registration" element={<RegistrationPage />} />
+          <Route path="/login" id="login" element={<LoginPage />} />
+          <Route
+            path="/registration"
+            id="registration"
+            element={<RegistrationPage />}
+          />
         </>
       )}
     </Routes>

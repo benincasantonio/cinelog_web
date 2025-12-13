@@ -5,21 +5,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@antoniobenincasa/ui";
-import { RegistrationForm } from "../components";
+import { AuthTabs, RegistrationForm } from "../components";
 
 const RegistrationPage = () => {
   return (
-    <>
-      <Card className="w-full md:w-1/2">
-        <CardHeader>
-          <CardTitle>Registration</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <RegistrationForm />
-        </CardContent>
-      </Card>
-    </>
+    <AuthTabs
+      children={
+        <Card className="w-full md:w-1/2">
+          <CardHeader>
+            <CardTitle>Registration</CardTitle>
+            <CardDescription>Create a new account</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RegistrationForm />
+          </CardContent>
+        </Card>
+      }
+    />
   );
 };
 
