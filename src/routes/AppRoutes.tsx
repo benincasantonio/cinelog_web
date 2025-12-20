@@ -7,6 +7,9 @@ const RegistrationPage = lazy(
   () => import("@features/auth/pages/RegistrationPage")
 );
 const HomePage = lazy(() => import("@features/home/pages/HomePage"));
+const MovieSearchPage = lazy(
+  () => import("@features/movie-search/pages/MovieSearchPage")
+);
 
 export const AppRoutes = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -25,7 +28,13 @@ export const AppRoutes = () => {
       <Route path="/" id="home" element={<HomePage />} />
 
       {isAuthenticated ? (
-        <></>
+        <>
+          <Route
+            path="/search"
+            id="movie-search"
+            element={<MovieSearchPage />}
+          />
+        </>
       ) : (
         <>
           <Route path="/login" id="login" element={<LoginPage />} />
