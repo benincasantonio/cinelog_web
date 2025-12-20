@@ -22,10 +22,10 @@ export const AppRoutes = () => {
         path="*"
         element={<Navigate to={isAuthenticated ? "/" : "/login"} />}
       />
+      <Route path="/" id="home" element={<HomePage />} />
+
       {isAuthenticated ? (
-        <>
-          <Route path="/" element={<HomePage />} />
-        </>
+        <></>
       ) : (
         <>
           <Route path="/login" id="login" element={<LoginPage />} />
