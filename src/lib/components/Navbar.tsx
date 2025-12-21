@@ -23,7 +23,7 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 flex items-center justify-between px-4 py-2">
+    <nav className="w-full border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 py-2">
       {/* Left side - Logo and Navigation */}
       <div className="flex items-center gap-6">
         <Link
