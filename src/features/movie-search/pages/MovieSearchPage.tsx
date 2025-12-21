@@ -8,9 +8,13 @@ const MoviesPage = () => {
   const loadMovieSearchResults = useMoviesStore(
     (state) => state.loadMovieSearchResults
   );
+  const resetMovieSearchResults = useMoviesStore(
+    (state) => state.resetMovieSearchResults
+  );
 
   useEffect(() => {
     if (!query || query.length < 3) {
+      resetMovieSearchResults();
       return;
     }
 
@@ -19,7 +23,7 @@ const MoviesPage = () => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [query]); // loadMovieSearchResults is stable from Zustand
+  }, [query]);
 
   return (
     <div className="flex flex-col">

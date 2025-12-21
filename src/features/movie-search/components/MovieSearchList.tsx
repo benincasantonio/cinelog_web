@@ -3,11 +3,22 @@ import { useMoviesStore } from "../store/useMoviesStore";
 export const MovieSearchList = () => {
   const movieSearchResult = useMoviesStore((state) => state.movieSearchResult);
   const isLoading = useMoviesStore((state) => state.isLoading);
+  const searched = useMoviesStore((state) => state.searched);
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-8">
         <div className="text-lg text-gray-600">Searching for movies...</div>
+      </div>
+    );
+  }
+
+  if (!searched) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-lg text-gray-600">
+          Start typing to search for movies.
+        </div>
       </div>
     );
   }
