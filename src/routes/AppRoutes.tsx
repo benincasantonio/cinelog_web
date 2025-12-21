@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/features/auth/stores";
 import { lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { DefaultLayout } from "@/lib/components";
 
 const LoginPage = lazy(() => import("@features/auth/pages/LoginPage"));
 const RegistrationPage = lazy(
@@ -21,30 +22,32 @@ export const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route
-        path="*"
-        element={<Navigate to={isAuthenticated ? "/" : "/login"} />}
-      />
-      <Route path="/" id="home" element={<HomePage />} />
+      <Route element={<DefaultLayout />}>
+        <Route
+          path="*"
+          element={<Navigate to={isAuthenticated ? "/" : "/login"} />}
+        />
+        <Route path="/" id="home" element={<HomePage />} />
 
-      {isAuthenticated ? (
-        <>
-          <Route
-            path="/search"
-            id="movie-search"
-            element={<MovieSearchPage />}
-          />
-        </>
-      ) : (
-        <>
-          <Route path="/login" id="login" element={<LoginPage />} />
-          <Route
-            path="/registration"
-            id="registration"
-            element={<RegistrationPage />}
-          />
-        </>
-      )}
+        {isAuthenticated ? (
+          <>
+            <Route
+              path="/search"
+              id="movie-search"
+              element={<MovieSearchPage />}
+            />
+          </>
+        ) : (
+          <>
+            <Route path="/login" id="login" element={<LoginPage />} />
+            <Route
+              path="/registration"
+              id="registration"
+              element={<RegistrationPage />}
+            />
+          </>
+        )}
+      </Route>
     </Routes>
   );
 };

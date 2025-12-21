@@ -1,31 +1,11 @@
-import { Button } from "@antoniobenincasa/ui";
-import { useAuthStore } from "@features/auth/stores";
-import { useNavigate } from "react-router-dom";
-
 const HomePage = () => {
-  const { logout } = useAuthStore();
-  const navigate = useNavigate();
-  const authStore = useAuthStore();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
-
   return (
     <>
-      {authStore.isAuthenticated && (
-        <Button variant="destructive" onClick={handleLogout}>
-          Logout
-        </Button>
-      )}
-
-      {!authStore.isAuthenticated && (
-        <div className="flex gap-1">
-          <Button onClick={() => navigate("/login")}>Login</Button>
-          <Button onClick={() => navigate("/registration")}>Register</Button>
-        </div>
-      )}
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">
+          Welcome to CineLog
+        </h1>
+      </div>
     </>
   );
 };
