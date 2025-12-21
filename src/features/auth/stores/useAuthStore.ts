@@ -4,13 +4,18 @@ import {
   register,
 } from "@/features/auth/repositories/auth-repository";
 import { create } from "zustand";
-import { onAuthStateChanged, type Unsubscribe } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  type Unsubscribe,
+  type UserCredential,
+} from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import type { RegisterRequest } from "../models/register-request";
 
 export const useAuthStore = create<{
   isAuthenticated: boolean;
   isInitialized: boolean;
+  userData: UserCredential | null;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -19,11 +24,12 @@ export const useAuthStore = create<{
 }>((set) => ({
   isAuthenticated: false,
   isInitialized: false,
+  userData: null,
   setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
   login: async (email: string, password: string) => {
     try {
-      await login(email, password);
-      set({ isAuthenticated: true });
+      const userData = await login(email, password);
+      set({ isAuthenticated: true, userData });
     } catch (error) {
       console.error(error);
       set({ isAuthenticated: false });
@@ -32,7 +38,7 @@ export const useAuthStore = create<{
   logout: async () => {
     try {
       await logout();
-      set({ isAuthenticated: false });
+      set({ isAuthenticated: false, userData: null });
     } catch (error) {
       console.error(error);
     }
