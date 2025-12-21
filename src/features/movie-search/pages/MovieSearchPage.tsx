@@ -15,11 +15,7 @@ const MoviesPage = () => {
     }
 
     const timer = setTimeout(() => {
-      if (typeof loadMovieSearchResults === "function") {
-        loadMovieSearchResults(query);
-      } else {
-        console.error("loadMovieSearchResults is not a function!");
-      }
+      loadMovieSearchResults(query);
     }, 500);
 
     return () => clearTimeout(timer);

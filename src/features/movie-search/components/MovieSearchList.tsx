@@ -23,33 +23,48 @@ export const MovieSearchList = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="flex flex-col p-4 gap-2">
+      <h3 className="px-2 py-2 text-sm font-bold text-gray-700 dark:text-gray-500 uppercase tracking-wider mb-2">
+        Top Results
+      </h3>
       {movieSearchResult.results.map((movie) => (
         <div
           key={movie.id}
-          className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+          className="group flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-white/10"
         >
-          {movie.poster_path && (
-            <img
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              alt={movie.title}
-              className="w-full h-64 object-cover"
-            />
-          )}
-          <div className="p-4">
-            <h3 className="font-bold text-lg mb-2 truncate">{movie.title}</h3>
-            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-              {movie.overview}
-            </p>
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-500">
-                {movie.release_date || "N/A"}
-              </span>
-              <span className="font-semibold text-yellow-500">
-                ★ {movie.vote_average.toFixed(1)}
-              </span>
+          <div
+            className="w-[60px] h-[90px] shrink-0 rounded-lg bg-cover bg-center shadow-md group-hover:shadow-lg transition-shadow"
+            style={{
+              backgroundImage: movie.poster_path
+                ? `url(https://image.tmdb.org/t/p/w200${movie.poster_path})`
+                : undefined,
+            }}
+          >
+            {!movie.poster_path && (
+              <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-lg">
+                <span className="text-gray-400 dark:text-gray-600 text-xs">
+                  No Image
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col flex-1 min-w-0">
+            <h4 className="text-lg text-left font-bold text-gray-900 dark:text-white truncate">
+              {movie.title}
+            </h4>
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <span>{movie.release_date?.split("-")[0] || "N/A"}</span>
+              {movie.vote_average > 0 && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-gray-600 dark:bg-gray-400"></span>
+                  <span>★ {movie.vote_average.toFixed(1)}</span>
+                </>
+              )}
             </div>
           </div>
+          <button className="shrink-0 w-10 h-10 rounded-full border border-violet-600 text-violet-600 hover:bg-violet-600 hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100">
+            <span className="text-xl leading-none">+</span>
+          </button>
         </div>
       ))}
     </div>
