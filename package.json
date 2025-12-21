@@ -12,7 +12,7 @@
     "generate:component": "plop --plopfile scripts/plop/plopfile.js component"
   },
   "dependencies": {
-    "@antoniobenincasa/ui": "^0.3.1",
+    "@antoniobenincasa/ui": "^0.4.1",
     "@hookform/resolvers": "^5.2.2",
     "firebase": "^12.6.0",
     "ky": "^1.14.0",
