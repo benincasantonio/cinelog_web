@@ -9,17 +9,23 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
 } from "@antoniobenincasa/ui";
-import { Search, LogOut, User } from "lucide-react";
+import { Search, LogOut, User, Moon, Sun } from "lucide-react";
 import { useAuthStore } from "@features/auth/stores/useAuthStore";
+import { useTheme } from "@/lib/hooks/useTheme";
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = async () => {
     await logout();
     navigate("/");
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -54,6 +60,18 @@ export const Navbar = () => {
 
       {/* Right side - Auth buttons or User menu */}
       <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          aria-label="Toggle theme"
+        >
+          {theme === "dark" ? (
+            <Sun className="w-5 h-5" />
+          ) : (
+            <Moon className="w-5 h-5" />
+          )}
+        </Button>
         {!isAuthenticated ? (
           <>
             <Button variant="ghost" onClick={() => navigate("/login")}>
