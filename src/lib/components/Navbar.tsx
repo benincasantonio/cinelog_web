@@ -3,36 +3,40 @@ import {
   NavigationMenu,
   NavigationMenuLink,
   NavigationMenuList,
-  navigationMenuTriggerStyle,
   Button,
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "@antoniobenincasa/ui";
-import { Search, LogOut, User, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useAuthStore } from "@features/auth/stores/useAuthStore";
 import { useTheme } from "@/lib/hooks/useTheme";
+import { useIsMobile } from "../hooks";
+import { ProfileDropdownMenu } from "./ProfileDropdownMenu";
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const logout = useAuthStore((state) => state.logout);
   const { theme, setTheme } = useTheme();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/");
-  };
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
+  const navigationData: {
+    label: string;
+    path: string;
+    visible?: boolean;
+  }[] = [
+    { label: "Home", path: "/" },
+    {
+      label: "Search",
+      path: "/search",
+      visible: isAuthenticated,
+    },
+  ];
+
+  const isMobile = useIsMobile();
+
   return (
     <nav className="w-full border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 py-2">
-      {/* Left side - Logo and Navigation */}
       <div className="flex items-center gap-6">
         <Link
           to="/"
@@ -41,20 +45,14 @@ export const Navbar = () => {
           CineLog
         </Link>
 
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuLink asChild>
-              <Link to="/" className={navigationMenuTriggerStyle()}>
-                Home
-              </Link>
-            </NavigationMenuLink>
-            {isAuthenticated && (
-              <NavigationMenuLink asChild>
-                <Link to="/search" className={navigationMenuTriggerStyle()}>
-                  <Search className="w-4 h-4 mr-2" />
-                  Search
-                </Link>
-              </NavigationMenuLink>
+        <NavigationMenu viewport={isMobile}>
+          <NavigationMenuList className="flex-wrap">
+            {navigationData.map((item) =>
+              item.visible !== false ? (
+                <NavigationMenuLink asChild key={item.path}>
+                  <Link to={item.path}>{item.label}</Link>
+                </NavigationMenuLink>
+              ) : null
             )}
           </NavigationMenuList>
         </NavigationMenu>
@@ -82,38 +80,7 @@ export const Navbar = () => {
             <Button onClick={() => navigate("/registration")}>Register</Button>
           </>
         ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="h-auto p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white">
-                  <User className="w-5 h-5" />
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem asChild>
-                <Link
-                  to="/profile"
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <User className="w-4 h-4" />
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={handleLogout}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ProfileDropdownMenu />
         )}
       </div>
     </nav>
