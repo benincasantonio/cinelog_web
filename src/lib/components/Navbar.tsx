@@ -1,13 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import {
   NavigationMenu,
-  NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   navigationMenuTriggerStyle,
   Button,
-  NavigationMenuTrigger,
-  NavigationMenuContent,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
 } from "@antoniobenincasa/ui";
 import { Search, LogOut, User, Moon, Sun } from "lucide-react";
 import { useAuthStore } from "@features/auth/stores/useAuthStore";
@@ -80,42 +82,38 @@ export const Navbar = () => {
             <Button onClick={() => navigate("/registration")}>Register</Button>
           </>
         ) : (
-          <NavigationMenu className="relative">
-            <NavigationMenuList>
-              <NavigationMenuItem className="relative">
-                <NavigationMenuTrigger className="h-auto p-0 hover:bg-transparent data-[state=open]:bg-transparent">
-                  <div className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white">
-                      <User className="w-5 h-5" />
-                    </div>
-                  </div>
-                </NavigationMenuTrigger>
-
-                <NavigationMenuContent>
-                  <div className="flex flex-col gap-1 p-2 w-48">
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/profile"
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                      >
-                        <User className="w-4 h-4" />
-                        Profile
-                      </Link>
-                    </NavigationMenuLink>
-                    <NavigationMenuLink asChild>
-                      <div
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-                        onClick={handleLogout}
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Logout
-                      </div>
-                    </NavigationMenuLink>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="h-auto p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white">
+                  <User className="w-5 h-5" />
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <User className="w-4 h-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={handleLogout}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
     </nav>
