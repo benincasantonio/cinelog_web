@@ -92,15 +92,26 @@ export const Navbar = () => {
                 </NavigationMenuTrigger>
 
                 <NavigationMenuContent>
-                  <NavigationMenuLink asChild>
-                    <div
-                      className="flex-row justify-between cursor-pointer"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Logout
-                    </div>
-                  </NavigationMenuLink>
+                  <div className="flex flex-col gap-1 p-2 w-48">
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to="/profile"
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <User className="w-4 h-4" />
+                        Profile
+                      </Link>
+                    </NavigationMenuLink>
+                    <NavigationMenuLink asChild>
+                      <div
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                        onClick={handleLogout}
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </div>
+                    </NavigationMenuLink>
+                  </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>

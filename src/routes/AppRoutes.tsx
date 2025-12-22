@@ -11,6 +11,7 @@ const HomePage = lazy(() => import("@features/home/pages/HomePage"));
 const MovieSearchPage = lazy(
   () => import("@features/movie-search/pages/MovieSearchPage")
 );
+const ProfilePage = lazy(() => import("@features/profile/pages/ProfilePage"));
 
 export const AppRoutes = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -35,6 +36,11 @@ export const AppRoutes = () => {
               path="/search"
               id="movie-search"
               element={<MovieSearchPage />}
+            />
+            <Route
+              path="/profile"
+              id="profile"
+              element={<ProfilePage />}
             />
           </>
         ) : (
