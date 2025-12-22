@@ -18,7 +18,7 @@ const ProfilePage = () => {
 
         {/* User Info */}
         <div className="mt-2 mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-black  dark:text-white">
             User Profile
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
