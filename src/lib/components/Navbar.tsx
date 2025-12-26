@@ -72,6 +72,16 @@ export const Navbar = () => {
             <Moon className="w-5 h-5" />
           )}
         </Button>
+
+        {isAuthenticated && (
+          <Button
+            variant="default"
+            className="bg-violet-600 text-white dark:bg-violet-600 dark:text-gray-900 hover:bg-violet-700 dark:hover:bg-violet-500"
+          >
+            Log a Movie
+          </Button>
+        )}
+
         {!isAuthenticated ? (
           <>
             <Button variant="ghost" onClick={() => navigate("/login")}>
@@ -80,7 +90,9 @@ export const Navbar = () => {
             <Button onClick={() => navigate("/registration")}>Register</Button>
           </>
         ) : (
-          <ProfileDropdownMenu />
+          <>
+            <ProfileDropdownMenu />
+          </>
         )}
       </div>
     </nav>
