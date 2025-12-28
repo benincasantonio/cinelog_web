@@ -22,7 +22,10 @@ export const CreateMovieLogDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent showCloseButton className="sm:max-w-[425px]">
+      <DialogContent
+        showCloseButton
+        className="w-full max-w-[425px] sm:max-w-lg"
+      >
         <DialogHeader>
           <DialogTitle>Log a Movie</DialogTitle>
           <DialogDescription>
