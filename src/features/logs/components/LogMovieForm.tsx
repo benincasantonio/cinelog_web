@@ -1,15 +1,182 @@
-import { Form } from "@antoniobenincasa/ui";
+import {
+  FormField,
+  Input,
+  Form,
+  FormItem,
+  FormControl,
+  FormLabel,
+  FormMessage,
+  Button,
+  Autocomplete,
+  Textarea,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@antoniobenincasa/ui";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { type LogFormSchema } from "../schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { logFormSchema, type LogFormSchema } from "../schemas";
+import { search } from "@/features/movie-search/repositories";
+import { WATCHED_WHERE_VALUES, WATCHED_WHERE_LABELS } from "../models";
+import { createLog } from "../repositories";
 
 export const LogMovieForm = () => {
   const form = useForm<LogFormSchema>({
+    resolver: zodResolver(logFormSchema),
+    defaultValues: {
+      tmdbId: 0,
+      dateWatched: "",
+      viewingNotes: null,
+      watchedWhere: null,
+    },
     mode: "onBlur",
   });
 
+  const [searchItems, setSearchItems] = useState<
+    Array<{ label: string; value: string }>
+  >([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const onFilterChange = async (value: string) => {
+    const results = await search(value);
+
+    const items = results.results.map((movie) => ({
+      label: movie.title,
+      value: movie.id.toString(),
+    }));
+
+    setSearchItems(items);
+  };
+
+  const onValueChange = (value: string) => {
+    if (!value) {
+      form.setValue("tmdbId", 0);
+      return;
+    }
+
+    form.setValue("tmdbId", parseInt(value, 10));
+  };
+
+  const handleSubmit = async (data: LogFormSchema) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await createLog({
+        tmdbId: data.tmdbId,
+        dateWatched: data.dateWatched,
+        viewingNotes: data.viewingNotes ?? null,
+        watchedWhere: data.watchedWhere ?? null,
+      });
+
+      // Reset form on success
+      form.reset();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An error occurred while creating the log");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form className="flex flex-col">Coming soon.</form>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-3"
+      >
+        {error && <div className="text-red-500 text-sm">{error}</div>}
+        <FormField
+          control={form.control}
+          name="tmdbId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Movie</FormLabel>
+              <FormControl>
+                <Autocomplete
+                  value={field.value?.toString() ?? undefined}
+                  items={searchItems}
+                  onFilterChange={onFilterChange}
+                  onValueChange={onValueChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="dateWatched"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Date Watched</FormLabel>
+              <FormControl>
+                <Input {...field} type="date" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="watchedWhere"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Watched Where (Optional)</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value ?? undefined}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select where you watched" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {WATCHED_WHERE_VALUES.map((value) => (
+                      <SelectItem key={value} value={value}>
+                        {WATCHED_WHERE_LABELS[value]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="viewingNotes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Viewing Notes (Optional)</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? ""}
+                  placeholder="Your thoughts about the movie"
+                  rows={4}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" variant="default" disabled={loading}>
+          {loading ? "Creating Log..." : "Create Log"}
+        </Button>
+      </form>
     </Form>
   );
 };
