@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@antoniobenincasa/ui";
+import { MoviesWatched } from "../components";
 
 const ProfilePage = () => {
   return (
@@ -58,9 +59,7 @@ const ProfilePage = () => {
         </TabsContent>
 
         <TabsContent value="movies" className="mt-0">
-          <div className="text-center py-16 text-gray-500 dark:text-gray-400">
-            <p className="text-lg font-medium">No movies watched yet</p>
-          </div>
+          <MoviesWatched />
         </TabsContent>
 
         <TabsContent value="stats" className="mt-0">

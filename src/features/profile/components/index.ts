@@ -1,1 +1,1 @@
-// Export components here when needed
+export { MoviesWatched } from "./MoviesWatched";
