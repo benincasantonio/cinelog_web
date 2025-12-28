@@ -9,14 +9,9 @@ import {
   DialogTitle,
 } from "@antoniobenincasa/ui";
 import { useCreateMovieLogDialogStore } from "../store";
+import { LogMovieForm } from "./LogMovieForm";
 
-type CreateMovieLogDialogProps = {
-  children?: React.ReactNode;
-};
-
-export const CreateMovieLogDialog = ({
-  children,
-}: CreateMovieLogDialogProps) => {
+export const CreateMovieLogDialog = () => {
   const isOpen = useCreateMovieLogDialogStore((state) => state.isOpen);
   const setIsOpen = useCreateMovieLogDialogStore((state) => state.setIsOpen);
 
@@ -33,13 +28,7 @@ export const CreateMovieLogDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
-          {children ?? (
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Coming soon.
-            </div>
-          )}
-        </div>
+        <LogMovieForm />
 
         <DialogFooter>
           <DialogClose asChild>
