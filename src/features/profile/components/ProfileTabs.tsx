@@ -1,32 +1,21 @@
-import { MoviesWatched } from "@/features/movie/components";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@antoniobenincasa/ui";
+import { Tabs, TabsContent, TabsList } from "@antoniobenincasa/ui";
+import { MoviesWatched } from "@/features/movie/components/MoviesWatched";
 import { LayoutDashboard, Film, BarChart3 } from "lucide-react";
+import { ProfileTab } from "./ProfileTab";
 
 export const ProfileTabs = () => {
   return (
     <Tabs defaultValue="overview" className="w-full">
       <TabsList className="w-full justify-start rounded-none border-b border-gray-200 dark:border-gray-800 bg-transparent h-auto p-0 gap-8 px-6">
-        <TabsTrigger
-          value="overview"
-          className="flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-violet-600 dark:data-[state=active]:border-violet-400 data-[state=active]:bg-transparent data-[state=active]:text-violet-600 dark:data-[state=active]:text-violet-400 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all px-0 py-4 font-medium text-sm shadow-none !bg-transparent -mb-[1px]"
-        >
-          <LayoutDashboard className="w-4 h-4" />
+        <ProfileTab value="overview" icon={LayoutDashboard}>
           Overview
-        </TabsTrigger>
-        <TabsTrigger
-          value="movies"
-          className="flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-violet-600 dark:data-[state=active]:border-violet-400 data-[state=active]:bg-transparent data-[state=active]:text-violet-600 dark:data-[state=active]:text-violet-400 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all px-0 py-4 font-medium text-sm shadow-none bg-transparent -mb-px"
-        >
-          <Film className="w-4 h-4" />
+        </ProfileTab>
+        <ProfileTab value="movies" icon={Film}>
           Movies Watched
-        </TabsTrigger>
-        <TabsTrigger
-          value="stats"
-          className="flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-violet-600 dark:data-[state=active]:border-violet-400 data-[state=active]:bg-transparent data-[state=active]:text-violet-600 dark:data-[state=active]:text-violet-400 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all px-0 py-4 font-medium text-sm shadow-none !bg-transparent -mb-[1px]"
-        >
-          <BarChart3 className="w-4 h-4" />
+        </ProfileTab>
+        <ProfileTab value="stats" icon={BarChart3}>
           Stats
-        </TabsTrigger>
+        </ProfileTab>
       </TabsList>
 
       <TabsContent
