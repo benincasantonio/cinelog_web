@@ -10,6 +10,7 @@ export const registrationSchema = z
     dateOfBirth: z.date().refine((date) => date < new Date(), {
       message: "Date of birth must be in the past",
     }),
+    bio: z.string().optional(),
   })
   .strict();
 

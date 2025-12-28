@@ -13,6 +13,7 @@ import {
   Form,
   FormMessage,
   Input,
+  Textarea,
 } from "@antoniobenincasa/ui";
 import { useAuthStore } from "../stores";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +35,7 @@ export const RegistrationForm = () => {
       password: "",
       handle: "",
       dateOfBirth: undefined,
+      bio: "",
     },
   });
 
@@ -49,6 +51,7 @@ export const RegistrationForm = () => {
         password: data.password,
         handle: data.handle,
         dateOfBirth: data.dateOfBirth?.toISOString() ?? "",
+        bio: data.bio,
       });
 
       navigate("/login");
@@ -157,6 +160,20 @@ export const RegistrationForm = () => {
                     field.onChange(value ? new Date(value) : undefined);
                   }}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="bio"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Bio</FormLabel>
+              <FormControl>
+                <Textarea {...field} placeholder="Tell us about yourself" />
               </FormControl>
               <FormMessage />
             </FormItem>

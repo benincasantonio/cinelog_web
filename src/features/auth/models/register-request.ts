@@ -5,4 +5,5 @@ export type RegisterRequest = {
   password: string;
   handle: string;
   dateOfBirth: string;
+  bio?: string;
 };
