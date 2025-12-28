@@ -122,7 +122,7 @@ export const MoviesWatched = () => {
               </div>
               <div className="flex flex-col flex-1 min-w-0">
                 <h4 className="text-lg text-left font-bold text-gray-900 dark:text-white truncate">
-                  Movie #{log.tmdbId}
+                  {log.movie?.title || "Unknown Title"}
                 </h4>
                 <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
                   <span>

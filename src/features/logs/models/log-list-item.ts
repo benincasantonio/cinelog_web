@@ -1,3 +1,5 @@
+import type { MovieResponse } from "@/features/movie/models";
+
 export type LogListItem = {
   id: string;
   movieId: string;
@@ -6,5 +8,5 @@ export type LogListItem = {
   viewingNotes?: string;
   posterPath?: string;
   watchedWhere?: string;
+  movie?: MovieResponse;
 };
-
