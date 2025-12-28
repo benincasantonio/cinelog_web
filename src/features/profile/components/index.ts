@@ -1,4 +1,4 @@
-export { MoviesWatched } from "./MoviesWatched";
+export { MoviesWatched } from "../../movie/components/MoviesWatched";
 export { ProfileLoading } from "./ProfileLoading";
 export { ProfileHeader } from "./ProfileHeader";
 export { ProfileLayout } from "./ProfileLayout";

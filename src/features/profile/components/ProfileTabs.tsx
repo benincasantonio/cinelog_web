@@ -1,10 +1,5 @@
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@antoniobenincasa/ui";
-import { MoviesWatched } from "./MoviesWatched";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@antoniobenincasa/ui";
+import { MoviesWatched } from "../../movie/components/MoviesWatched";
 
 export const ProfileTabs = () => {
   return (
