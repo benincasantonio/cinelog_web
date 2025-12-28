@@ -10,6 +10,10 @@ import { useAuthStore } from "@features/auth/stores/useAuthStore";
 import { useTheme } from "@/lib/hooks/useTheme";
 import { useIsMobile } from "../hooks";
 import { ProfileDropdownMenu } from "./ProfileDropdownMenu";
+import {
+  CreateMovieLogButton,
+  CreateMovieLogDialog,
+} from "@features/logs/components";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -73,14 +77,7 @@ export const Navbar = () => {
           )}
         </Button>
 
-        {isAuthenticated && (
-          <Button
-            variant="default"
-            className="bg-violet-600 text-white dark:bg-violet-600 dark:text-gray-900 hover:bg-violet-700 dark:hover:bg-violet-500"
-          >
-            Log a Movie
-          </Button>
-        )}
+        {isAuthenticated && <CreateMovieLogButton />}
 
         {!isAuthenticated ? (
           <>
@@ -95,6 +92,8 @@ export const Navbar = () => {
           </>
         )}
       </div>
+
+      {isAuthenticated && <CreateMovieLogDialog />}
     </nav>
   );
 };
