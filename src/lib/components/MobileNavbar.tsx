@@ -42,7 +42,7 @@ export const MobileNavbar = ({
     >
       <div className="flex items-center justify-end p-4">
         <X
-          className="cursor-pointer hover:text-violet-600 dark:hover:text-violet-400 transition-colors duration-500"
+          className="cursor-pointer hover:text-primary dark:hover:text-violet-400 transition-colors duration-500"
           size={40}
           onClick={onClose}
         />

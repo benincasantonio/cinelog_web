@@ -9,7 +9,7 @@ export const ProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
   return (
     <>
       {/* Header Banner */}
-      <div className="w-full h-48 bg-gradient-to-r from-violet-600 to-purple-600" />
+      <div className="w-full h-48 bg-gradient-to-r from-text-primary to-purple-600" />
 
       {/* Profile Info Section */}
       <div className="px-4 pb-4 border-b border-gray-300 dark:border-gray-700">

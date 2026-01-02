@@ -76,7 +76,7 @@ export const Navbar = () => {
           ></Menu>
           <Link
             to="/"
-            className="text-xl font-bold text-gray-900 dark:text-white hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+            className="text-xl font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-violet-400 transition-colors"
           >
             CineLog
           </Link>
