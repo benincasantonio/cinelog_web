@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useMovieDetailsStore } from "../store/useMovieDetailsStore";
 import { MovieDetailsHero } from "../components/MovieDetailsHero";
 import { MovieGenres } from "../components/MovieGenres";
+import { MovieVote } from "../components/MovieVote";
+import { MovieRuntime } from "../components/MovieRuntime";
 
 const MovieDetailsPage = () => {
   const { tmdbId } = useParams<{ tmdbId: string }>();
@@ -80,18 +82,8 @@ const MovieDetailsPage = () => {
 
         {/* Meta Data */}
         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-          {runtime && (
-            <div className="flex items-center gap-1">
-              <span>
-                ⏱ {Math.floor(runtime / 60)}h {runtime % 60}m
-              </span>
-            </div>
-          )}
-          {voteAverage > 0 && (
-            <div className="flex items-center gap-1 font-semibold text-amber-500">
-              <span>★ {voteAverage.toFixed(1)}</span>
-            </div>
-          )}
+          <MovieRuntime runtime={runtime} />
+          <MovieVote vote={voteAverage} source="tmdb" />
           <MovieGenres genres={genres} />
         </div>
 
