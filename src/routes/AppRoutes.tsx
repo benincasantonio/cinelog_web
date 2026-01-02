@@ -11,6 +11,9 @@ const HomePage = lazy(() => import("@features/home/pages/HomePage"));
 const MovieSearchPage = lazy(
   () => import("@features/movie-search/pages/MovieSearchPage")
 );
+const MovieDetailsPage = lazy(
+  () => import("@features/movie/pages/MovieDetailsPage")
+);
 const ProfilePage = lazy(() => import("@features/profile/pages/ProfilePage"));
 
 export const AppRoutes = () => {
@@ -38,10 +41,11 @@ export const AppRoutes = () => {
               element={<MovieSearchPage />}
             />
             <Route
-              path="/profile"
-              id="profile"
-              element={<ProfilePage />}
+              path="/movies/:tmdbId"
+              id="movie-details"
+              element={<MovieDetailsPage />}
             />
+            <Route path="/profile" id="profile" element={<ProfilePage />} />
           </>
         ) : (
           <>

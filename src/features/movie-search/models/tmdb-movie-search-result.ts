@@ -2,18 +2,18 @@ export interface TMDBMovieSearchResultItem {
   id: number;
   title: string;
   overview: string;
-  release_date: string;
-  poster_path: string | null;
-  vote_average: number;
-  backdrop_path: string | null;
-  genre_ids: number[];
-  original_language: string;
-  original_title: string;
+  releaseDate: string;
+  posterPath: string | null;
+  voteAverage: number;
+  backdropPath: string | null;
+  genreIds: number[];
+  originalLanguage: string;
+  originalTitle: string;
 }
 
 export interface TMDBMovieSearchResult {
   page: number;
-  total_results: number;
-  total_pages: number;
+  totalResults: number;
+  totalPages: number;
   results: TMDBMovieSearchResultItem[];
 }

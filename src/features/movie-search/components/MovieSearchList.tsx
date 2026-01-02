@@ -1,6 +1,8 @@
 import { useMoviesStore } from "../store/useMoviesStore";
+import { useNavigate } from "react-router-dom";
 
 export const MovieSearchList = () => {
+  const navigate = useNavigate();
   const movieSearchResult = useMoviesStore((state) => state.movieSearchResult);
   const isLoading = useMoviesStore((state) => state.isLoading);
   const searched = useMoviesStore((state) => state.searched);
@@ -41,17 +43,18 @@ export const MovieSearchList = () => {
       {movieSearchResult.results.map((movie) => (
         <div
           key={movie.id}
+          onClick={() => navigate(`/movies/${movie.id}`)}
           className="group flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-white/10"
         >
           <div
             className="w-[60px] h-[90px] shrink-0 rounded-lg bg-cover bg-center shadow-md group-hover:shadow-lg transition-shadow"
             style={{
-              backgroundImage: movie.poster_path
-                ? `url(https://image.tmdb.org/t/p/w200${movie.poster_path})`
+              backgroundImage: movie.posterPath
+                ? `url(https://image.tmdb.org/t/p/w200${movie.posterPath})`
                 : undefined,
             }}
           >
-            {!movie.poster_path && (
+            {!movie.posterPath && (
               <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-lg">
                 <span className="text-gray-400 dark:text-gray-600 text-xs">
                   No Image
@@ -64,18 +67,15 @@ export const MovieSearchList = () => {
               {movie.title}
             </h4>
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
-              <span>{movie.release_date?.split("-")[0] || "N/A"}</span>
-              {movie.vote_average > 0 && (
+              <span>{movie.releaseDate?.split("-")[0] || "N/A"}</span>
+              {movie.voteAverage > 0 && (
                 <>
                   <span className="w-1 h-1 rounded-full bg-gray-600 dark:bg-gray-400"></span>
-                  <span>★ {movie.vote_average.toFixed(1)}</span>
+                  <span>★ {movie.voteAverage.toFixed(1)}</span>
                 </>
               )}
             </div>
           </div>
-          <button className="shrink-0 w-10 h-10 rounded-full border border-violet-600 text-violet-600 hover:bg-violet-600 hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100">
-            <span className="text-xl leading-none">+</span>
-          </button>
         </div>
       ))}
     </div>

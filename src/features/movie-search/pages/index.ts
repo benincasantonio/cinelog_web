@@ -1,1 +1,2 @@
-export { default as MovieSearchPage } from "./MovieSearchPage";
+export * from "./MovieSearchPage";
+export * from "./MoviesPage";
