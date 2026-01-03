@@ -29,7 +29,7 @@ export const LogMovieForm = () => {
   const form = useForm<LogFormSchema>({
     resolver: zodResolver(logFormSchema),
     defaultValues: {
-      tmdbId: 0,
+      tmdbId: undefined,
       dateWatched: "",
       viewingNotes: null,
       watchedWhere: null,
@@ -47,7 +47,7 @@ export const LogMovieForm = () => {
     const results = await search(value);
 
     const items = results.results.map((movie) => ({
-      label: movie.title,
+      label: `${movie.title} (${new Date(movie.releaseDate).getFullYear()})`,
       value: movie.id.toString(),
     }));
 
@@ -178,9 +178,7 @@ export const LogMovieForm = () => {
         />
 
         <Button type="submit" variant="default" disabled={loading}>
-          {loading
-            ? t("LogMovieForm.submitting")
-            : t("LogMovieForm.submit")}
+          {loading ? t("LogMovieForm.submitting") : t("LogMovieForm.submit")}
         </Button>
       </form>
     </Form>
