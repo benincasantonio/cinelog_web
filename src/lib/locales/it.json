@@ -2,5 +2,15 @@
   "MovieSearchPage": {
     "title": "Ricerca Film",
     "searchPlaceholder": "Cerca film..."
+  },
+  "ProfileDropdownMenu": {
+    "profile": "Profilo",
+    "language": "Lingua",
+    "logout": "Esci",
+    "languages": {
+      "en": "Inglese",
+      "fr": "Francese",
+      "it": "Italiano"
+    }
   }
 }

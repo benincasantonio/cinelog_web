@@ -2,5 +2,15 @@
   "MovieSearchPage": {
     "title": "Movie Search",
     "searchPlaceholder": "Search for movies..."
+  },
+  "ProfileDropdownMenu": {
+    "profile": "Profile",
+    "language": "Language",
+    "logout": "Logout",
+    "languages": {
+      "en": "English",
+      "fr": "French",
+      "it": "Italian"
+    }
   }
 }

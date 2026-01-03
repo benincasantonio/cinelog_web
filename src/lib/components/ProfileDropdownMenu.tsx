@@ -6,12 +6,17 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "@antoniobenincasa/ui";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Languages } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const ProfileDropdownMenu = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const logout = useAuthStore((state) => state.logout);
   const userInfo = useAuthStore((state) => state.userInfo);
@@ -19,6 +24,10 @@ export const ProfileDropdownMenu = () => {
   const handleLogout = async () => {
     await logout();
     navigate("/");
+  };
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
   };
 
   return (
@@ -40,9 +49,26 @@ export const ProfileDropdownMenu = () => {
             className="flex items-center gap-2 cursor-pointer"
           >
             <User className="w-4 h-4" />
-            Profile
+            {t("ProfileDropdownMenu.profile")}
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="flex items-center gap-2">
+            <Languages className="w-4 h-4" />
+            {t("ProfileDropdownMenu.language")}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem onClick={() => changeLanguage("en")}>
+              {t("ProfileDropdownMenu.languages.en")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => changeLanguage("fr")}>
+              {t("ProfileDropdownMenu.languages.fr")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => changeLanguage("it")}>
+              {t("ProfileDropdownMenu.languages.it")}
+            </DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"
@@ -50,7 +76,7 @@ export const ProfileDropdownMenu = () => {
           className="flex items-center gap-2 cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
-          Logout
+          {t("ProfileDropdownMenu.logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
