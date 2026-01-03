@@ -22,7 +22,7 @@ export const MoviesWatched = () => {
   );
 
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+  const years = Array.from({ length: 11 }, (_, i) => currentYear - i);
 
   useEffect(() => {
     const fetchLogs = async () => {
