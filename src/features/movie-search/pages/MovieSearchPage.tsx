@@ -2,8 +2,10 @@ import { Input } from "@antoniobenincasa/ui";
 import { MovieSearchList } from "../components";
 import { useEffect, useState } from "react";
 import { useMoviesStore } from "../store";
+import { useTranslation } from "react-i18next";
 
 const MoviesPage = () => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const loadMovieSearchResults = useMoviesStore(
     (state) => state.loadMovieSearchResults
@@ -27,9 +29,9 @@ const MoviesPage = () => {
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-2xl font-bold mb-4">Movie Search</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("MovieSearchPage.title")}</h1>
       <Input
-        placeholder="Search for movies..."
+        placeholder={t("MovieSearchPage.searchPlaceholder")}
         className="mb-4"
         value={query}
         autoFocus
