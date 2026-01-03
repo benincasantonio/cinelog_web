@@ -10,8 +10,10 @@ import {
 } from "@antoniobenincasa/ui";
 import { MoviesWatchedLoading } from "./MoviesWatchedLoading";
 import { MovieLogList } from "./MovieLogList";
+import { useTranslation } from "react-i18next";
 
 export const MoviesWatched = () => {
+  const { t } = useTranslation();
   const [logs, setLogs] = useState<LogListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export const MoviesWatched = () => {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Failed to load movies");
+          setError(t("MoviesWatched.errorLoading"));
         }
       } finally {
         setIsLoading(false);
@@ -69,14 +71,14 @@ export const MoviesWatched = () => {
       <div className="p-4 border-b border-gray-300 dark:border-gray-700">
         <div className="flex items-center gap-4">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Filter by Year:
+            {t("MoviesWatched.filterByYear")}
           </label>
           <Select value={selectedYear} onValueChange={setSelectedYear}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select year" />
+              <SelectValue placeholder={t("MoviesWatched.selectYear")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Years</SelectItem>
+              <SelectItem value="all">{t("MoviesWatched.allYears")}</SelectItem>
               {years.map((year) => (
                 <SelectItem key={year} value={year.toString()}>
                   {year}

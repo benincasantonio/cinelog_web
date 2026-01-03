@@ -12,5 +12,11 @@
       "fr": "French",
       "it": "Italian"
     }
+  },
+  "MoviesWatched": {
+    "filterByYear": "Filter by Year:",
+    "selectYear": "Select year",
+    "allYears": "All Years",
+    "errorLoading": "Failed to load movies"
   }
 }
