@@ -1,5 +1,6 @@
 import { Skeleton } from "@antoniobenincasa/ui";
 import { ProfileLayout } from "./ProfileLayout";
+import { MoviesWatchedLoading } from "@/features/movie/components/MoviesWatchedLoading";
 
 export const ProfileLoading = () => {
   const SidebarSkeleton = (
@@ -17,7 +18,6 @@ export const ProfileLoading = () => {
           <div className="w-full space-y-2">
             <Skeleton className="h-3 w-full" />
             <Skeleton className="h-3 w-5/6" />
-            <Skeleton className="h-3 w-4/6" />
           </div>
         </div>
       </div>
@@ -35,25 +35,7 @@ export const ProfileLoading = () => {
 
   return (
     <ProfileLayout sidebar={SidebarSkeleton}>
-      {/* Content Skeleton */}
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-48 mb-6" /> {/* Page Title */}
-        <div className="grid gap-4">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-800"
-            >
-              <Skeleton className="w-[60px] h-[90px] rounded-lg" />
-              <div className="space-y-2 flex-1">
-                <Skeleton className="h-5 w-1/3" />
-                <Skeleton className="h-4 w-1/4" />
-                <Skeleton className="h-3 w-full" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <MoviesWatchedLoading />
     </ProfileLayout>
   );
 };

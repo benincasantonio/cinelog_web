@@ -9,4 +9,5 @@ export type LogListItem = {
   posterPath?: string;
   watchedWhere?: string;
   movie?: MovieResponse;
+  movieRating?: number | null;
 };

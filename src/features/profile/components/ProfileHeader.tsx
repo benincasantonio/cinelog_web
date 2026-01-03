@@ -1,14 +1,11 @@
-import { User, ChevronDown, ChevronUp } from "lucide-react";
+import { User } from "lucide-react";
 import type { UserResponse } from "@/features/auth/models/user-response";
-import { useState } from "react";
 
 interface ProfileHeaderProps {
   userInfo: UserResponse | null;
 }
 
 export const ProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
-  const [isBioExpanded, setIsBioExpanded] = useState(false);
-
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
       {/* Mini Banner/Header decoration */}
@@ -43,31 +40,11 @@ export const ProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
           <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
             About
           </h2>
-          <div
-            className={`text-sm text-gray-600 dark:text-gray-400 leading-relaxed ${
-              !isBioExpanded ? "line-clamp-3" : ""
-            }`}
-          >
+          <div className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             {userInfo?.bio || (
               <span className="italic opacity-60">No bio available.</span>
             )}
           </div>
-          {userInfo?.bio && (
-            <button
-              onClick={() => setIsBioExpanded(!isBioExpanded)}
-              className="flex items-center gap-1 text-xs text-primary mt-3 font-medium hover:underline focus:outline-none cursor-pointer transition-colors"
-            >
-              {isBioExpanded ? (
-                <>
-                  Show less <ChevronUp className="w-3 h-3" />
-                </>
-              ) : (
-                <>
-                  Show more <ChevronDown className="w-3 h-3" />
-                </>
-              )}
-            </button>
-          )}
         </div>
       </div>
     </div>

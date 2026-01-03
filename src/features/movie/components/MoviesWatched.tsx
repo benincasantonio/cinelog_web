@@ -9,12 +9,15 @@ import {
   SelectValue,
 } from "@antoniobenincasa/ui";
 import { MoviesWatchedLoading } from "./MoviesWatchedLoading";
+import { MovieVote } from "./MovieVote";
 
 export const MoviesWatched = () => {
   const [logs, setLogs] = useState<LogListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<string>("all");
+  const [selectedYear, setSelectedYear] = useState<string>(
+    new Date().getFullYear().toString()
+  );
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
@@ -130,11 +133,15 @@ export const MoviesWatched = () => {
                     </>
                   )}
                 </div>
-                {log.viewingNotes && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
-                    {log.viewingNotes}
-                  </p>
-                )}
+
+                <div className="flex items-center gap-2 mt-1">
+                  {!!log.movie?.voteAverage && (
+                    <MovieVote vote={log.movie.voteAverage} source="tmdb" />
+                  )}
+                  {log.movieRating !== null && (
+                    <MovieVote vote={log.movieRating || 0} source="user" />
+                  )}
+                </div>
               </div>
             </div>
           ))}
