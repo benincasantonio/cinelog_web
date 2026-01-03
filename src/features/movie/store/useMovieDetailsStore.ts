@@ -1,11 +1,15 @@
 import { create } from "zustand";
 import { type TMDBMovieDetails } from "../models/tmdb-movie-details";
 import { getDetails } from "../repositories/movies-repository";
+import type { MovieRatingResponse } from "../models";
+import { getMovieRating } from "../repositories/movie-rating-repository";
 
 interface MovieDetailsStore {
   movieDetails: TMDBMovieDetails | undefined;
   isLoading: boolean;
-
+  movieRating: MovieRatingResponse | undefined;
+  isMovieRatingLoading: boolean;
+  loadMovieRating: (tmdbId: number) => Promise<void>;
   loadMovieDetails: (tmdbId: number) => Promise<void>;
   resetMovieDetails: () => void;
 }
@@ -13,8 +17,9 @@ interface MovieDetailsStore {
 export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
   return {
     movieDetails: undefined,
+    movieRating: undefined,
     isLoading: false,
-
+    isMovieRatingLoading: false,
     loadMovieDetails: async (tmdbId: number) => {
       set({ isLoading: true, movieDetails: undefined });
       try {
@@ -26,7 +31,17 @@ export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
       }
     },
     resetMovieDetails: () => {
-      set({ movieDetails: undefined });
+      set({ movieDetails: undefined, movieRating: undefined });
+    },
+    loadMovieRating: async (tmdbId: number) => {
+      set({ isMovieRatingLoading: true, movieRating: undefined });
+      try {
+        const rating = await getMovieRating(tmdbId);
+        set({ movieRating: rating, isMovieRatingLoading: false });
+      } catch (error) {
+        console.error("Error loading movie rating:", error);
+        set({ isMovieRatingLoading: false });
+      }
     },
   };
 });

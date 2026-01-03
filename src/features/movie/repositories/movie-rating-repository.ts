@@ -19,15 +19,15 @@ export const createOrUpdateRating = async (
     .json();
 };
 
-export const getRating = async (
-  movieId: number,
-  userId: string
+export const getMovieRating = async (
+  tmdbId: number,
+  userId?: string
 ): Promise<MovieRatingResponse> => {
   const token = await auth.currentUser?.getIdToken();
 
   return apiClient
-    .get(`v1/movie-ratings/${movieId}`, {
-      searchParams: { user_id: userId },
+    .get(`v1/movie-ratings/${tmdbId}`, {
+      searchParams: userId ? { user_id: userId } : undefined,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

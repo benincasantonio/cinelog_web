@@ -8,14 +8,22 @@ import { MovieRuntime } from "../components/MovieRuntime";
 import { RateMovieModal } from "../components/RateMovieModal";
 import { useMovieRatingStore } from "../store/useMovieRatingStore";
 import { Star } from "lucide-react";
+import { Skeleton } from "@antoniobenincasa/ui";
 
 const MovieDetailsPage = () => {
   const { tmdbId } = useParams<{ tmdbId: string }>();
   const navigate = useNavigate();
   const movieDetails = useMovieDetailsStore((state) => state.movieDetails);
+  const movieRating = useMovieDetailsStore((state) => state.movieRating);
   const isLoading = useMovieDetailsStore((state) => state.isLoading);
+  const isMovieRatingLoading = useMovieDetailsStore(
+    (state) => state.isMovieRatingLoading
+  );
   const loadMovieDetails = useMovieDetailsStore(
     (state) => state.loadMovieDetails
+  );
+  const loadMovieRating = useMovieDetailsStore(
+    (state) => state.loadMovieRating
   );
   const resetMovieDetails = useMovieDetailsStore(
     (state) => state.resetMovieDetails
@@ -25,11 +33,12 @@ const MovieDetailsPage = () => {
   useEffect(() => {
     if (tmdbId) {
       loadMovieDetails(Number(tmdbId));
+      loadMovieRating(Number(tmdbId));
     }
     return () => {
       resetMovieDetails();
     };
-  }, [tmdbId, loadMovieDetails, resetMovieDetails]);
+  }, [tmdbId, loadMovieDetails, loadMovieRating, resetMovieDetails]);
 
   if (isLoading) {
     return (
@@ -88,6 +97,11 @@ const MovieDetailsPage = () => {
         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
           <MovieRuntime runtime={runtime} />
           <MovieVote vote={voteAverage} source="tmdb" />
+          {isMovieRatingLoading ? (
+            <Skeleton className="w-16 h-4" />
+          ) : (
+            <MovieVote vote={movieRating?.rating || 0} source="user" />
+          )}
           <MovieGenres genres={genres} />
           <button
             onClick={() => tmdbId && openRateModal(tmdbId)}

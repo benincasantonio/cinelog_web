@@ -24,7 +24,11 @@ export const useMovieRatingStore = create<MovieRatingState>((set, get) => ({
 
     set({ isLoading: true });
     try {
-      await createOrUpdateRating({ tmdbId, rating, comment });
+      await createOrUpdateRating({
+        tmdbId,
+        rating,
+        comment: comment?.trim() || null,
+      });
       set({ isOpen: false });
     } catch (error) {
       console.error("Failed to rate movie", error);

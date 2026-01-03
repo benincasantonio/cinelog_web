@@ -26,7 +26,7 @@ export const RateMovieForm = () => {
     resolver: zodResolver(rateMovieSchema),
     defaultValues: {
       rating: 0,
-      comment: "",
+      comment: undefined,
     },
     mode: "onChange",
   });

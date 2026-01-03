@@ -1,4 +1,3 @@
-import React from "react";
 import { useMovieRatingStore } from "../store/useMovieRatingStore";
 import { RateMovieForm } from "./RateMovieForm";
 import {
@@ -9,7 +8,7 @@ import {
   DialogTitle,
 } from "@antoniobenincasa/ui";
 
-export const RateMovieModal: React.FC = () => {
+export const RateMovieModal = () => {
   const isOpen = useMovieRatingStore((state) => state.isOpen);
   const setIsOpen = useMovieRatingStore((state) => state.setIsOpen);
 
