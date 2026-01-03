@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@antoniobenincasa/ui";
+import { MoviesWatchedLoading } from "./MoviesWatchedLoading";
 
 export const MoviesWatched = () => {
   const [logs, setLogs] = useState<LogListItem[]>([]);
@@ -48,13 +49,7 @@ export const MoviesWatched = () => {
   }, [selectedYear]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-16">
-        <div className="text-lg text-gray-600 dark:text-gray-400">
-          Loading movies...
-        </div>
-      </div>
-    );
+    return <MoviesWatchedLoading />;
   }
 
   if (error) {

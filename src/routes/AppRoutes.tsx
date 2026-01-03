@@ -16,6 +16,16 @@ const MovieDetailsPage = lazy(
 );
 const ProfilePage = lazy(() => import("@features/profile/pages/ProfilePage"));
 
+const ProfileOverviewPage = lazy(
+  () => import("@features/profile/pages/ProfileOverviewPage")
+);
+const ProfileMoviesWatchedPage = lazy(
+  () => import("@features/profile/pages/ProfileMoviesWatchedPage")
+);
+const ProfileStatsPage = lazy(
+  () => import("@features/profile/pages/ProfileStatsPage")
+);
+
 export const AppRoutes = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isInitialized = useAuthStore((state) => state.isInitialized);
@@ -45,7 +55,14 @@ export const AppRoutes = () => {
               id="movie-details"
               element={<MovieDetailsPage />}
             />
-            <Route path="/profile" id="profile" element={<ProfilePage />} />
+            <Route path="/:handle" element={<ProfilePage />}>
+              <Route index element={<ProfileOverviewPage />} />
+              <Route
+                path="movie-watched"
+                element={<ProfileMoviesWatchedPage />}
+              />
+              <Route path="stats" element={<ProfileStatsPage />} />
+            </Route>
           </>
         ) : (
           <>

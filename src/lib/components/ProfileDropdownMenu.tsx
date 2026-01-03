@@ -14,6 +14,7 @@ export const ProfileDropdownMenu = () => {
   const navigate = useNavigate();
 
   const logout = useAuthStore((state) => state.logout);
+  const userInfo = useAuthStore((state) => state.userInfo);
 
   const handleLogout = async () => {
     await logout();
@@ -35,7 +36,7 @@ export const ProfileDropdownMenu = () => {
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem asChild>
           <Link
-            to="/profile"
+            to={userInfo?.handle ? `/${userInfo.handle}` : "/profile"}
             className="flex items-center gap-2 cursor-pointer"
           >
             <User className="w-4 h-4" />
