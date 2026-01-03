@@ -10,7 +10,10 @@ interface MovieRatingState {
   openModal: (tmdbId: string, movieRating?: MovieRatingResponse | null) => void;
   closeModal: () => void;
   setIsOpen: (isOpen: boolean) => void;
-  submitRating: (rating: number, comment?: string) => Promise<void>;
+  submitRating: (
+    rating: number,
+    comment?: string
+  ) => Promise<MovieRatingResponse | void>;
 }
 
 export const useMovieRatingStore = create<MovieRatingState>((set, get) => ({
@@ -28,12 +31,13 @@ export const useMovieRatingStore = create<MovieRatingState>((set, get) => ({
 
     set({ isLoading: true });
     try {
-      await createOrUpdateRating({
+      const movieRating = await createOrUpdateRating({
         tmdbId,
         rating,
         comment: comment?.trim() || null,
       });
       set({ isOpen: false });
+      return movieRating;
     } catch (error) {
       console.error("Failed to rate movie", error);
     } finally {

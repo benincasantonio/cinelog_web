@@ -9,6 +9,7 @@ import { RateMovieModal } from "../components/RateMovieModal";
 import { useMovieRatingStore } from "../store/useMovieRatingStore";
 import { Star } from "lucide-react";
 import { Skeleton } from "@antoniobenincasa/ui";
+import type { MovieRatingResponse } from "../models";
 
 const MovieDetailsPage = () => {
   const { tmdbId } = useParams<{ tmdbId: string }>();
@@ -28,6 +29,7 @@ const MovieDetailsPage = () => {
   const resetMovieDetails = useMovieDetailsStore(
     (state) => state.resetMovieDetails
   );
+  const setMovieRating = useMovieDetailsStore((state) => state.setMovieRating);
   const openRateModal = useMovieRatingStore((state) => state.openModal);
 
   useEffect(() => {
@@ -40,9 +42,9 @@ const MovieDetailsPage = () => {
     };
   }, [tmdbId, loadMovieDetails, loadMovieRating, resetMovieDetails]);
 
-  const onRateMovieUpdated = () => {
+  const onRateMovieUpdated = (movieRating: MovieRatingResponse) => {
     if (tmdbId) {
-      loadMovieRating(Number(tmdbId));
+      setMovieRating(movieRating);
     }
   };
 

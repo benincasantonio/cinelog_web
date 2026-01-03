@@ -12,6 +12,7 @@ interface MovieDetailsStore {
   loadMovieRating: (tmdbId: number) => Promise<void>;
   loadMovieDetails: (tmdbId: number) => Promise<void>;
   resetMovieDetails: () => void;
+  setMovieRating: (movieRating: MovieRatingResponse) => void;
 }
 
 export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
@@ -29,6 +30,9 @@ export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
         console.error("Error loading movie details:", error);
         set({ isLoading: false });
       }
+    },
+    setMovieRating: (movieRating: MovieRatingResponse) => {
+      set({ movieRating });
     },
     resetMovieDetails: () => {
       set({ movieDetails: undefined, movieRating: undefined });

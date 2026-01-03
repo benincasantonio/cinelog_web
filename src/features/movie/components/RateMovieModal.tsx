@@ -1,3 +1,4 @@
+import type { MovieRatingResponse } from "../models";
 import { useMovieRatingStore } from "../store/useMovieRatingStore";
 import { RateMovieForm } from "./RateMovieForm";
 import {
@@ -9,16 +10,16 @@ import {
 } from "@antoniobenincasa/ui";
 
 type RateMovieModalProps = {
-  onSuccess?: () => void;
+  onSuccess?: (movieRating: MovieRatingResponse) => void;
 };
 
 export const RateMovieModal = ({ onSuccess }: RateMovieModalProps) => {
   const isOpen = useMovieRatingStore((state) => state.isOpen);
   const setIsOpen = useMovieRatingStore((state) => state.setIsOpen);
 
-  const handleSuccess = () => {
+  const handleSuccess = (movieRating: MovieRatingResponse) => {
     setIsOpen(false);
-    onSuccess?.();
+    onSuccess?.(movieRating);
   };
 
   return (
@@ -31,7 +32,10 @@ export const RateMovieModal = ({ onSuccess }: RateMovieModalProps) => {
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          <RateMovieForm onSuccess={handleSuccess} />
+          <RateMovieForm
+            onSuccess={handleSuccess}
+            onCancel={() => setIsOpen(false)}
+          />
         </div>
       </DialogContent>
     </Dialog>

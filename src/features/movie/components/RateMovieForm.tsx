@@ -4,6 +4,8 @@ import { RateMovie } from "./RateMovie";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button, Spinner, Textarea } from "@antoniobenincasa/ui";
+import type { MovieRatingResponse } from "../models";
+import { useEffect } from "react";
 
 const rateMovieSchema = z.object({
   rating: z.number().min(1, "Please select a rating"),
@@ -13,10 +15,11 @@ const rateMovieSchema = z.object({
 type RateMovieFormData = z.infer<typeof rateMovieSchema>;
 
 type RateMovieFormProps = {
-  onSuccess?: () => void;
+  onSuccess?: (movieRating: MovieRatingResponse) => void;
+  onCancel?: () => void;
 };
 
-export const RateMovieForm = ({ onSuccess }: RateMovieFormProps) => {
+export const RateMovieForm = ({ onSuccess, onCancel }: RateMovieFormProps) => {
   const submitRating = useMovieRatingStore((state) => state.submitRating);
   const isLoading = useMovieRatingStore((state) => state.isLoading);
   const movieRating = useMovieRatingStore((state) => state.movieRating);
@@ -25,6 +28,7 @@ export const RateMovieForm = ({ onSuccess }: RateMovieFormProps) => {
     control,
     register,
     handleSubmit,
+    reset,
     formState: { errors, isValid },
   } = useForm<RateMovieFormData>({
     resolver: zodResolver(rateMovieSchema),
@@ -35,9 +39,20 @@ export const RateMovieForm = ({ onSuccess }: RateMovieFormProps) => {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    if (movieRating) {
+      reset({
+        rating: movieRating.rating,
+        comment: movieRating.comment || undefined,
+      });
+    }
+  }, [movieRating, reset]);
+
   const onSubmit = async (data: RateMovieFormData) => {
-    await submitRating(data.rating, data.comment);
-    onSuccess?.();
+    const movieRating = await submitRating(data.rating, data.comment);
+    if (movieRating) {
+      onSuccess?.(movieRating);
+    }
   };
 
   return (
@@ -75,7 +90,12 @@ export const RateMovieForm = ({ onSuccess }: RateMovieFormProps) => {
       </div>
 
       <div className="flex justify-end gap-3 pt-2">
-        <Button type="button" variant="ghost" disabled={isLoading}>
+        <Button
+          type="button"
+          variant="ghost"
+          disabled={isLoading}
+          onClick={onCancel}
+        >
           Cancel
         </Button>
         <Button type="submit" disabled={!isValid || isLoading}>
