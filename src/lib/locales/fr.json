@@ -50,6 +50,7 @@
     "notFound": "Film introuvable.",
     "goBack": "Retour",
     "rate": "Noter",
+    "logMovie": "Enregistrer",
     "overview": "Synopsis",
     "noOverview": "Aucun résumé disponible pour ce film."
   },

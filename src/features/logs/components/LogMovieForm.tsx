@@ -15,7 +15,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@antoniobenincasa/ui";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { logFormSchema, type LogFormSchema } from "../schemas";
@@ -23,9 +23,17 @@ import { search } from "@/features/movie-search/repositories";
 import { WATCHED_WHERE_VALUES } from "../models";
 import { createLog } from "../repositories";
 import { useTranslation } from "react-i18next";
+import { useCreateMovieLogDialogStore } from "../store";
 
 export const LogMovieForm = () => {
   const { t } = useTranslation();
+  const prefilledMovie = useCreateMovieLogDialogStore(
+    (state) => state.prefilledMovie
+  );
+  const clearPrefilledMovie = useCreateMovieLogDialogStore(
+    (state) => state.clearPrefilledMovie
+  );
+
   const form = useForm<LogFormSchema>({
     resolver: zodResolver(logFormSchema),
     defaultValues: {
@@ -43,11 +51,24 @@ export const LogMovieForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Prefill the form when a movie is provided
+  useEffect(() => {
+    if (prefilledMovie) {
+      form.setValue("tmdbId", prefilledMovie.tmdbId);
+      setSearchItems([
+        {
+          label: prefilledMovie.title,
+          value: prefilledMovie.tmdbId.toString(),
+        },
+      ]);
+    }
+  }, [prefilledMovie, form]);
+
   const onFilterChange = async (value: string) => {
     const results = await search(value);
 
     const items = results.results.map((movie) => ({
-      label: `${movie.title} (${new Date(movie.releaseDate).getFullYear()})`,
+      label: movie.title,
       value: movie.id.toString(),
     }));
 
@@ -77,6 +98,7 @@ export const LogMovieForm = () => {
 
       // Reset form on success
       form.reset();
+      clearPrefilledMovie();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

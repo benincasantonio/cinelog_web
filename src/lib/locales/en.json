@@ -50,6 +50,7 @@
     "notFound": "Movie not found.",
     "goBack": "Go back",
     "rate": "Rate",
+    "logMovie": "Log Movie",
     "overview": "Overview",
     "noOverview": "No overview available for this movie."
   },

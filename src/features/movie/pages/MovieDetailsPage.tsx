@@ -7,10 +7,11 @@ import { MovieVote } from "../components/MovieVote";
 import { MovieRuntime } from "../components/MovieRuntime";
 import { RateMovieModal } from "../components/RateMovieModal";
 import { useMovieRatingStore } from "../store/useMovieRatingStore";
-import { Star } from "lucide-react";
+import { Star, Clapperboard } from "lucide-react";
 import { Skeleton } from "@antoniobenincasa/ui";
 import type { MovieRatingResponse } from "../models";
 import { useTranslation } from "react-i18next";
+import { useCreateMovieLogDialogStore } from "@/features/logs/store";
 
 const MovieDetailsPage = () => {
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ const MovieDetailsPage = () => {
   );
   const setMovieRating = useMovieDetailsStore((state) => state.setMovieRating);
   const openRateModal = useMovieRatingStore((state) => state.openModal);
+  const openLogDialog = useCreateMovieLogDialogStore((state) => state.open);
 
   useEffect(() => {
     if (tmdbId) {
@@ -133,6 +135,16 @@ const MovieDetailsPage = () => {
             />
           )}
           <MovieGenres genres={genres} />
+
+          <button
+            onClick={() =>
+              tmdbId && openLogDialog({ tmdbId: Number(tmdbId), title })
+            }
+            className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-600/10 text-green-600 hover:bg-green-600/20 transition-colors font-medium cursor-pointer"
+          >
+            <Clapperboard className="w-4 h-4" />
+            <span>{t("MovieDetailsPage.logMovie")}</span>
+          </button>
         </div>
 
         {/* Overview */}
