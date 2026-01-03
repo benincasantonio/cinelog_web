@@ -103,32 +103,57 @@
       "dobPast": "La date de naissance doit être dans le passé"
     }
   },
-    "AuthTabs": {
-      "login": "Connexion",
-      "registration": "Inscription"
-    },
-    "CreateMovieLogDialog": {
-      "title": "Enregistrer un film",
-      "description": "Ajoutez les détails de ce que vous avez regardé.",
-      "close": "Fermer"
-    },
-    "LogMovieForm": {
-      "movieLabel": "Film",
-      "dateWatchedLabel": "Date de visionnage",
-      "watchedWhereLabel": "Lieu de visionnage (Optionnel)",
-      "watchedWherePlaceholder": "Sélectionnez où vous avez regardé",
-      "viewingNotesLabel": "Notes de visionnage (Optionnel)",
-      "viewingNotesPlaceholder": "Vos pensées sur le film",
-      "submit": "Créer le journal",
-      "submitting": "Création du journal...",
-      "error": "Une erreur s'est produite lors de la création du journal"
-    },
-    "WatchedWhere": {
-      "cinema": "Cinéma",
-      "streaming": "Streaming",
-      "homeVideo": "Vidéo à domicile",
-      "tv": "TV",
-      "other": "Autre"
-    }
+  "AuthTabs": {
+    "login": "Connexion",
+    "registration": "Inscription"
+  },
+  "CreateMovieLogDialog": {
+    "title": "Enregistrer un film",
+    "description": "Ajoutez les détails de ce que vous avez regardé.",
+    "close": "Fermer"
+  },
+  "LogMovieForm": {
+    "movieLabel": "Film",
+    "dateWatchedLabel": "Date de visionnage",
+    "watchedWhereLabel": "Lieu de visionnage (Optionnel)",
+    "watchedWherePlaceholder": "Sélectionnez où vous avez regardé",
+    "viewingNotesLabel": "Notes de visionnage (Optionnel)",
+    "viewingNotesPlaceholder": "Vos pensées sur le film",
+    "submit": "Créer le journal",
+    "submitting": "Création du journal...",
+    "error": "Une erreur s'est produite lors de la création du journal"
+  },
+  "WatchedWhere": {
+    "cinema": "Cinéma",
+    "streaming": "Streaming",
+    "homeVideo": "Vidéo à domicile",
+    "tv": "TV",
+    "other": "Autre"
+  },
+  "MoviesPage": {
+    "title": "Recherche de Films"
+  },
+  "MovieSearchList": {
+    "searching": "Recherche de films...",
+    "startTyping": "Commencez à taper pour rechercher des films.",
+    "noMoviesFound": "Aucun film trouvé. Essayez de rechercher quelque chose !",
+    "topResults": "Meilleurs Résultats"
+  },
+  "Navbar": {
+    "home": "Accueil",
+    "search": "Rechercher",
+    "login": "Connexion",
+    "register": "S'inscrire"
+  },
+  "HomePage": {
+    "title": "Suivez chaque voyage cinématographique",
+    "subtitle": "Enregistrez où et quand vous avez regardé vos films préférés et plongez dans vos statistiques de visionnage personnelles.",
+    "tagline": "Possédez vos données de films. Pas de pubs, pas de suivi, juste vous et les films.",
+    "italic": "Fait pour les gens qui aiment regarder leurs statistiques autant que les films eux-mêmes.",
+    "contributeTitle": "Envie de contribuer ?",
+    "contributeText": "Ce projet est open source. Que ce soit pour corriger des bugs, ajouter des fonctionnalités ou améliorer la documentation, votre aide est appréciée !",
+    "frontend": "Site Web Frontend",
+    "backend": "API Backend"
   }
+}
   

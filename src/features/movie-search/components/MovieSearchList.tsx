@@ -1,7 +1,9 @@
 import { useMoviesStore } from "../store/useMoviesStore";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const MovieSearchList = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const movieSearchResult = useMoviesStore((state) => state.movieSearchResult);
   const isLoading = useMoviesStore((state) => state.isLoading);
@@ -10,7 +12,7 @@ export const MovieSearchList = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-8">
-        <div className="text-lg text-gray-600">Searching for movies...</div>
+        <div className="text-lg text-gray-600">{t("MovieSearchList.searching")}</div>
       </div>
     );
   }
@@ -19,7 +21,7 @@ export const MovieSearchList = () => {
     return (
       <div className="flex justify-center items-center py-8">
         <div className="text-lg text-gray-600">
-          Start typing to search for movies.
+          {t("MovieSearchList.startTyping")}
         </div>
       </div>
     );
@@ -29,7 +31,7 @@ export const MovieSearchList = () => {
     return (
       <div className="flex justify-center items-center py-8">
         <div className="text-lg text-gray-600">
-          No movies found. Try searching for something!
+          {t("MovieSearchList.noMoviesFound")}
         </div>
       </div>
     );
@@ -38,7 +40,7 @@ export const MovieSearchList = () => {
   return (
     <div className="flex flex-col p-4 gap-2">
       <h3 className="px-2 py-2 text-sm font-bold text-gray-700 dark:text-gray-500 uppercase tracking-wider mb-2">
-        Top Results
+        {t("MovieSearchList.topResults")}
       </h3>
       {movieSearchResult.results.map((movie) => (
         <div
@@ -57,7 +59,7 @@ export const MovieSearchList = () => {
             {!movie.posterPath && (
               <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-lg">
                 <span className="text-gray-400 dark:text-gray-600 text-xs">
-                  No Image
+                  {t("MovieLogItem.noImage")}
                 </span>
               </div>
             )}

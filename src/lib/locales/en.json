@@ -103,32 +103,57 @@
       "dobPast": "Date of birth must be in the past"
     }
   },
-    "AuthTabs": {
-      "login": "Login",
-      "registration": "Registration"
-    },
-    "CreateMovieLogDialog": {
-      "title": "Log a Movie",
-      "description": "Add the details of what you watched.",
-      "close": "Close"
-    },
-    "LogMovieForm": {
-      "movieLabel": "Movie",
-      "dateWatchedLabel": "Date Watched",
-      "watchedWhereLabel": "Watched Where (Optional)",
-      "watchedWherePlaceholder": "Select where you watched",
-      "viewingNotesLabel": "Viewing Notes (Optional)",
-      "viewingNotesPlaceholder": "Your thoughts about the movie",
-      "submit": "Create Log",
-      "submitting": "Creating Log...",
-      "error": "An error occurred while creating the log"
-    },
-    "WatchedWhere": {
-      "cinema": "Cinema",
-      "streaming": "Streaming",
-      "homeVideo": "Home Video",
-      "tv": "TV",
-      "other": "Other"
-    }
+  "AuthTabs": {
+    "login": "Login",
+    "registration": "Registration"
+  },
+  "CreateMovieLogDialog": {
+    "title": "Log a Movie",
+    "description": "Add the details of what you watched.",
+    "close": "Close"
+  },
+  "LogMovieForm": {
+    "movieLabel": "Movie",
+    "dateWatchedLabel": "Date Watched",
+    "watchedWhereLabel": "Watched Where (Optional)",
+    "watchedWherePlaceholder": "Select where you watched",
+    "viewingNotesLabel": "Viewing Notes (Optional)",
+    "viewingNotesPlaceholder": "Your thoughts about the movie",
+    "submit": "Create Log",
+    "submitting": "Creating Log...",
+    "error": "An error occurred while creating the log"
+  },
+  "WatchedWhere": {
+    "cinema": "Cinema",
+    "streaming": "Streaming",
+    "homeVideo": "Home Video",
+    "tv": "TV",
+    "other": "Other"
+  },
+  "MoviesPage": {
+    "title": "Movie Search"
+  },
+  "MovieSearchList": {
+    "searching": "Searching for movies...",
+    "startTyping": "Start typing to search for movies.",
+    "noMoviesFound": "No movies found. Try searching for something!",
+    "topResults": "Top Results"
+  },
+  "Navbar": {
+    "home": "Home",
+    "search": "Search",
+    "login": "Login",
+    "register": "Register"
+  },
+  "HomePage": {
+    "title": "Track every cinematic journey",
+    "subtitle": "Log where and when you watched your favorite movies and dive into your personal viewing statistics.",
+    "tagline": "Own your movie data. No ads, no tracking, just you and the movies.",
+    "italic": "Made for people who love watching their stats as much as the movies themselves.",
+    "contributeTitle": "Want to contribute?",
+    "contributeText": "This project is open source. Whether it's fixing bugs, adding features, or improving documentation, your help is appreciated!",
+    "frontend": "Frontend Web",
+    "backend": "Backend API"
   }
+}
   

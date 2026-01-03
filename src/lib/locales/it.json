@@ -103,32 +103,57 @@
       "dobPast": "La data di nascita deve essere nel passato"
     }
   },
-    "AuthTabs": {
-      "login": "Accedi",
-      "registration": "Registrati"
-    },
-    "CreateMovieLogDialog": {
-      "title": "Registra Film",
-      "description": "Aggiungi i dettagli di ciò che hai visto.",
-      "close": "Chiudi"
-    },
-    "LogMovieForm": {
-      "movieLabel": "Film",
-      "dateWatchedLabel": "Data di visione",
-      "watchedWhereLabel": "Dove lo hai visto (Opzionale)",
-      "watchedWherePlaceholder": "Seleziona dove lo hai visto",
-      "viewingNotesLabel": "Note di visione (Opzionale)",
-      "viewingNotesPlaceholder": "I tuoi pensieri sul film",
-      "submit": "Crea Log",
-      "submitting": "Creazione Log...",
-      "error": "Si è verificato un errore durante la creazione del log"
-    },
-    "WatchedWhere": {
-      "cinema": "Cinema",
-      "streaming": "Streaming",
-      "homeVideo": "Home Video",
-      "tv": "TV",
-      "other": "Altro"
-    }
+  "AuthTabs": {
+    "login": "Accedi",
+    "registration": "Registrati"
+  },
+  "CreateMovieLogDialog": {
+    "title": "Registra Film",
+    "description": "Aggiungi i dettagli di ciò che hai visto.",
+    "close": "Chiudi"
+  },
+  "LogMovieForm": {
+    "movieLabel": "Film",
+    "dateWatchedLabel": "Data di visione",
+    "watchedWhereLabel": "Dove lo hai visto (Opzionale)",
+    "watchedWherePlaceholder": "Seleziona dove lo hai visto",
+    "viewingNotesLabel": "Note di visione (Opzionale)",
+    "viewingNotesPlaceholder": "I tuoi pensieri sul film",
+    "submit": "Crea Log",
+    "submitting": "Creazione Log...",
+    "error": "Si è verificato un errore durante la creazione del log"
+  },
+  "WatchedWhere": {
+    "cinema": "Cinema",
+    "streaming": "Streaming",
+    "homeVideo": "Home Video",
+    "tv": "TV",
+    "other": "Altro"
+  },
+  "MoviesPage": {
+    "title": "Ricerca Film"
+  },
+  "MovieSearchList": {
+    "searching": "Ricerca di film...",
+    "startTyping": "Inizia a digitare per cercare film.",
+    "noMoviesFound": "Nessun film trovato. Prova a cercare qualcosa!",
+    "topResults": "Migliori Risultati"
+  },
+  "Navbar": {
+    "home": "Home",
+    "search": "Cerca",
+    "login": "Accedi",
+    "register": "Registrati"
+  },
+  "HomePage": {
+    "title": "Traccia ogni viaggio cinematografico",
+    "subtitle": "Registra dove e quando hai guardato i tuoi film preferiti e immergiti nelle tue statistiche di visione personali.",
+    "tagline": "Possiedi i tuoi dati sui film. Nessuna pubblicità, nessun tracciamento, solo te e i film.",
+    "italic": "Fatto per le persone che amano guardare le proprie statistiche tanto quanto i film stessi.",
+    "contributeTitle": "Vuoi contribuire?",
+    "contributeText": "Questo progetto è open source. Che si tratti di correggere bug, aggiungere funzionalità o migliorare la documentazione, il tuo aiuto è apprezzato!",
+    "frontend": "Sito Web Frontend",
+    "backend": "API Backend"
   }
+}
   

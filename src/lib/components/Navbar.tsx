@@ -17,8 +17,10 @@ import {
 import { MobileNavbar } from "./MobileNavbar";
 import { useState } from "react";
 import type { MobileNavbarItem } from "../mobile-navbar-item.model";
+import { useTranslation } from "react-i18next";
 
 export const Navbar = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { theme, setTheme } = useTheme();
@@ -33,9 +35,9 @@ export const Navbar = () => {
     path: string;
     visible?: boolean;
   }[] = [
-    { label: "Home", path: "/" },
+    { label: t("Navbar.home"), path: "/" },
     {
-      label: "Search",
+      label: t("Navbar.search"),
       path: "/search",
       visible: isAuthenticated,
     },
@@ -43,22 +45,22 @@ export const Navbar = () => {
 
   const mobileNavbarItems: MobileNavbarItem[] = [
     {
-      name: "Home",
+      name: t("Navbar.home"),
       path: "/",
       visible: true,
     },
     {
-      name: "Search",
+      name: t("Navbar.search"),
       path: "/search",
       visible: isAuthenticated,
     },
     {
-      name: "Login",
+      name: t("Navbar.login"),
       path: "/login",
       visible: !isAuthenticated,
     },
     {
-      name: "Registration",
+      name: t("Navbar.register"),
       path: "/registration",
       visible: !isAuthenticated,
     },
@@ -114,10 +116,10 @@ export const Navbar = () => {
           {!isAuthenticated ? (
             <div className="hidden md:flex items-center gap-2">
               <Button variant="ghost" onClick={() => navigate("/login")}>
-                Login
+                {t("Navbar.login")}
               </Button>
               <Button onClick={() => navigate("/registration")}>
-                Register
+                {t("Navbar.register")}
               </Button>
             </div>
           ) : (
