@@ -33,7 +33,7 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
         </h4>
         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
           <span>
-            {t("MovieLogItem.watched")}
+            {t("MovieLogItem.watched")}&nbsp;
             {new Date(log.dateWatched).toLocaleDateString()}
           </span>
           {log.watchedWhere && (

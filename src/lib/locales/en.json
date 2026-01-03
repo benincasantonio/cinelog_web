@@ -25,9 +25,14 @@
     "movies": "Movies",
     "watched": "Watched"
   },
-  "MovieLogItem": {
-    "unknownTitle": "Unknown Title",
-    "watched": "Watched:",
-    "noImage": "No Image"
+    "MovieLogItem": {
+      "unknownTitle": "Unknown Title",
+      "watched": "Watched:",
+      "noImage": "No Image"
+    },
+    "ProfileHeader": {
+      "about": "About",
+      "noBio": "No bio available."
+    }
   }
-}
+  

@@ -1,11 +1,14 @@
 import { User } from "lucide-react";
 import type { UserResponse } from "@/features/auth/models/user-response";
+import { useTranslation } from "react-i18next";
 
 interface ProfileHeaderProps {
   userInfo: UserResponse | null;
 }
 
 export const ProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
       {/* Mini Banner/Header decoration */}
@@ -38,11 +41,13 @@ export const ProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
         {/* Bio Section */}
         <div className="text-left w-full">
           <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-            About
+            {t("ProfileHeader.about")}
           </h2>
           <div className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             {userInfo?.bio || (
-              <span className="italic opacity-60">No bio available.</span>
+              <span className="italic opacity-60">
+                {t("ProfileHeader.noBio")}
+              </span>
             )}
           </div>
         </div>
