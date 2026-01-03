@@ -32,6 +32,7 @@ const MoviesPage = () => {
         placeholder="Search for movies..."
         className="mb-4"
         value={query}
+        autoFocus
         onChange={(e) => setQuery(e.target.value)}
       />
 
