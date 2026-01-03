@@ -40,6 +40,12 @@ const MovieDetailsPage = () => {
     };
   }, [tmdbId, loadMovieDetails, loadMovieRating, resetMovieDetails]);
 
+  const onRateMovieUpdated = () => {
+    if (tmdbId) {
+      loadMovieRating(Number(tmdbId));
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
@@ -131,7 +137,7 @@ const MovieDetailsPage = () => {
           </p>
         </div>
       </div>
-      <RateMovieModal />
+      <RateMovieModal onSuccess={onRateMovieUpdated} />
     </div>
   );
 };

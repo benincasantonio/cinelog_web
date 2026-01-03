@@ -8,9 +8,18 @@ import {
   DialogTitle,
 } from "@antoniobenincasa/ui";
 
-export const RateMovieModal = () => {
+type RateMovieModalProps = {
+  onSuccess?: () => void;
+};
+
+export const RateMovieModal = ({ onSuccess }: RateMovieModalProps) => {
   const isOpen = useMovieRatingStore((state) => state.isOpen);
   const setIsOpen = useMovieRatingStore((state) => state.setIsOpen);
+
+  const handleSuccess = () => {
+    setIsOpen(false);
+    onSuccess?.();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -22,7 +31,7 @@ export const RateMovieModal = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          <RateMovieForm />
+          <RateMovieForm onSuccess={handleSuccess} />
         </div>
       </DialogContent>
     </Dialog>
