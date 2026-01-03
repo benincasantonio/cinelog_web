@@ -5,6 +5,9 @@ import { MovieDetailsHero } from "../components/MovieDetailsHero";
 import { MovieGenres } from "../components/MovieGenres";
 import { MovieVote } from "../components/MovieVote";
 import { MovieRuntime } from "../components/MovieRuntime";
+import { RateMovieModal } from "../components/RateMovieModal";
+import { useMovieRatingStore } from "../store/useMovieRatingStore";
+import { Star } from "lucide-react";
 
 const MovieDetailsPage = () => {
   const { tmdbId } = useParams<{ tmdbId: string }>();
@@ -17,6 +20,7 @@ const MovieDetailsPage = () => {
   const resetMovieDetails = useMovieDetailsStore(
     (state) => state.resetMovieDetails
   );
+  const openRateModal = useMovieRatingStore((state) => state.openModal);
 
   useEffect(() => {
     if (tmdbId) {
@@ -85,6 +89,13 @@ const MovieDetailsPage = () => {
           <MovieRuntime runtime={runtime} />
           <MovieVote vote={voteAverage} source="tmdb" />
           <MovieGenres genres={genres} />
+          <button
+            onClick={() => tmdbId && openRateModal(tmdbId)}
+            className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium cursor-pointer"
+          >
+            <Star className="w-4 h-4" />
+            <span>Rate</span>
+          </button>
         </div>
 
         {/* Overview */}
@@ -97,6 +108,7 @@ const MovieDetailsPage = () => {
           </p>
         </div>
       </div>
+      <RateMovieModal />
     </div>
   );
 };
