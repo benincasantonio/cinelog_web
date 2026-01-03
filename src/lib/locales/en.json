@@ -25,52 +25,86 @@
     "movies": "Movies",
     "watched": "Watched"
   },
-    "MovieLogItem": {
-      "unknownTitle": "Unknown Title",
-      "watched": "Watched:",
-      "noImage": "No Image"
-    },
-      "ProfileHeader": {
-        "about": "About",
-        "noBio": "No bio available."
-      },
-      "ProfileMenu": {
-        "overview": "Overview",
-        "moviesWatched": "Movies Watched",
-        "stats": "Stats"
-      },
-      "ProfileOverviewPage": {
-        "comingSoon": "Overview - Coming soon"
-      },
-        "ProfileStatsPage": {
-          "comingSoon": "Stats - Coming soon"
-        },
-        "MovieDetailsPage": {
-          "loading": "Loading movie details...",
-          "notFound": "Movie not found.",
-          "goBack": "Go back",
-          "rate": "Rate",
-          "overview": "Overview",
-          "noOverview": "No overview available for this movie."
-        },
-        "MovieDetailsHero": {
-          "noBackdrop": "No Backdrop Available",
-          "back": "← Back",
-          "noImage": "No Image"
-        },
-        "RateMovieModal": {
-          "title": "Rate Movie",
-          "description": "Share your thoughts and rate this movie."
-        },
-        "RateMovieForm": {
-          "yourRating": "Your Rating",
-          "reviewOptional": "Review (Optional)",
-          "commentPlaceholder": "Write your thoughts about the movie...",
-          "cancel": "Cancel",
-          "save": "Save Rating",
-          "validation": {
-            "rating": "Please select a rating"
-          }
-        }
-      }
-      
+  "MovieLogItem": {
+    "unknownTitle": "Unknown Title",
+    "watched": "Watched:",
+    "noImage": "No Image"
+  },
+  "ProfileHeader": {
+    "about": "About",
+    "noBio": "No bio available."
+  },
+  "ProfileMenu": {
+    "overview": "Overview",
+    "moviesWatched": "Movies Watched",
+    "stats": "Stats"
+  },
+  "ProfileOverviewPage": {
+    "comingSoon": "Overview - Coming soon"
+  },
+  "ProfileStatsPage": {
+    "comingSoon": "Stats - Coming soon"
+  },
+  "MovieDetailsPage": {
+    "loading": "Loading movie details...",
+    "notFound": "Movie not found.",
+    "goBack": "Go back",
+    "rate": "Rate",
+    "overview": "Overview",
+    "noOverview": "No overview available for this movie."
+  },
+  "MovieDetailsHero": {
+    "noBackdrop": "No Backdrop Available",
+    "back": "← Back",
+    "noImage": "No Image"
+  },
+  "RateMovieModal": {
+    "title": "Rate Movie",
+    "description": "Share your thoughts and rate this movie."
+  },
+  "RateMovieForm": {
+    "yourRating": "Your Rating",
+    "reviewOptional": "Review (Optional)",
+    "commentPlaceholder": "Write your thoughts about the movie...",
+    "cancel": "Cancel",
+    "save": "Save Rating",
+    "validation": {
+      "rating": "Please select a rating"
+    }
+  },
+  "LoginPage": {
+    "title": "Login",
+    "description": "Login to your account"
+  },
+  "RegistrationPage": {
+    "title": "Registration",
+    "description": "Create a new account"
+  },
+  "LoginForm": {
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "submitting": "Logging in...",
+    "error": "An error occurred during login"
+  },
+  "RegistrationForm": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "handle": "Handle",
+    "dateOfBirth": "Date of Birth",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us about yourself",
+    "submit": "Register",
+    "submitting": "Registering...",
+    "error": "An error occurred during registration",
+    "validation": {
+      "dobPast": "Date of birth must be in the past"
+    }
+  },
+  "AuthTabs": {
+    "login": "Login",
+    "registration": "Registration"
+  }
+}

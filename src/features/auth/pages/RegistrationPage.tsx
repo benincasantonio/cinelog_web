@@ -6,15 +6,18 @@ import {
   CardTitle,
 } from "@antoniobenincasa/ui";
 import { AuthTabs, RegistrationForm } from "../components";
+import { useTranslation } from "react-i18next";
 
 const RegistrationPage = () => {
+  const { t } = useTranslation();
+
   return (
     <AuthTabs
       children={
         <Card className="w-full md:w-1/2">
           <CardHeader>
-            <CardTitle>Registration</CardTitle>
-            <CardDescription>Create a new account</CardDescription>
+            <CardTitle>{t("RegistrationPage.title")}</CardTitle>
+            <CardDescription>{t("RegistrationPage.description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <RegistrationForm />

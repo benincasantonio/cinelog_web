@@ -1,8 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  registrationSchema,
-  type RegistrationSchema,
-} from "../schemas/registration.schema";
 import { useForm } from "react-hook-form";
 import {
   Button,
@@ -18,16 +14,43 @@ import {
 import { useAuthStore } from "../stores";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { z } from "zod";
+
+type RegistrationSchema = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  handle: string;
+  dateOfBirth: Date;
+  bio?: string;
+};
 
 export const RegistrationForm = () => {
+  const { t } = useTranslation();
   const { register } = useAuthStore();
   const navigate = useNavigate();
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const localizedSchema = z
+    .object({
+      firstName: z.string().min(1).nonempty(),
+      lastName: z.string().min(1).nonempty(),
+      email: z.email().nonempty(),
+      password: z.string().min(8).nonempty(),
+      handle: z.string().min(1).nonempty(),
+      dateOfBirth: z.date().refine((date) => date < new Date(), {
+        message: t("RegistrationForm.validation.dobPast"),
+      }),
+      bio: z.string().optional(),
+    })
+    .strict();
+
   const form = useForm<RegistrationSchema>({
-    resolver: zodResolver(registrationSchema),
+    resolver: zodResolver(localizedSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -59,7 +82,7 @@ export const RegistrationForm = () => {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An error occurred during registration");
+        setError(t("RegistrationForm.error"));
       }
     } finally {
       setLoading(false);
@@ -78,9 +101,9 @@ export const RegistrationForm = () => {
           name="firstName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>First Name</FormLabel>
+              <FormLabel>{t("RegistrationForm.firstName")}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="First Name" />
+                <Input {...field} placeholder={t("RegistrationForm.firstName")} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,9 +115,9 @@ export const RegistrationForm = () => {
           name="lastName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Last Name</FormLabel>
+              <FormLabel>{t("RegistrationForm.lastName")}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Last Name" />
+                <Input {...field} placeholder={t("RegistrationForm.lastName")} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,9 +129,9 @@ export const RegistrationForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t("RegistrationForm.email")}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Email" />
+                <Input {...field} placeholder={t("RegistrationForm.email")} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -119,9 +142,9 @@ export const RegistrationForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t("RegistrationForm.password")}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Password" type="password" />
+                <Input {...field} placeholder={t("RegistrationForm.password")} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,9 +156,9 @@ export const RegistrationForm = () => {
           name="handle"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Handle</FormLabel>
+              <FormLabel>{t("RegistrationForm.handle")}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Handle" />
+                <Input {...field} placeholder={t("RegistrationForm.handle")} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -147,10 +170,10 @@ export const RegistrationForm = () => {
           name="dateOfBirth"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date of Birth</FormLabel>
+              <FormLabel>{t("RegistrationForm.dateOfBirth")}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Date of Birth"
+                  placeholder={t("RegistrationForm.dateOfBirth")}
                   type="date"
                   value={
                     field.value ? field.value.toISOString().split("T")[0] : ""
@@ -171,9 +194,9 @@ export const RegistrationForm = () => {
           name="bio"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel>{t("RegistrationForm.bio")}</FormLabel>
               <FormControl>
-                <Textarea {...field} placeholder="Tell us about yourself" />
+                <Textarea {...field} placeholder={t("RegistrationForm.bioPlaceholder")} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -181,7 +204,7 @@ export const RegistrationForm = () => {
         />
 
         <Button type="submit" variant="default" disabled={loading}>
-          {loading ? "Registering..." : "Register"}
+          {loading ? t("RegistrationForm.submitting") : t("RegistrationForm.submit")}
         </Button>
       </form>
     </Form>

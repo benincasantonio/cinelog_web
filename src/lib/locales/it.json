@@ -25,52 +25,86 @@
     "movies": "Film",
     "watched": "Visti"
   },
-    "MovieLogItem": {
-      "unknownTitle": "Titolo Sconosciuto",
-      "watched": "Visto:",
-      "noImage": "Nessuna Immagine"
-    },
-      "ProfileHeader": {
-        "about": "Informazioni",
-        "noBio": "Nessuna biografia disponibile."
-      },
-      "ProfileMenu": {
-        "overview": "Panoramica",
-        "moviesWatched": "Film visti",
-        "stats": "Statistiche"
-      },
-      "ProfileOverviewPage": {
-        "comingSoon": "Panoramica - Disponibile a breve"
-      },
-        "ProfileStatsPage": {
-          "comingSoon": "Statistiche - Disponibile a breve"
-        },
-        "MovieDetailsPage": {
-          "loading": "Caricamento dettagli film...",
-          "notFound": "Film non trovato.",
-          "goBack": "Torna indietro",
-          "rate": "Vota",
-          "overview": "Trama",
-          "noOverview": "Nessuna trama disponibile per questo film."
-        },
-        "MovieDetailsHero": {
-          "noBackdrop": "Nessuno sfondo disponibile",
-          "back": "← Indietro",
-          "noImage": "Nessuna immagine"
-        },
-        "RateMovieModal": {
-          "title": "Vota Film",
-          "description": "Condividi i tuoi pensieri e vota questo film."
-        },
-        "RateMovieForm": {
-          "yourRating": "Il tuo Voto",
-          "reviewOptional": "Recensione (Opzionale)",
-          "commentPlaceholder": "Scrivi i tuoi pensieri sul film...",
-          "cancel": "Annulla",
-          "save": "Salva Voto",
-          "validation": {
-            "rating": "Seleziona un voto"
-          }
-        }
-      }
-      
+  "MovieLogItem": {
+    "unknownTitle": "Titolo Sconosciuto",
+    "watched": "Visto:",
+    "noImage": "Nessuna Immagine"
+  },
+  "ProfileHeader": {
+    "about": "Informazioni",
+    "noBio": "Nessuna biografia disponibile."
+  },
+  "ProfileMenu": {
+    "overview": "Panoramica",
+    "moviesWatched": "Film visti",
+    "stats": "Statistiche"
+  },
+  "ProfileOverviewPage": {
+    "comingSoon": "Panoramica - Disponibile a breve"
+  },
+  "ProfileStatsPage": {
+    "comingSoon": "Statistiche - Disponibile a breve"
+  },
+  "MovieDetailsPage": {
+    "loading": "Caricamento dettagli film...",
+    "notFound": "Film non trovato.",
+    "goBack": "Torna indietro",
+    "rate": "Vota",
+    "overview": "Trama",
+    "noOverview": "Nessuna trama disponibile per questo film."
+  },
+  "MovieDetailsHero": {
+    "noBackdrop": "Nessuno sfondo disponibile",
+    "back": "← Indietro",
+    "noImage": "Nessuna immagine"
+  },
+  "RateMovieModal": {
+    "title": "Vota Film",
+    "description": "Condividi i tuoi pensieri e vota questo film."
+  },
+  "RateMovieForm": {
+    "yourRating": "Il tuo Voto",
+    "reviewOptional": "Recensione (Opzionale)",
+    "commentPlaceholder": "Scrivi i tuoi pensieri sul film...",
+    "cancel": "Annulla",
+    "save": "Salva Voto",
+    "validation": {
+      "rating": "Seleziona un voto"
+    }
+  },
+  "LoginPage": {
+    "title": "Accedi",
+    "description": "Accedi al tuo account"
+  },
+  "RegistrationPage": {
+    "title": "Registrazione",
+    "description": "Crea un nuovo account"
+  },
+  "LoginForm": {
+    "email": "Email",
+    "password": "Password",
+    "submit": "Accedi",
+    "submitting": "Accesso in corso...",
+    "error": "Si è verificato un errore durante l'accesso"
+  },
+  "RegistrationForm": {
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "email": "Email",
+    "password": "Password",
+    "handle": "Username",
+    "dateOfBirth": "Data di nascita",
+    "bio": "Biografia",
+    "bioPlaceholder": "Raccontaci qualcosa di te",
+    "submit": "Registrati",
+    "submitting": "Registrazione in corso...",
+    "error": "Si è verificato un errore durante la registrazione",
+    "validation": {
+      "dobPast": "La data di nascita deve essere nel passato"
+    }
+  },
+  "AuthTabs": {
+    "login": "Accedi",
+    "registration": "Registrati"
+  }
+}

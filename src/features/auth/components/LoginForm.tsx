@@ -14,8 +14,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginSchema } from "../schemas";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores";
+import { useTranslation } from "react-i18next";
 
 export const LoginForm = () => {
+  const { t } = useTranslation();
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -43,7 +45,7 @@ export const LoginForm = () => {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An error occurred during login");
+        setError(t("LoginForm.error"));
       }
     } finally {
       setLoading(false);
@@ -62,9 +64,9 @@ export const LoginForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t("LoginForm.email")}</FormLabel>
               <FormControl>
-                <Input {...field} type="email" placeholder="Email" />
+                <Input {...field} type="email" placeholder={t("LoginForm.email")} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -75,9 +77,9 @@ export const LoginForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t("LoginForm.password")}</FormLabel>
               <FormControl>
-                <Input {...field} type="password" placeholder="Password" />
+                <Input {...field} type="password" placeholder={t("LoginForm.password")} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -85,7 +87,7 @@ export const LoginForm = () => {
         />
 
         <Button type="submit" variant="default" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+          {loading ? t("LoginForm.submitting") : t("LoginForm.submit")}
         </Button>
       </form>
     </Form>
