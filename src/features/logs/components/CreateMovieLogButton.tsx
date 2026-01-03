@@ -1,8 +1,10 @@
 import { Button } from "@antoniobenincasa/ui";
 import { useCreateMovieLogDialogStore } from "../store";
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const CreateMovieLogButton = () => {
+  const { t } = useTranslation();
   const open = useCreateMovieLogDialogStore((state) => state.open);
 
   return (
@@ -12,7 +14,7 @@ export const CreateMovieLogButton = () => {
         className="bg-primary text-white dark:bg-primary dark:text-gray-900 hover:bg-violet-700 dark:hover:bg-violet-500 hidden md:inline-flex"
         onClick={open}
       >
-        Log a Movie
+        {t("CreateMovieLogButton.logMovie")}
       </Button>
 
       <Plus

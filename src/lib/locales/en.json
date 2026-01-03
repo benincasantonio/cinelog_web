@@ -112,6 +112,9 @@
     "description": "Add the details of what you watched.",
     "close": "Close"
   },
+  "CreateMovieLogButton": {
+    "logMovie": "Log a Movie"
+  },
   "LogMovieForm": {
     "movieLabel": "Movie",
     "dateWatchedLabel": "Date Watched",
