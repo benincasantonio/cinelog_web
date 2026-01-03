@@ -103,8 +103,32 @@
       "dobPast": "La data di nascita deve essere nel passato"
     }
   },
-  "AuthTabs": {
-    "login": "Accedi",
-    "registration": "Registrati"
+    "AuthTabs": {
+      "login": "Accedi",
+      "registration": "Registrati"
+    },
+    "CreateMovieLogDialog": {
+      "title": "Registra Film",
+      "description": "Aggiungi i dettagli di ciò che hai visto.",
+      "close": "Chiudi"
+    },
+    "LogMovieForm": {
+      "movieLabel": "Film",
+      "dateWatchedLabel": "Data di visione",
+      "watchedWhereLabel": "Dove lo hai visto (Opzionale)",
+      "watchedWherePlaceholder": "Seleziona dove lo hai visto",
+      "viewingNotesLabel": "Note di visione (Opzionale)",
+      "viewingNotesPlaceholder": "I tuoi pensieri sul film",
+      "submit": "Crea Log",
+      "submitting": "Creazione Log...",
+      "error": "Si è verificato un errore durante la creazione del log"
+    },
+    "WatchedWhere": {
+      "cinema": "Cinema",
+      "streaming": "Streaming",
+      "homeVideo": "Home Video",
+      "tv": "TV",
+      "other": "Altro"
+    }
   }
-}
+  

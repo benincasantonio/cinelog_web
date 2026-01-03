@@ -103,8 +103,32 @@
       "dobPast": "La date de naissance doit être dans le passé"
     }
   },
-  "AuthTabs": {
-    "login": "Connexion",
-    "registration": "Inscription"
+    "AuthTabs": {
+      "login": "Connexion",
+      "registration": "Inscription"
+    },
+    "CreateMovieLogDialog": {
+      "title": "Enregistrer un film",
+      "description": "Ajoutez les détails de ce que vous avez regardé.",
+      "close": "Fermer"
+    },
+    "LogMovieForm": {
+      "movieLabel": "Film",
+      "dateWatchedLabel": "Date de visionnage",
+      "watchedWhereLabel": "Lieu de visionnage (Optionnel)",
+      "watchedWherePlaceholder": "Sélectionnez où vous avez regardé",
+      "viewingNotesLabel": "Notes de visionnage (Optionnel)",
+      "viewingNotesPlaceholder": "Vos pensées sur le film",
+      "submit": "Créer le journal",
+      "submitting": "Création du journal...",
+      "error": "Une erreur s'est produite lors de la création du journal"
+    },
+    "WatchedWhere": {
+      "cinema": "Cinéma",
+      "streaming": "Streaming",
+      "homeVideo": "Vidéo à domicile",
+      "tv": "TV",
+      "other": "Autre"
+    }
   }
-}
+  

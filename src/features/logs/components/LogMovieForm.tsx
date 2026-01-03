@@ -20,10 +20,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { logFormSchema, type LogFormSchema } from "../schemas";
 import { search } from "@/features/movie-search/repositories";
-import { WATCHED_WHERE_VALUES, WATCHED_WHERE_LABELS } from "../models";
+import { WATCHED_WHERE_VALUES } from "../models";
 import { createLog } from "../repositories";
+import { useTranslation } from "react-i18next";
 
 export const LogMovieForm = () => {
+  const { t } = useTranslation();
   const form = useForm<LogFormSchema>({
     resolver: zodResolver(logFormSchema),
     defaultValues: {
@@ -79,7 +81,7 @@ export const LogMovieForm = () => {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An error occurred while creating the log");
+        setError(t("LogMovieForm.error"));
       }
     } finally {
       setLoading(false);
@@ -98,7 +100,7 @@ export const LogMovieForm = () => {
           name="tmdbId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Movie</FormLabel>
+              <FormLabel>{t("LogMovieForm.movieLabel")}</FormLabel>
               <FormControl>
                 <Autocomplete
                   value={field.value?.toString() ?? undefined}
@@ -117,7 +119,7 @@ export const LogMovieForm = () => {
           name="dateWatched"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date Watched</FormLabel>
+              <FormLabel>{t("LogMovieForm.dateWatchedLabel")}</FormLabel>
               <FormControl>
                 <Input {...field} type="date" />
               </FormControl>
@@ -131,19 +133,21 @@ export const LogMovieForm = () => {
           name="watchedWhere"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Watched Where (Optional)</FormLabel>
+              <FormLabel>{t("LogMovieForm.watchedWhereLabel")}</FormLabel>
               <FormControl>
                 <Select
                   value={field.value ?? undefined}
                   onValueChange={field.onChange}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select where you watched" />
+                    <SelectValue
+                      placeholder={t("LogMovieForm.watchedWherePlaceholder")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {WATCHED_WHERE_VALUES.map((value) => (
                       <SelectItem key={value} value={value}>
-                        {WATCHED_WHERE_LABELS[value]}
+                        {t(`WatchedWhere.${value}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -159,12 +163,12 @@ export const LogMovieForm = () => {
           name="viewingNotes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Viewing Notes (Optional)</FormLabel>
+              <FormLabel>{t("LogMovieForm.viewingNotesLabel")}</FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
                   value={field.value ?? ""}
-                  placeholder="Your thoughts about the movie"
+                  placeholder={t("LogMovieForm.viewingNotesPlaceholder")}
                   rows={4}
                 />
               </FormControl>
@@ -174,7 +178,9 @@ export const LogMovieForm = () => {
         />
 
         <Button type="submit" variant="default" disabled={loading}>
-          {loading ? "Creating Log..." : "Create Log"}
+          {loading
+            ? t("LogMovieForm.submitting")
+            : t("LogMovieForm.submit")}
         </Button>
       </form>
     </Form>

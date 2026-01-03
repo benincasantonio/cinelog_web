@@ -10,8 +10,10 @@ import {
 } from "@antoniobenincasa/ui";
 import { useCreateMovieLogDialogStore } from "../store";
 import { LogMovieForm } from "./LogMovieForm";
+import { useTranslation } from "react-i18next";
 
 export const CreateMovieLogDialog = () => {
+  const { t } = useTranslation();
   const isOpen = useCreateMovieLogDialogStore((state) => state.isOpen);
   const setIsOpen = useCreateMovieLogDialogStore((state) => state.setIsOpen);
 
@@ -22,9 +24,9 @@ export const CreateMovieLogDialog = () => {
         className="w-full max-w-[425px] sm:max-w-lg"
       >
         <DialogHeader>
-          <DialogTitle>Log a Movie</DialogTitle>
+          <DialogTitle>{t("CreateMovieLogDialog.title")}</DialogTitle>
           <DialogDescription>
-            Add the details of what you watched.
+            {t("CreateMovieLogDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -32,7 +34,7 @@ export const CreateMovieLogDialog = () => {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="secondary">Close</Button>
+            <Button variant="secondary">{t("CreateMovieLogDialog.close")}</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
