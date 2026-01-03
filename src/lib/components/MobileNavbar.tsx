@@ -23,7 +23,6 @@ export const MobileNavbar = ({
       }
     };
 
-    console.log("MobileNavbar useEffect triggered");
     if (closeOnEscape) {
       window.addEventListener("keydown", handleEscape);
       return () => {

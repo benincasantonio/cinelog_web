@@ -97,19 +97,28 @@ const MovieDetailsPage = () => {
         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
           <MovieRuntime runtime={runtime} />
           <MovieVote vote={voteAverage} source="tmdb" />
-          {isMovieRatingLoading ? (
-            <Skeleton className="w-16 h-4" />
-          ) : (
-            <MovieVote vote={movieRating?.rating || 0} source="user" />
+
+          {isMovieRatingLoading && <Skeleton className="w-16 h-4" />}
+
+          {!isMovieRatingLoading && !movieRating && (
+            <button
+              onClick={() => tmdbId && openRateModal(tmdbId)}
+              className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium cursor-pointer"
+            >
+              <Star className="w-4 h-4" />
+              <span>Rate</span>
+            </button>
+          )}
+
+          {!isMovieRatingLoading && movieRating && (
+            <MovieVote
+              className="cursor-pointer"
+              vote={movieRating?.rating || 0}
+              source="user"
+              onClick={() => tmdbId && openRateModal(tmdbId, movieRating)}
+            />
           )}
           <MovieGenres genres={genres} />
-          <button
-            onClick={() => tmdbId && openRateModal(tmdbId)}
-            className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium cursor-pointer"
-          >
-            <Star className="w-4 h-4" />
-            <span>Rate</span>
-          </button>
         </div>
 
         {/* Overview */}

@@ -16,6 +16,7 @@ export const RateMovieForm = () => {
   const submitRating = useMovieRatingStore((state) => state.submitRating);
   const isLoading = useMovieRatingStore((state) => state.isLoading);
   const closeModal = useMovieRatingStore((state) => state.closeModal);
+  const movieRating = useMovieRatingStore((state) => state.movieRating);
 
   const {
     control,
@@ -25,8 +26,8 @@ export const RateMovieForm = () => {
   } = useForm<RateMovieFormData>({
     resolver: zodResolver(rateMovieSchema),
     defaultValues: {
-      rating: 0,
-      comment: undefined,
+      rating: movieRating?.rating || 0,
+      comment: movieRating?.comment || undefined,
     },
     mode: "onChange",
   });

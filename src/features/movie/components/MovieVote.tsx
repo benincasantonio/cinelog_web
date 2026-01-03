@@ -5,12 +5,14 @@ interface MovieVoteProps {
   vote: number;
   source: "user" | "tmdb";
   className?: string;
+  onClick?: () => void;
 }
 
 export const MovieVote: React.FC<MovieVoteProps> = ({
   vote,
   source,
   className = "",
+  onClick,
 }) => {
   if (vote <= 0) return null;
 
@@ -19,6 +21,7 @@ export const MovieVote: React.FC<MovieVoteProps> = ({
   return (
     <div
       className={`flex items-center gap-1 font-semibold ${colorClass} ${className}`}
+      onClick={onClick}
     >
       <Star className="w-4 h-4 fill-current" />
       <span>{vote.toFixed(1)}</span>
