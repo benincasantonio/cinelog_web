@@ -10,8 +10,10 @@ import { useMovieRatingStore } from "../store/useMovieRatingStore";
 import { Star } from "lucide-react";
 import { Skeleton } from "@antoniobenincasa/ui";
 import type { MovieRatingResponse } from "../models";
+import { useTranslation } from "react-i18next";
 
 const MovieDetailsPage = () => {
+  const { t } = useTranslation();
   const { tmdbId } = useParams<{ tmdbId: string }>();
   const navigate = useNavigate();
   const movieDetails = useMovieDetailsStore((state) => state.movieDetails);
@@ -51,7 +53,9 @@ const MovieDetailsPage = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <div className="text-lg text-gray-600">Loading movie details...</div>
+        <div className="text-lg text-gray-600">
+          {t("MovieDetailsPage.loading")}
+        </div>
       </div>
     );
   }
@@ -59,12 +63,14 @@ const MovieDetailsPage = () => {
   if (!movieDetails) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4">
-        <div className="text-lg text-gray-600">Movie not found.</div>
+        <div className="text-lg text-gray-600">
+          {t("MovieDetailsPage.notFound")}
+        </div>
         <button
           onClick={() => navigate(-1)}
           className="text-blue-500 hover:underline"
         >
-          Go back
+          {t("MovieDetailsPage.goBack")}
         </button>
       </div>
     );
@@ -114,7 +120,7 @@ const MovieDetailsPage = () => {
               className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium cursor-pointer"
             >
               <Star className="w-4 h-4" />
-              <span>Rate</span>
+              <span>{t("MovieDetailsPage.rate")}</span>
             </button>
           )}
 
@@ -132,10 +138,10 @@ const MovieDetailsPage = () => {
         {/* Overview */}
         <div className="space-y-2">
           <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-            Overview
+            {t("MovieDetailsPage.overview")}
           </h3>
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-            {overview || "No overview available for this movie."}
+            {overview || t("MovieDetailsPage.noOverview")}
           </p>
         </div>
       </div>

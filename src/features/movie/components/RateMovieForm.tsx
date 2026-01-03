@@ -6,13 +6,12 @@ import { z } from "zod";
 import { Button, Spinner, Textarea } from "@antoniobenincasa/ui";
 import type { MovieRatingResponse } from "../models";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
-const rateMovieSchema = z.object({
-  rating: z.number().min(1, "Please select a rating"),
-  comment: z.string().optional(),
-});
-
-type RateMovieFormData = z.infer<typeof rateMovieSchema>;
+type RateMovieFormData = {
+  rating: number;
+  comment?: string;
+};
 
 type RateMovieFormProps = {
   onSuccess?: (movieRating: MovieRatingResponse) => void;
@@ -20,9 +19,15 @@ type RateMovieFormProps = {
 };
 
 export const RateMovieForm = ({ onSuccess, onCancel }: RateMovieFormProps) => {
+  const { t } = useTranslation();
   const submitRating = useMovieRatingStore((state) => state.submitRating);
   const isLoading = useMovieRatingStore((state) => state.isLoading);
   const movieRating = useMovieRatingStore((state) => state.movieRating);
+
+  const rateMovieSchema = z.object({
+    rating: z.number().min(1, t("RateMovieForm.validation.rating")),
+    comment: z.string().optional(),
+  });
 
   const {
     control,
@@ -59,7 +64,7 @@ export const RateMovieForm = ({ onSuccess, onCancel }: RateMovieFormProps) => {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          Your Rating
+          {t("RateMovieForm.yourRating")}
         </label>
         <Controller
           name="rating"
@@ -78,13 +83,13 @@ export const RateMovieForm = ({ onSuccess, onCancel }: RateMovieFormProps) => {
           htmlFor="comment"
           className="text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Review (Optional)
+          {t("RateMovieForm.reviewOptional")}
         </label>
         <Textarea
           id="comment"
           rows={4}
           className="resize-none"
-          placeholder="Write your thoughts about the movie..."
+          placeholder={t("RateMovieForm.commentPlaceholder")}
           {...register("comment")}
         />
       </div>
@@ -96,10 +101,10 @@ export const RateMovieForm = ({ onSuccess, onCancel }: RateMovieFormProps) => {
           disabled={isLoading}
           onClick={onCancel}
         >
-          Cancel
+          {t("RateMovieForm.cancel")}
         </Button>
         <Button type="submit" disabled={!isValid || isLoading}>
-          {isLoading ? <Spinner /> : "Save Rating"}
+          {isLoading ? <Spinner /> : t("RateMovieForm.save")}
         </Button>
       </div>
     </form>

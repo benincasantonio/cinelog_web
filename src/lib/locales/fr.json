@@ -42,8 +42,35 @@
       "ProfileOverviewPage": {
         "comingSoon": "Aperçu - Bientôt disponible"
       },
-      "ProfileStatsPage": {
-        "comingSoon": "Statistiques - Bientôt disponible"
+        "ProfileStatsPage": {
+          "comingSoon": "Statistiques - Bientôt disponible"
+        },
+        "MovieDetailsPage": {
+          "loading": "Chargement des détails du film...",
+          "notFound": "Film introuvable.",
+          "goBack": "Retour",
+          "rate": "Noter",
+          "overview": "Synopsis",
+          "noOverview": "Aucun résumé disponible pour ce film."
+        },
+        "MovieDetailsHero": {
+          "noBackdrop": "Aucune toile de fond disponible",
+          "back": "← Retour",
+          "noImage": "Pas d'Image"
+        },
+        "RateMovieModal": {
+          "title": "Noter le film",
+          "description": "Partagez votre avis et notez ce film."
+        },
+        "RateMovieForm": {
+          "yourRating": "Votre Note",
+          "reviewOptional": "Critique (Optionnel)",
+          "commentPlaceholder": "Écrivez vos pensées sur le film...",
+          "cancel": "Annuler",
+          "save": "Enregistrer",
+          "validation": {
+            "rating": "Veuillez sélectionner une note"
+          }
+        }
       }
-    }
-    
+      

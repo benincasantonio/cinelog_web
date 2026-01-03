@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface MovieDetailsHeroProps {
   title: string;
@@ -16,6 +17,7 @@ export const MovieDetailsHero = ({
   tagline,
 }: MovieDetailsHeroProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="relative w-full h-[300px] md:h-[400px] bg-gray-900 shrink-0">
@@ -28,16 +30,18 @@ export const MovieDetailsHero = ({
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-800">
-          <span className="text-gray-400">No Backdrop Available</span>
+          <span className="text-gray-400">
+            {t("MovieDetailsHero.noBackdrop")}
+          </span>
         </div>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
 
       <button
         onClick={() => navigate(-1)}
-        className="absolute top-4 left-4 z-10 px-4 py-2 bg-black/50 hover:bg-black/70 text-white rounded-full backdrop-blur-sm transition-colors"
+        className="absolute top-4 left-4 z-10 px-4 py-2 bg-black/50 hover:bg-black/70 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
       >
-        ← Back
+        {t("MovieDetailsHero.back")}
       </button>
 
       {/* Poster & Title Overlay */}
@@ -51,7 +55,9 @@ export const MovieDetailsHero = ({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-300 dark:bg-gray-700">
-              <span className="text-xs text-gray-500">No Image</span>
+              <span className="text-xs text-gray-500">
+                {t("MovieDetailsHero.noImage")}
+              </span>
             </div>
           )}
         </div>

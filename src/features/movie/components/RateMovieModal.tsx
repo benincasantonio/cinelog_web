@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@antoniobenincasa/ui";
+import { useTranslation } from "react-i18next";
 
 type RateMovieModalProps = {
   onSuccess?: (movieRating: MovieRatingResponse) => void;
@@ -16,6 +17,7 @@ type RateMovieModalProps = {
 export const RateMovieModal = ({ onSuccess }: RateMovieModalProps) => {
   const isOpen = useMovieRatingStore((state) => state.isOpen);
   const setIsOpen = useMovieRatingStore((state) => state.setIsOpen);
+  const { t } = useTranslation();
 
   const handleSuccess = (movieRating: MovieRatingResponse) => {
     setIsOpen(false);
@@ -26,9 +28,9 @@ export const RateMovieModal = ({ onSuccess }: RateMovieModalProps) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Rate Movie</DialogTitle>
+          <DialogTitle>{t("RateMovieModal.title")}</DialogTitle>
           <DialogDescription>
-            Share your thoughts and rate this movie.
+            {t("RateMovieModal.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">

@@ -42,8 +42,35 @@
       "ProfileOverviewPage": {
         "comingSoon": "Overview - Coming soon"
       },
-      "ProfileStatsPage": {
-        "comingSoon": "Stats - Coming soon"
+        "ProfileStatsPage": {
+          "comingSoon": "Stats - Coming soon"
+        },
+        "MovieDetailsPage": {
+          "loading": "Loading movie details...",
+          "notFound": "Movie not found.",
+          "goBack": "Go back",
+          "rate": "Rate",
+          "overview": "Overview",
+          "noOverview": "No overview available for this movie."
+        },
+        "MovieDetailsHero": {
+          "noBackdrop": "No Backdrop Available",
+          "back": "← Back",
+          "noImage": "No Image"
+        },
+        "RateMovieModal": {
+          "title": "Rate Movie",
+          "description": "Share your thoughts and rate this movie."
+        },
+        "RateMovieForm": {
+          "yourRating": "Your Rating",
+          "reviewOptional": "Review (Optional)",
+          "commentPlaceholder": "Write your thoughts about the movie...",
+          "cancel": "Cancel",
+          "save": "Save Rating",
+          "validation": {
+            "rating": "Please select a rating"
+          }
+        }
       }
-    }
-    
+      
