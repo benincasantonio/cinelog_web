@@ -18,5 +18,16 @@
     "selectYear": "Seleziona anno",
     "allYears": "Tutti gli Anni",
     "errorLoading": "Impossibile caricare i film"
+  },
+  "MovieLogList": {
+    "noMovies": "Nessun film visto ancora",
+    "movie": "Film",
+    "movies": "Film",
+    "watched": "Visti"
+  },
+  "MovieLogItem": {
+    "unknownTitle": "Titolo Sconosciuto",
+    "watched": "Visto:",
+    "noImage": "Nessuna Immagine"
   }
 }

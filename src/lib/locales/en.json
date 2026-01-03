@@ -18,5 +18,16 @@
     "selectYear": "Select year",
     "allYears": "All Years",
     "errorLoading": "Failed to load movies"
+  },
+  "MovieLogList": {
+    "noMovies": "No movies watched yet",
+    "movie": "Movie",
+    "movies": "Movies",
+    "watched": "Watched"
+  },
+  "MovieLogItem": {
+    "unknownTitle": "Unknown Title",
+    "watched": "Watched:",
+    "noImage": "No Image"
   }
 }

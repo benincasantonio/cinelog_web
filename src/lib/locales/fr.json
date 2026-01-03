@@ -18,5 +18,16 @@
     "selectYear": "Sélectionner l'année",
     "allYears": "Toutes les Années",
     "errorLoading": "Échec du chargement des films"
+  },
+  "MovieLogList": {
+    "noMovies": "Aucun film regardé pour le moment",
+    "movie": "Film",
+    "movies": "Films",
+    "watched": "Regardés"
+  },
+  "MovieLogItem": {
+    "unknownTitle": "Titre Inconnu",
+    "watched": "Regardé:",
+    "noImage": "Pas d'Image"
   }
 }
