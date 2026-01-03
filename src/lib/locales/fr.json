@@ -30,9 +30,20 @@
       "watched": "Regardé:",
       "noImage": "Pas d'Image"
     },
-    "ProfileHeader": {
-      "about": "À propos",
-      "noBio": "Aucune bio disponible."
+      "ProfileHeader": {
+        "about": "À propos",
+        "noBio": "Aucune bio disponible."
+      },
+      "ProfileMenu": {
+        "overview": "Aperçu",
+        "moviesWatched": "Films vus",
+        "stats": "Statistiques"
+      },
+      "ProfileOverviewPage": {
+        "comingSoon": "Aperçu - Bientôt disponible"
+      },
+      "ProfileStatsPage": {
+        "comingSoon": "Statistiques - Bientôt disponible"
+      }
     }
-  }
-  
+    

@@ -30,9 +30,20 @@
       "watched": "Watched:",
       "noImage": "No Image"
     },
-    "ProfileHeader": {
-      "about": "About",
-      "noBio": "No bio available."
+      "ProfileHeader": {
+        "about": "About",
+        "noBio": "No bio available."
+      },
+      "ProfileMenu": {
+        "overview": "Overview",
+        "moviesWatched": "Movies Watched",
+        "stats": "Stats"
+      },
+      "ProfileOverviewPage": {
+        "comingSoon": "Overview - Coming soon"
+      },
+      "ProfileStatsPage": {
+        "comingSoon": "Stats - Coming soon"
+      }
     }
-  }
-  
+    

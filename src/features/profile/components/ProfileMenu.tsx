@@ -5,6 +5,7 @@ import {
   BarChart3,
   type LucideIcon,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ProfileMenuItem {
   label: string;
@@ -18,20 +19,22 @@ interface ProfileMenuProps {
 }
 
 export const ProfileMenu = ({ handle }: ProfileMenuProps) => {
+  const { t } = useTranslation();
+
   const menuItems: ProfileMenuItem[] = [
     {
-      label: "Overview",
+      label: t("ProfileMenu.overview"),
       icon: LayoutDashboard,
       path: `/${handle}`,
       end: true,
     },
     {
-      label: "Movies Watched",
+      label: t("ProfileMenu.moviesWatched"),
       icon: Film,
       path: `/${handle}/movie-watched`,
     },
     {
-      label: "Stats",
+      label: t("ProfileMenu.stats"),
       icon: BarChart3,
       path: `/${handle}/stats`,
     },

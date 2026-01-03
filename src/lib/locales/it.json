@@ -30,9 +30,20 @@
       "watched": "Visto:",
       "noImage": "Nessuna Immagine"
     },
-    "ProfileHeader": {
-      "about": "Informazioni",
-      "noBio": "Nessuna biografia disponibile."
+      "ProfileHeader": {
+        "about": "Informazioni",
+        "noBio": "Nessuna biografia disponibile."
+      },
+      "ProfileMenu": {
+        "overview": "Panoramica",
+        "moviesWatched": "Film visti",
+        "stats": "Statistiche"
+      },
+      "ProfileOverviewPage": {
+        "comingSoon": "Panoramica - Disponibile a breve"
+      },
+      "ProfileStatsPage": {
+        "comingSoon": "Statistiche - Disponibile a breve"
+      }
     }
-  }
-  
+    
