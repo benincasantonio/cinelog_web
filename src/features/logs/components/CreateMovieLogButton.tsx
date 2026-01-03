@@ -7,12 +7,16 @@ export const CreateMovieLogButton = () => {
   const { t } = useTranslation();
   const open = useCreateMovieLogDialogStore((state) => state.open);
 
+  const handleClick = () => {
+    open();
+  };
+
   return (
     <>
       <Button
         variant="default"
         className="bg-primary text-white dark:bg-primary dark:text-gray-900 hover:bg-violet-700 dark:hover:bg-violet-500 hidden md:inline-flex"
-        onClick={open}
+        onClick={handleClick}
       >
         {t("CreateMovieLogButton.logMovie")}
       </Button>
@@ -23,7 +27,7 @@ export const CreateMovieLogButton = () => {
       md:hidden
       cursor-pointer
     "
-        onClick={open}
+        onClick={handleClick}
       />
     </>
   );
