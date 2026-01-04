@@ -55,7 +55,7 @@ export const AppRoutes = () => {
               id="movie-details"
               element={<MovieDetailsPage />}
             />
-            <Route path="/:handle" element={<ProfilePage />}>
+            <Route path="/profile/:handle" element={<ProfilePage />}>
               <Route index element={<ProfileOverviewPage />} />
               <Route
                 path="movie-watched"

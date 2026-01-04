@@ -25,18 +25,18 @@ export const ProfileMenu = ({ handle }: ProfileMenuProps) => {
     {
       label: t("ProfileMenu.overview"),
       icon: LayoutDashboard,
-      path: `/${handle}`,
+      path: `/profile/${handle}`,
       end: true,
     },
     {
       label: t("ProfileMenu.moviesWatched"),
       icon: Film,
-      path: `/${handle}/movie-watched`,
+      path: `/profile/${handle}/movie-watched`,
     },
     {
       label: t("ProfileMenu.stats"),
       icon: BarChart3,
-      path: `/${handle}/stats`,
+      path: `/profile/${handle}/stats`,
     },
   ];
 

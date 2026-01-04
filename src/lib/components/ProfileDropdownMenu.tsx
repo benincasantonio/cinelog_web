@@ -45,7 +45,7 @@ export const ProfileDropdownMenu = () => {
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem asChild>
           <Link
-            to={userInfo?.handle ? `/${userInfo.handle}` : "/profile"}
+            to={userInfo?.handle ? `/profile/${userInfo.handle}` : "/profile"}
             className="flex items-center gap-2 cursor-pointer"
           >
             <User className="w-4 h-4" />
