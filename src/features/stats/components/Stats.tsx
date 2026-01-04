@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useStatsStore } from "../store/useStatsStore";
 import { StatsCard } from "./StatsCard";
+import { WatchMethodPieChart } from "./WatchMethodPieChart";
 
 export const Stats = () => {
   const { stats, isLoading, error, fetchStats } = useStatsStore();
@@ -29,6 +30,7 @@ export const Stats = () => {
         <StatsCard title="Total Rewatches" value={stats.summary.total_rewatches} />
         <StatsCard title="Total Minutes" value={stats.summary.total_minutes} />
       </div>
+      <WatchMethodPieChart byMethod={stats.distribution.by_method} />
     </div>
   );
 };

@@ -158,6 +158,15 @@
     "contributeText": "Questo progetto è open source. Che si tratti di correggere bug, aggiungere funzionalità o migliorare la documentazione, il tuo aiuto è apprezzato!",
     "frontend": "Sito Web Frontend",
     "backend": "API Backend"
+  },
+  "WatchMethodPieChart": {
+    "title": "Come Guardi",
+    "cinema": "Cinema",
+    "streaming": "Streaming",
+    "homeVideo": "Home Video",
+    "tv": "TV",
+    "other": "Altro",
+    "noData": "Nessun dato disponibile"
   }
 }
   

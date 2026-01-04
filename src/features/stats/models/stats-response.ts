@@ -1,7 +1,7 @@
 export type ByMethod = {
   cinema: number;
   streaming: number;
-  physical_media: number;
+  home_video: number;
   tv: number;
   other: number;
 };

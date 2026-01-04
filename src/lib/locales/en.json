@@ -158,6 +158,15 @@
     "contributeText": "This project is open source. Whether it's fixing bugs, adding features, or improving documentation, your help is appreciated!",
     "frontend": "Frontend Web",
     "backend": "Backend API"
+  },
+  "WatchMethodPieChart": {
+    "title": "How You Watch",
+    "cinema": "Cinema",
+    "streaming": "Streaming",
+    "homeVideo": "Home Video",
+    "tv": "TV",
+    "other": "Other",
+    "noData": "No watch data available"
   }
 }
   
