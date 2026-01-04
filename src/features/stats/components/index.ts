@@ -1,1 +1,3 @@
-export * from "./StatsView";
+export * from "./Stats";
+export * from "./StatsCard";
+
