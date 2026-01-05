@@ -21,6 +21,7 @@ export type Summary = {
   unique_titles: number;
   total_rewatches: number;
   total_minutes: number;
+  vote_average: number;
 };
 
 export type StatsResponse = {

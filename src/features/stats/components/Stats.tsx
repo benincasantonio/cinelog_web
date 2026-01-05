@@ -27,8 +27,15 @@ export const Stats = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard title="Total Watched" value={stats.summary.total_watches} />
         <StatsCard title="Unique Titles" value={stats.summary.unique_titles} />
-        <StatsCard title="Total Rewatches" value={stats.summary.total_rewatches} />
+        <StatsCard
+          title="Total Rewatches"
+          value={stats.summary.total_rewatches}
+        />
         <StatsCard title="Total Minutes" value={stats.summary.total_minutes} />
+        <StatsCard
+          title="Average Rating"
+          value={stats.summary.vote_average.toFixed(1)}
+        />
       </div>
       <WatchMethodPieChart byMethod={stats.distribution.by_method} />
     </div>
