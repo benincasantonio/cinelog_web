@@ -14,13 +14,13 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
-    include: ['**/*.{unit,integration}.{ts,tsx}'],
+    include: ['**/*.{unit.test,integration.test,spec}.{ts,tsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       include: ['src/features/movie/components/MovieLogItem.tsx'],
       exclude: [
-        '**/*.{unit,integration}.{ts,tsx}',
+        '**/*.{unit.test,integration.test,spec}.{ts,tsx}',
         '**/node_modules/**',
         '**/dist/**',
         '**/*.d.ts',

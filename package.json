@@ -14,8 +14,8 @@
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:unit": "vitest run src/features/movie/components/MovieLogItem.unit.tsx",
-    "test:integration": "vitest run src/features/movie/components/MovieLogItem.integration.tsx"
+    "test:unit": "vitest run src/features/movie/components/MovieLogItem.unit.test.tsx",
+    "test:integration": "vitest run src/features/movie/components/MovieLogItem.integration.test.tsx"
   },
   "dependencies": {
     "@antoniobenincasa/ui": "^0.8.9",
