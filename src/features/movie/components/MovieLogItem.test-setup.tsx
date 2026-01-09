@@ -1,6 +1,6 @@
 import { BrowserRouter, useParams } from 'react-router-dom'
-import { MovieLogItem } from './MovieLogItem'
 import type { LogListItem } from '@/features/logs/models'
+import { MovieLogItem } from './MovieLogItem'
 
 // Create a test component that wraps MovieLogItem with routing
 export const TestWrapper = ({ log }: { log: LogListItem }) => {
