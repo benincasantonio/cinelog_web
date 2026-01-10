@@ -2,28 +2,32 @@
 ================================================================================
 SYNC IMPACT REPORT
 ================================================================================
-Version Change: N/A (template) -> 1.0.0 (initial ratification)
+Version Change: 1.0.0 -> 1.1.0 (Vitest testing framework integration)
 
-Modified Principles: N/A (new constitution)
+Modified Principles:
+  - III. Test-First Development: Expanded with Vitest-specific practices and CI/CD
 
 Added Sections:
-  - I. Technology Stack (Core + State Management)
-  - II. Feature Architecture (Feature Sliced Modified)
-  - III. Test-First Development (Strict TDD)
-  - Technology Stack Requirements (Section 2)
-  - Development Workflow (Section 3)
-  - Governance rules
+  - Test Infrastructure (new subsection under Development Workflow)
+  - Test File Naming & Organization
+  - Build Configuration & Test Exclusion
+  - CI/CD Testing Pipeline
 
-Removed Sections: N/A
+Removed Sections: None
 
 Templates Requiring Updates:
-  - .specify/templates/plan-template.md: Constitution Check section exists, compatible
-  - .specify/templates/spec-template.md: User scenarios structure compatible with TDD
-  - .specify/templates/tasks-template.md: TDD test-first workflow compatible
+  - .specify/templates/plan-template.md: ✅ Compatible (no changes needed)
+  - .specify/templates/spec-template.md: ✅ Compatible (no changes needed)
+  - .specify/templates/tasks-template.md: ✅ Compatible (no changes needed)
+  - AGENTS.md: ⚠ Pending manual update (Testing Guidelines section outdated)
+  - README.md: ⚠ Pending manual update (Testing section references removed)
 
 Deferred TODOs: None
 
-Follow-up Actions: None required
+Follow-up Actions:
+  - Update AGENTS.md Testing Guidelines section (line 26-29)
+  - Update README.md Testing section (line 42-44) to reference vitest commands
+  - Consider documenting playwright.yml workflow_run dependency pattern
 ================================================================================
 -->
 
@@ -87,10 +91,24 @@ Strict Test-Driven Development is MANDATORY for all feature implementations.
 - All edge cases MUST have test coverage
 - No implementation code may be written before corresponding tests exist
 
+**Test Framework & Tools**:
+
+- Unit & Integration tests: **Vitest** (v4.0.16+) with jsdom environment
+- E2E tests: **Playwright** (v1.57+)
+- Testing utilities: @testing-library/react, @testing-library/user-event
+- Test assertions: expect with testing-library matchers (@testing-library/jest-dom)
+
+**Test File Naming Convention**:
+
+- Unit tests: `*.unit.test.ts(x)` - Test isolated components/functions
+- Integration tests: `*.integration.test.ts(x)` - Test feature interactions
+- E2E tests: Playwright test files (separate from source code)
+
 **Test File Locations**:
 
-- Tests MUST be co-located with source code as `*.test.ts(x)` or `*.spec.ts(x)`
-- Integration tests for features go in `src/features/<feature>/*.test.tsx`
+- Unit and integration tests MUST be co-located with source code
+- Pattern: `src/features/<feature>/<type>/<name>.{unit,integration}.test.ts(x)`
+- Example: `src/features/movie/components/MovieLogItem.unit.test.tsx`
 
 ## Technology Stack Requirements
 
@@ -116,22 +134,67 @@ Strict Test-Driven Development is MANDATORY for all feature implementations.
 
 ## Development Workflow
 
+### Test Infrastructure
+
+**Running Tests Locally**:
+
+| Command | Purpose | Scope |
+|---------|---------|-------|
+| `bun run test` | Watch mode for all tests | All unit + integration tests |
+| `bun run test:unit` | Run unit tests only | `*.unit.test.ts(x)` files |
+| `bun run test:integration` | Run integration tests only | `*.integration.test.ts(x)` files |
+| `bun run test:ui` | Vitest UI dashboard | Visual test explorer |
+| `bun run test:coverage` | Generate coverage report | Coverage metrics in `./coverage/` |
+
+**Build Configuration**:
+
+- `bun run build` automatically excludes test files from TypeScript compilation
+- Test files are filtered via `tsconfig.app.json` exclude patterns
+- No test files MUST appear in production bundle (dist/)
+
+**Test Environment Setup**:
+
+- Vitest configured with jsdom environment for DOM testing
+- Setup file: `src/test/setup.ts` initializes:
+  - @testing-library/jest-dom matchers
+  - Browser API mocks (matchMedia)
+  - Global cleanup after each test
+
 ### Code Quality Gates
 
 All PRs MUST pass before merge:
 
 1. `bun run lint` - ESLint with zero errors
-2. `bun run build` - TypeScript compilation with zero errors
-3. All tests passing (when test runner configured)
+2. `bun run build` - TypeScript compilation + test exclusion verification
+3. `bun run test:unit` - All unit tests passing
+4. `bun run test:integration` - All integration tests passing
+5. Playwright E2E tests passing (via `.github/workflows/playwright.yml`)
+6. Minimum code coverage maintained (verify via `bun run test:coverage`)
+
+**CI/CD Testing Pipeline**:
+
+- Unit & Integration tests run on every push and PR (`.github/workflows/tests.yml`)
+- Playwright E2E tests trigger only after unit + integration tests pass
+- Coverage reports uploaded to Codecov (separate flags for unit/integration)
+- Test results block merge if any tests fail
 
 ### Feature Development Process
 
-1. Create feature branch from `main`
-2. Scaffold feature structure using `bun run generate:feature`
-3. Write tests FIRST (TDD)
-4. Implement to pass tests
-5. Run lint and build validation
-6. Submit PR with clear description
+1. Create feature branch from `main` (use `feature/<issue>-<description>`)
+2. Create GitHub issue (use `gh issue create`) before starting work
+3. Scaffold feature structure using `bun run generate:feature`
+4. **Write tests FIRST** following TDD:
+   - Write unit tests for business logic
+   - Write integration tests for component interactions
+   - Verify tests fail (Red)
+5. Implement minimal code to pass tests (Green)
+6. Refactor while maintaining test coverage (Refactor)
+7. Run full validation suite:
+   - `bun run lint` - Fix any linting errors
+   - `bun run build` - Verify TypeScript compilation and test exclusion
+   - `bun run test:unit && bun run test:integration` - Ensure all tests pass
+8. Submit PR with reference to GitHub issue (#<number>)
+9. Obtain code review approval before merge
 
 ### Naming Conventions
 
@@ -171,4 +234,4 @@ All code reviews MUST verify compliance with these principles.
 
 For runtime development guidance, refer to `AGENTS.md` at repository root.
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-07
+**Version**: 1.1.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-10
