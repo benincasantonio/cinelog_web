@@ -17,7 +17,7 @@ interface WatchMethodPieChartProps {
 const COLORS = {
   cinema: "hsl(271, 91%, 65%)", // violet
   streaming: "hsl(217, 91%, 60%)", // blue
-  home_video: "hsl(142, 71%, 45%)", // green
+  homeVideo: "hsl(142, 71%, 45%)", // green
   tv: "hsl(38, 92%, 50%)", // orange
   other: "hsl(0, 0%, 45%)", // gray
 };
@@ -34,9 +34,9 @@ export const WatchMethodPieChart = ({ byMethod }: WatchMethodPieChartProps) => {
       label: t("WatchMethodPieChart.streaming"),
       color: COLORS.streaming,
     },
-    home_video: {
+    homeVideo: {
       label: t("WatchMethodPieChart.homeVideo"),
-      color: COLORS.home_video,
+      color: COLORS.homeVideo,
     },
     tv: {
       label: t("WatchMethodPieChart.tv"),
@@ -51,7 +51,7 @@ export const WatchMethodPieChart = ({ byMethod }: WatchMethodPieChartProps) => {
   const chartData = [
     { name: "cinema", value: byMethod.cinema, fill: COLORS.cinema },
     { name: "streaming", value: byMethod.streaming, fill: COLORS.streaming },
-    { name: "home_video", value: byMethod.home_video, fill: COLORS.home_video },
+    { name: "homeVideo", value: byMethod.homeVideo, fill: COLORS.homeVideo },
     { name: "tv", value: byMethod.tv, fill: COLORS.tv },
     { name: "other", value: byMethod.other, fill: COLORS.other },
   ].filter((item) => item.value > 0);
@@ -60,7 +60,7 @@ export const WatchMethodPieChart = ({ byMethod }: WatchMethodPieChartProps) => {
 
   if (total === 0) {
     return (
-      <div className="flex items-center justify-center h-[300px] text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-center h-75 text-gray-500 dark:text-gray-400">
         {t("WatchMethodPieChart.noData")}
       </div>
     );
@@ -71,7 +71,7 @@ export const WatchMethodPieChart = ({ byMethod }: WatchMethodPieChartProps) => {
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
         {t("WatchMethodPieChart.title")}
       </h3>
-      <ChartContainer config={chartConfig} className="h-[300px] w-full">
+      <ChartContainer config={chartConfig} className="h-75 w-full">
         <PieChart>
           <ChartTooltip
             content={
