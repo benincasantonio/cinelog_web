@@ -11,11 +11,10 @@
     "generate:feature": "plop --plopfile scripts/plop/plopfile.js feature",
     "generate:component": "plop --plopfile scripts/plop/plopfile.js component",
     "test": "vitest",
-    "test:run": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:unit": "vitest run src/features/movie/components/MovieLogItem.unit.test.tsx",
-    "test:integration": "vitest run src/features/movie/components/MovieLogItem.integration.test.tsx"
+    "test:unit": "VITEST_TEST_TYPE=unit vitest run",
+    "test:integration": "VITEST_TEST_TYPE=integration vitest run"
   },
   "dependencies": {
     "@antoniobenincasa/ui": "^0.8.9",
