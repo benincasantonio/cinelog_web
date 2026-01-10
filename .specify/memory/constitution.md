@@ -2,34 +2,42 @@
 ================================================================================
 SYNC IMPACT REPORT
 ================================================================================
-Version Change: 1.1.0 -> 1.2.0
+Version Change: 1.2.0 -> 1.3.0
 
-Versioning Rationale: MINOR bump. Added new mandatory workflow step (publish
-branch immediately after creation) and significantly expanded testing guidance
-(TDD enforcement, specific naming patterns for unit and integration tests,
-co-location requirements). These are material additions to existing principles.
+Versioning Rationale: MINOR bump. Removed mandatory workflow steps (GitHub
+issue creation and immediate branch publishing) from the Feature Development
+Process. This materially simplifies the development workflow by removing
+procedural requirements, but does not redefine core technical principles.
 
 Modified Sections:
-  - Development Workflow → Feature Development Process
-    (Added step 3: Publish branch immediately after creation)
-  - Test-First Development (NON-NEGOTIABLE) → Expanded with naming conventions
-    (Added unit test and integration test naming patterns)
+  - Feature Development Process → Removed steps 1 and 3
+    (Removed mandatory GitHub issue creation step)
+    (Removed mandatory immediate branch publishing step)
+  - Naming Conventions → Removed branch naming pattern with issue numbers
+    (Removed feature/#NNN-name, hotfix/#NNN-name, bugfix/#NNN-name patterns)
+    (Branch naming can now follow simpler patterns without issue number requirement)
 
-Added Guidance:
-  - Mandatory branch publishing immediately after creation for issue linking
-  - Unit test naming pattern: *.unit.test.ts(x)
-  - Integration test naming pattern: *.integration.test.ts(x)
-  - Tests MUST be created alongside main components (co-location enforced)
+Removed Guidance:
+  - Mandatory GitHub issue creation before starting work
+  - Requirement to use gh CLI or GitHub web UI for issue creation
+  - Mandatory immediate branch publishing after creation
+  - Strict branch naming with issue numbers (feature/#42-user-auth pattern)
+  - CI/pre-commit hook enforcement of branch naming convention
 
-Removed Sections: None
+Retained Guidance:
+  - All testing requirements (TDD, naming conventions, co-location)
+  - Technology stack requirements
+  - Feature architecture patterns
+  - Code quality gates
+  - All other naming conventions (components, stores, files)
 
 Templates Requiring Updates:
-  - spec-template.md: ✅ COMPATIBLE - no changes needed
-  - plan-template.md: ✅ COMPATIBLE - no changes needed  
-  - tasks-template.md: ✅ UPDATED - test task examples now use new naming
-    patterns (*.unit.test.ts, *.integration.test.ts)
-  - AGENTS.md: ✅ UPDATED - Testing Guidelines section now includes new
-    naming conventions and TDD requirement
+  - spec-template.md: ✅ UPDATED - Feature Branch now uses feature/[kebab-case-name]
+    pattern (removed issue number requirement)
+  - plan-template.md: ✅ UPDATED - Branch references simplified to
+    feature/[feature-name] and spec paths updated
+  - tasks-template.md: ✅ UPDATED - Input path simplified to /specs/[feature-name]/
+  - AGENTS.md: ✅ COMPATIBLE - no workflow step requirements
 
 Deferred TODOs: None
 
@@ -145,34 +153,14 @@ All PRs MUST pass before merge:
 
 ### Feature Development Process
 
-1. **Create GitHub Issue** (MANDATORY)
-   - Use: `gh issue create --title "[FEATURE_NAME]" --body "[DESCRIPTION]"`
-   - Capture and record the issue number (e.g., #42)
-   - **If `gh` CLI unavailable**: Create issue manually via GitHub web UI
-   - Do NOT proceed without a documented GitHub issue
-
-2. **Create Feature Branch** (STRICT NAMING CONVENTION)
-   - Pattern: `feature/#<issue-number>-<kebab-case-name>`
-   - Example: `feature/#42-user-authentication`
-   - Other workflows:
-     - Hotfix: `hotfix/#123-login-bug`
-     - Bug fix: `bugfix/#456-form-validation`
-   - **STRICT ENFORCEMENT**: Branch names MUST match pattern; CI/pre-commit
-     hooks block merge if naming convention is violated
-
-3. **Publish Branch Immediately** (MANDATORY)
-   - Use: `git push -u origin <branch-name>`
-   - Branch MUST be published immediately after creation
-   - This enables automatic linking to the GitHub issue
-   - Do NOT proceed with development on an unpublished branch
-
-4. Scaffold feature structure using `bun run generate:feature`
-5. Write tests FIRST (TDD) - unit tests (`*.unit.test.ts(x)`) and
+1. Create feature branch with descriptive name (e.g., `feature/user-authentication`)
+2. Scaffold feature structure using `bun run generate:feature`
+3. Write tests FIRST (TDD) - unit tests (`*.unit.test.ts(x)`) and
    integration tests (`*.integration.test.ts(x)`)
-6. Implement to pass tests
-7. Run lint and build validation
-8. Submit PR with clear description and issue reference: "Closes #42"
-9. Ensure all code quality gates pass before merge
+4. Implement to pass tests
+5. Run lint and build validation
+6. Submit PR with clear description
+7. Ensure all code quality gates pass before merge
 
 ### Naming Conventions
 
@@ -186,9 +174,9 @@ All PRs MUST pass before merge:
 | Hooks | use<Thing>.ts | `useDebounce.ts` |
 | Unit tests | *.unit.test.ts(x) | `UserCard.unit.test.tsx` |
 | Integration tests | *.integration.test.ts(x) | `auth.integration.test.ts` |
-| Feature branches | feature/#NNN-name | `feature/#42-user-auth` |
-| Hotfix branches | hotfix/#NNN-name | `hotfix/#123-crash-fix` |
-| Bugfix branches | bugfix/#NNN-name | `bugfix/#456-validation` |
+| Feature branches | feature/descriptive-name | `feature/user-auth` |
+| Hotfix branches | hotfix/descriptive-name | `hotfix/login-crash` |
+| Bugfix branches | bugfix/descriptive-name | `bugfix/form-validation` |
 
 ## Governance
 
@@ -217,4 +205,4 @@ All code reviews MUST verify compliance with these principles.
 
 For runtime development guidance, refer to `AGENTS.md` at repository root.
 
-**Version**: 1.2.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-10
+**Version**: 1.3.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-10

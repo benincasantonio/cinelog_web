@@ -5,7 +5,7 @@ description: "Task list template for feature implementation"
 
 # Tasks: [FEATURE NAME]
 
-**Input**: Design documents from `/specs/[###-feature-name]/`
+**Input**: Design documents from `/specs/[feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
 **Tests**: Tests are MANDATORY per Constitution (TDD). Unit tests use `*.unit.test.ts(x)` naming, integration tests use `*.integration.test.ts(x)` naming. Tests MUST be created alongside main components.
