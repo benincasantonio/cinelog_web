@@ -25,19 +25,19 @@ export const Stats = () => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard title="Total Watched" value={stats.summary.total_watches} />
-        <StatsCard title="Unique Titles" value={stats.summary.unique_titles} />
+        <StatsCard title="Total Watched" value={stats.summary.totalWatches} />
+        <StatsCard title="Unique Titles" value={stats.summary.uniqueTitles} />
         <StatsCard
           title="Total Rewatches"
-          value={stats.summary.total_rewatches}
+          value={stats.summary.totalRewatches}
         />
-        <StatsCard title="Total Minutes" value={stats.summary.total_minutes} />
+        <StatsCard title="Total Minutes" value={stats.summary.totalMinutes} />
         <StatsCard
           title="Average Rating"
-          value={stats.summary.vote_average.toFixed(1)}
+          value={stats.summary.voteAverage.toFixed(1)}
         />
       </div>
-      <WatchMethodPieChart byMethod={stats.distribution.by_method} />
+      <WatchMethodPieChart byMethod={stats.distribution.byMethod} />
     </div>
   );
 };

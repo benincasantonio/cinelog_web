@@ -7,21 +7,21 @@ export type ByMethod = {
 };
 
 export type Distribution = {
-  by_method: ByMethod;
+  byMethod: ByMethod;
 };
 
 export type Pace = {
-  on_track_for: number;
-  current_average: number;
-  days_since_last_log: number;
+  onTrackFor: number;
+  currentAverage: number;
+  daysSinceLastLog: number;
 };
 
 export type Summary = {
-  total_watches: number;
-  unique_titles: number;
-  total_rewatches: number;
-  total_minutes: number;
-  vote_average: number;
+  totalWatches: number;
+  uniqueTitles: number;
+  totalRewatches: number;
+  totalMinutes: number;
+  voteAverage: number;
 };
 
 export type StatsResponse = {
