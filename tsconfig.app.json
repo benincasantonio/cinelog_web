@@ -30,5 +30,6 @@
       "@features/*": ["./src/features/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["**/*.unit.test.ts", "**/*.unit.test.tsx", "**/*.integration.test.ts", "**/*.integration.test.tsx"]
 }
