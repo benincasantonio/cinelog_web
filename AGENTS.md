@@ -26,7 +26,11 @@
 ## Testing Guidelines
 - No test runner is configured yet (no `test` script).
 - Validate changes with `bun run lint` and `bun run build`.
-- If you add tests, place them near the code under test as `*.test.ts(x)` or `*.spec.ts(x)`.
+- TDD is MANDATORY: Write tests FIRST, verify they fail, then implement.
+- Test naming conventions (per Constitution):
+  - Unit tests: `*.unit.test.ts(x)` (e.g., `UserCard.unit.test.tsx`)
+  - Integration tests: `*.integration.test.ts(x)` (e.g., `auth.integration.test.ts`)
+- Tests MUST be co-located with source code (same directory as the component/module).
 
 ## Commit & Pull Request Guidelines
 - Follow Conventional Commits: `feat: …`, `fix: …`, `chore: …`, `refactor: …`, `style: …`.

@@ -2,33 +2,38 @@
 ================================================================================
 SYNC IMPACT REPORT
 ================================================================================
-Version Change: 1.0.0 -> 1.1.0
+Version Change: 1.1.0 -> 1.2.0
 
-Versioning Rationale: MINOR bump. Added new mandatory workflow steps
-(GitHub issue creation + strict branch naming) that expand existing
-"Feature Development Process" guidance. No principles removed or redefined.
+Versioning Rationale: MINOR bump. Added new mandatory workflow step (publish
+branch immediately after creation) and significantly expanded testing guidance
+(TDD enforcement, specific naming patterns for unit and integration tests,
+co-location requirements). These are material additions to existing principles.
 
 Modified Sections:
   - Development Workflow → Feature Development Process
-    (Expanded from 6 to 8 steps, reordered with GitHub issue first)
+    (Added step 3: Publish branch immediately after creation)
+  - Test-First Development (NON-NEGOTIABLE) → Expanded with naming conventions
+    (Added unit test and integration test naming patterns)
 
 Added Guidance:
-  - Mandatory GitHub issue creation (gh CLI + manual fallback)
-  - Strict branch naming: feature/#<issue>-<kebab-case>
-  - CI/pre-commit hook enforcement requirement
+  - Mandatory branch publishing immediately after creation for issue linking
+  - Unit test naming pattern: *.unit.test.ts(x)
+  - Integration test naming pattern: *.integration.test.ts(x)
+  - Tests MUST be created alongside main components (co-location enforced)
 
 Removed Sections: None
 
 Templates Requiring Updates:
-  - spec-template.md: ✅ UPDATED - Feature Branch reference added
-  - plan-template.md: ✅ COMPATIBLE - no changes needed
-  - tasks-template.md: ✅ COMPATIBLE - no changes needed
+  - spec-template.md: ✅ COMPATIBLE - no changes needed
+  - plan-template.md: ✅ COMPATIBLE - no changes needed  
+  - tasks-template.md: ✅ UPDATED - test task examples now use new naming
+    patterns (*.unit.test.ts, *.integration.test.ts)
+  - AGENTS.md: ✅ UPDATED - Testing Guidelines section now includes new
+    naming conventions and TDD requirement
 
 Deferred TODOs: None
 
-Follow-up Actions:
-  - CI/pre-commit hook setup (recommend using husky + branch-name-validator)
-    This is noted but NOT in constitution scope—separate DevOps task
+Follow-up Actions: None - all templates updated
 ================================================================================
 -->
 
@@ -91,11 +96,20 @@ Strict Test-Driven Development is MANDATORY for all feature implementations.
 - All success paths MUST have test coverage
 - All edge cases MUST have test coverage
 - No implementation code may be written before corresponding tests exist
+- Integration and unit tests MUST be created alongside main components
+
+**Test File Naming Conventions** (MANDATORY):
+
+| Test Type | Naming Pattern | Example |
+|-----------|----------------|---------|
+| Unit tests | `*.unit.test.ts(x)` | `UserCard.unit.test.tsx` |
+| Integration tests | `*.integration.test.ts(x)` | `auth.integration.test.ts` |
 
 **Test File Locations**:
 
-- Tests MUST be co-located with source code as `*.test.ts(x)` or `*.spec.ts(x)`
-- Integration tests for features go in `src/features/<feature>/*.test.tsx`
+- Tests MUST be co-located with source code (same directory as the component/module)
+- Unit tests: `src/features/<feature>/components/ComponentName.unit.test.tsx`
+- Integration tests: `src/features/<feature>/<feature-name>.integration.test.ts`
 
 ## Technology Stack Requirements
 
@@ -146,12 +160,19 @@ All PRs MUST pass before merge:
    - **STRICT ENFORCEMENT**: Branch names MUST match pattern; CI/pre-commit
      hooks block merge if naming convention is violated
 
-3. Scaffold feature structure using `bun run generate:feature`
-4. Write tests FIRST (TDD)
-5. Implement to pass tests
-6. Run lint and build validation
-7. Submit PR with clear description and issue reference: "Closes #42"
-8. Ensure all code quality gates pass before merge
+3. **Publish Branch Immediately** (MANDATORY)
+   - Use: `git push -u origin <branch-name>`
+   - Branch MUST be published immediately after creation
+   - This enables automatic linking to the GitHub issue
+   - Do NOT proceed with development on an unpublished branch
+
+4. Scaffold feature structure using `bun run generate:feature`
+5. Write tests FIRST (TDD) - unit tests (`*.unit.test.ts(x)`) and
+   integration tests (`*.integration.test.ts(x)`)
+6. Implement to pass tests
+7. Run lint and build validation
+8. Submit PR with clear description and issue reference: "Closes #42"
+9. Ensure all code quality gates pass before merge
 
 ### Naming Conventions
 
@@ -163,6 +184,8 @@ All PRs MUST pass before merge:
 | Stores | use<Thing>Store.ts | `useAuthStore.ts` |
 | Schemas | *.schema.ts | `login.schema.ts` |
 | Hooks | use<Thing>.ts | `useDebounce.ts` |
+| Unit tests | *.unit.test.ts(x) | `UserCard.unit.test.tsx` |
+| Integration tests | *.integration.test.ts(x) | `auth.integration.test.ts` |
 | Feature branches | feature/#NNN-name | `feature/#42-user-auth` |
 | Hotfix branches | hotfix/#NNN-name | `hotfix/#123-crash-fix` |
 | Bugfix branches | bugfix/#NNN-name | `bugfix/#456-validation` |
@@ -194,4 +217,4 @@ All code reviews MUST verify compliance with these principles.
 
 For runtime development guidance, refer to `AGENTS.md` at repository root.
 
-**Version**: 1.1.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-10
+**Version**: 1.2.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-10
