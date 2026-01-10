@@ -2,28 +2,33 @@
 ================================================================================
 SYNC IMPACT REPORT
 ================================================================================
-Version Change: N/A (template) -> 1.0.0 (initial ratification)
+Version Change: 1.0.0 -> 1.1.0
 
-Modified Principles: N/A (new constitution)
+Versioning Rationale: MINOR bump. Added new mandatory workflow steps
+(GitHub issue creation + strict branch naming) that expand existing
+"Feature Development Process" guidance. No principles removed or redefined.
 
-Added Sections:
-  - I. Technology Stack (Core + State Management)
-  - II. Feature Architecture (Feature Sliced Modified)
-  - III. Test-First Development (Strict TDD)
-  - Technology Stack Requirements (Section 2)
-  - Development Workflow (Section 3)
-  - Governance rules
+Modified Sections:
+  - Development Workflow → Feature Development Process
+    (Expanded from 6 to 8 steps, reordered with GitHub issue first)
 
-Removed Sections: N/A
+Added Guidance:
+  - Mandatory GitHub issue creation (gh CLI + manual fallback)
+  - Strict branch naming: feature/#<issue>-<kebab-case>
+  - CI/pre-commit hook enforcement requirement
+
+Removed Sections: None
 
 Templates Requiring Updates:
-  - .specify/templates/plan-template.md: Constitution Check section exists, compatible
-  - .specify/templates/spec-template.md: User scenarios structure compatible with TDD
-  - .specify/templates/tasks-template.md: TDD test-first workflow compatible
+  - spec-template.md: ✅ UPDATED - Feature Branch reference added
+  - plan-template.md: ✅ COMPATIBLE - no changes needed
+  - tasks-template.md: ✅ COMPATIBLE - no changes needed
 
 Deferred TODOs: None
 
-Follow-up Actions: None required
+Follow-up Actions:
+  - CI/pre-commit hook setup (recommend using husky + branch-name-validator)
+    This is noted but NOT in constitution scope—separate DevOps task
 ================================================================================
 -->
 
@@ -126,12 +131,27 @@ All PRs MUST pass before merge:
 
 ### Feature Development Process
 
-1. Create feature branch from `main`
-2. Scaffold feature structure using `bun run generate:feature`
-3. Write tests FIRST (TDD)
-4. Implement to pass tests
-5. Run lint and build validation
-6. Submit PR with clear description
+1. **Create GitHub Issue** (MANDATORY)
+   - Use: `gh issue create --title "[FEATURE_NAME]" --body "[DESCRIPTION]"`
+   - Capture and record the issue number (e.g., #42)
+   - **If `gh` CLI unavailable**: Create issue manually via GitHub web UI
+   - Do NOT proceed without a documented GitHub issue
+
+2. **Create Feature Branch** (STRICT NAMING CONVENTION)
+   - Pattern: `feature/#<issue-number>-<kebab-case-name>`
+   - Example: `feature/#42-user-authentication`
+   - Other workflows:
+     - Hotfix: `hotfix/#123-login-bug`
+     - Bug fix: `bugfix/#456-form-validation`
+   - **STRICT ENFORCEMENT**: Branch names MUST match pattern; CI/pre-commit
+     hooks block merge if naming convention is violated
+
+3. Scaffold feature structure using `bun run generate:feature`
+4. Write tests FIRST (TDD)
+5. Implement to pass tests
+6. Run lint and build validation
+7. Submit PR with clear description and issue reference: "Closes #42"
+8. Ensure all code quality gates pass before merge
 
 ### Naming Conventions
 
@@ -143,6 +163,9 @@ All PRs MUST pass before merge:
 | Stores | use<Thing>Store.ts | `useAuthStore.ts` |
 | Schemas | *.schema.ts | `login.schema.ts` |
 | Hooks | use<Thing>.ts | `useDebounce.ts` |
+| Feature branches | feature/#NNN-name | `feature/#42-user-auth` |
+| Hotfix branches | hotfix/#NNN-name | `hotfix/#123-crash-fix` |
+| Bugfix branches | bugfix/#NNN-name | `bugfix/#456-validation` |
 
 ## Governance
 
@@ -171,4 +194,4 @@ All code reviews MUST verify compliance with these principles.
 
 For runtime development guidance, refer to `AGENTS.md` at repository root.
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-07
+**Version**: 1.1.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-10
