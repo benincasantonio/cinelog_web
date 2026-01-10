@@ -24,9 +24,40 @@
   - Feature folders: `kebab-case/`
 
 ## Testing Guidelines
-- No test runner is configured yet (no `test` script).
-- Validate changes with `bun run lint` and `bun run build`.
-- If you add tests, place them near the code under test as `*.test.ts(x)` or `*.spec.ts(x)`.
+
+All features MUST follow Test-Driven Development (TDD) principles. Tests are executed with **Vitest v4.0.16+** and **Playwright v1.57+** for E2E testing.
+
+### Running Tests Locally
+
+- `bun run test` - Watch mode for all unit and integration tests
+- `bun run test:unit` - Run only unit tests (`*.unit.test.ts(x)`)
+- `bun run test:integration` - Run only integration tests (`*.integration.test.ts(x)`)
+- `bun run test:ui` - Open Vitest UI dashboard for visual test exploration
+- `bun run test:coverage` - Generate coverage report (output: `./coverage/`)
+
+### Test File Organization
+
+- **Unit tests**: `*.unit.test.ts(x)` - Test isolated components/functions
+- **Integration tests**: `*.integration.test.ts(x)` - Test feature interactions
+- **E2E tests**: Playwright tests in `tests/` directory
+- **Location**: Tests MUST be co-located with source code
+  - Example: `src/features/movie/components/MovieLogItem.unit.test.tsx`
+
+### TDD Workflow
+
+1. Write failing tests FIRST (Red phase)
+2. Implement minimal code to pass (Green phase)
+3. Refactor while keeping tests passing (Refactor phase)
+4. Validate with `bun run lint && bun run build && bun run test:unit && bun run test:integration`
+
+### Code Quality Gates
+
+All PRs MUST pass:
+- `bun run lint` - Zero ESLint errors
+- `bun run build` - TypeScript compilation + test exclusion verification
+- `bun run test:unit` - All unit tests passing
+- `bun run test:integration` - All integration tests passing
+- GitHub Actions CI/CD pipeline passing (unit/integration/E2E tests)
 
 ## Commit & Pull Request Guidelines
 - Follow Conventional Commits: `feat: …`, `fix: …`, `chore: …`, `refactor: …`, `style: …`.

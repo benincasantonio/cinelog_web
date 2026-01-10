@@ -17,6 +17,11 @@ Cinelog Web is the React + TypeScript client for Cinelog, built with Vite (rolld
 - `bun run lint` runs ESLint.
 - `bun run generate:feature` scaffolds a new feature module.
 - `bun run generate:component` scaffolds a new component.
+- `bun run test` runs all tests in watch mode.
+- `bun run test:unit` runs only unit tests.
+- `bun run test:integration` runs only integration tests.
+- `bun run test:ui` opens Vitest UI dashboard.
+- `bun run test:coverage` generates test coverage report.
 
 ## Project Structure
 
@@ -41,4 +46,29 @@ Use `.env` with the following keys:
 
 ## Testing
 
-No test runner is configured yet. Validate changes with `bun run lint` and `bun run build`.
+This project follows strict Test-Driven Development (TDD) practices.
+
+**Test Framework**:
+- Unit & Integration tests: Vitest v4.0.16+ with jsdom environment
+- E2E tests: Playwright v1.57+
+
+**Test File Naming**:
+- Unit tests: `*.unit.test.ts(x)` - Isolated component/function tests
+- Integration tests: `*.integration.test.ts(x)` - Feature interaction tests
+- E2E tests: Playwright tests in `tests/` directory
+
+**Running Tests**:
+- `bun run test` - Watch mode for all tests
+- `bun run test:unit` - Unit tests only
+- `bun run test:integration` - Integration tests only
+- `bun run test:ui` - Vitest UI dashboard
+- `bun run test:coverage` - Coverage report
+
+**Code Quality Requirements**:
+Before submitting a PR, ensure all of these pass:
+- `bun run lint` - ESLint validation
+- `bun run build` - TypeScript compilation + test exclusion check
+- `bun run test:unit` - All unit tests passing
+- `bun run test:integration` - All integration tests passing
+
+For detailed testing guidelines, see the [Constitution](/.specify/memory/constitution.md#iii-test-first-development-non-negotiable) and [AGENTS.md](/AGENTS.md#testing-guidelines).
