@@ -23,7 +23,7 @@ export const MovieLogList = ({ logs }: MovieLogListProps) => {
         {logs.length}
         {logs.length === 1
           ? t("MovieLogList.movie")
-          : t("MovieLogList.movies")}{" "}
+          : t("MovieLogList.movies")}&nbsp;
         {t("MovieLogList.watched")}
       </h3>
       {logs.map((log) => (

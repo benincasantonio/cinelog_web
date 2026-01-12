@@ -74,7 +74,7 @@ export const MoviesWatched = () => {
             {t("MoviesWatched.filterByYear")}
           </label>
           <Select value={selectedYear} onValueChange={setSelectedYear}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-45">
               <SelectValue placeholder={t("MoviesWatched.selectYear")} />
             </SelectTrigger>
             <SelectContent>
