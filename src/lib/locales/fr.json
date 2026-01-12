@@ -24,7 +24,8 @@
     "movie": "Film",
     "movies": "Films",
     "watched": "Regardés",
-    "watchedCount": "{{count}} {{count, plural, one{Film Regardé} other{Films Regardés}}}"
+    "watchedMovie_one": "{{count}} Film Regardé",
+    "watchedMovie_other": "{{count}} Films Regardés"
   },
   "MovieLogItem": {
     "unknownTitle": "Titre Inconnu",

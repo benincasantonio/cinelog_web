@@ -24,7 +24,8 @@
     "movie": "Film",
     "movies": "Film",
     "watched": "Visti",
-    "watchedCount": "{{count}} {{count, plural, one{Film Visto} other{Film Visti}}}"
+    "watchedMovie_one": "{{count}} Film Visto",
+    "watchedMovie_other": "{{count}} Film Visti"
   },
   "MovieLogItem": {
     "unknownTitle": "Titolo Sconosciuto",
