@@ -23,7 +23,8 @@
     "noMovies": "Nessun film visto ancora",
     "movie": "Film",
     "movies": "Film",
-    "watched": "Visti"
+    "watched": "Visti",
+    "watchedCount": "{{count}} {{count, plural, one{Film Visto} other{Film Visti}}}"
   },
   "MovieLogItem": {
     "unknownTitle": "Titolo Sconosciuto",

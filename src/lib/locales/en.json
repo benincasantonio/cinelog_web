@@ -23,7 +23,8 @@
     "noMovies": "No movies watched yet",
     "movie": "Movie",
     "movies": "Movies",
-    "watched": "Watched"
+    "watched": "Watched",
+    "watchedCount": "{{count}} {{count, plural, one{Movie} other{Movies}}} Watched"
   },
   "MovieLogItem": {
     "unknownTitle": "Unknown Title",

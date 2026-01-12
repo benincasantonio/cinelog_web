@@ -23,7 +23,8 @@
     "noMovies": "Aucun film regardé pour le moment",
     "movie": "Film",
     "movies": "Films",
-    "watched": "Regardés"
+    "watched": "Regardés",
+    "watchedCount": "{{count}} {{count, plural, one{Film Regardé} other{Films Regardés}}}"
   },
   "MovieLogItem": {
     "unknownTitle": "Titre Inconnu",

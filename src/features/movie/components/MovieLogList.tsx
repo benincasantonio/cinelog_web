@@ -20,11 +20,7 @@ export const MovieLogList = ({ logs }: MovieLogListProps) => {
   return (
     <div className="flex flex-col p-4 gap-2">
       <h3 className="px-2 py-2 text-sm font-bold text-gray-700 dark:text-gray-500 uppercase tracking-wider mb-2">
-        {logs.length}&nbsp;
-        {logs.length === 1
-          ? t("MovieLogList.movie")
-          : t("MovieLogList.movies")}
-        {t("MovieLogList.watched")}
+        {t("MovieLogList.watchedCount", { count: logs.length })}
       </h3>
       {logs.map((log) => (
         <MovieLogItem key={log.id} log={log} />
