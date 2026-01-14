@@ -1,6 +1,9 @@
-@layer base, components, utilities, overrides;
-
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@source "../node_modules/@antoniobenincasa/ui";
+
+@import "@antoniobenincasa/ui/ui.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
