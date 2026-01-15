@@ -1,318 +1,327 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { MovieLogItem } from './MovieLogItem'
-import type { LogListItem } from '@/features/logs/models'
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { LogListItem } from '@/features/logs/models';
+import { MovieLogItem } from './MovieLogItem';
 
 // Mock useNavigate from react-router-dom
-const mockNavigate = vi.fn()
+const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  }
-})
+	const actual = await vi.importActual('react-router-dom');
+	return {
+		...actual,
+		useNavigate: () => mockNavigate,
+	};
+});
 
 // Mock react-i18next
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}))
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
 
 // Mock MovieVote component
 vi.mock('./MovieVote', () => ({
-  MovieVote: ({ vote }: { vote: number }) => <div data-testid="movie-vote">{vote}</div>,
-}))
+	MovieVote: ({ vote }: { vote: number }) => (
+		<div data-testid="movie-vote">{vote}</div>
+	),
+}));
 
 // Create mock log data factory
 const createMockLog = (overrides?: Partial<LogListItem>): LogListItem => ({
-  id: '1',
-  movieId: 'movie-1',
-  tmdbId: 550,
-  dateWatched: '2024-01-09',
-  posterPath: '/path/to/poster.jpg',
-  watchedWhere: 'cinema',
-  movieRating: 8,
-  movie: {
-    id: 'movie-1',
-    title: 'Fight Club',
-    tmdbId: 550,
-    posterPath: '/path/to/poster.jpg',
-    releaseDate: '1999-10-15',
-    overview: 'An insomniac office worker and a devil-may-care soapmaker form an underground fight club...',
-    voteAverage: 8.8,
-  },
-  ...overrides,
-})
+	id: '1',
+	movieId: 'movie-1',
+	tmdbId: 550,
+	dateWatched: '2024-01-09',
+	posterPath: '/path/to/poster.jpg',
+	watchedWhere: 'cinema',
+	movieRating: 8,
+	movie: {
+		id: 'movie-1',
+		title: 'Fight Club',
+		tmdbId: 550,
+		posterPath: '/path/to/poster.jpg',
+		releaseDate: '1999-10-15',
+		overview:
+			'An insomniac office worker and a devil-may-care soapmaker form an underground fight club...',
+		voteAverage: 8.8,
+	},
+	...overrides,
+});
 
 describe('MovieLogItem', () => {
-  beforeEach(() => {
-    mockNavigate.mockClear()
-  })
+	beforeEach(() => {
+		mockNavigate.mockClear();
+	});
 
-  describe('T3.1.1: Component Renders Without Crashing', () => {
-    it('should render component with valid mock log data', () => {
-      const log = createMockLog()
-      render(<MovieLogItem log={log} />)
+	describe('T3.1.1: Component Renders Without Crashing', () => {
+		it('should render component with valid mock log data', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
 
-      expect(screen.getByText('Fight Club')).toBeInTheDocument()
-    })
-  })
+			expect(screen.getByText('Fight Club')).toBeInTheDocument();
+		});
+	});
 
-  describe('T3.1.2: Movie Title is Clickable Element', () => {
-    it('should have role="button" on title element', () => {
-      const log = createMockLog()
-      render(<MovieLogItem log={log} />)
+	describe('T3.1.2: Movie Title is Clickable Element', () => {
+		it('should have role="button" on title element', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
 
-      const titleElement = screen.getByRole('button', { name: /Fight Club/i })
-      expect(titleElement).toBeInTheDocument()
-    })
+			const titleElement = screen.getByRole('button', { name: /Fight Club/i });
+			expect(titleElement).toBeInTheDocument();
+		});
 
-    it('should have aria-label containing movie title', () => {
-      const log = createMockLog()
-      render(<MovieLogItem log={log} />)
+		it('should have aria-label containing movie title', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
 
-      const titleElement = screen.getByRole('button')
-      expect(titleElement).toHaveAttribute('aria-label', expect.stringContaining('Fight Club'))
-    })
+			const titleElement = screen.getByRole('button');
+			expect(titleElement).toHaveAttribute(
+				'aria-label',
+				expect.stringContaining('Fight Club')
+			);
+		});
 
-    it('should have data-testid for testing', () => {
-      const log = createMockLog()
-      render(<MovieLogItem log={log} />)
+		it('should have data-testid for testing', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
 
-      const titleElement = screen.getByTestId('movie-title-link')
-      expect(titleElement).toBeInTheDocument()
-    })
-  })
+			const titleElement = screen.getByTestId('movie-title-link');
+			expect(titleElement).toBeInTheDocument();
+		});
+	});
 
-   describe('T3.1.3: Click Handler Calls Navigate with Correct Route', () => {
-     it('should call navigate with correct route when title is clicked', async () => {
-       const user = userEvent.setup()
-       const log = createMockLog({ tmdbId: 550 })
-       render(<MovieLogItem log={log} />)
- 
-       const titleElement = screen.getByRole('button', { name: /Fight Club/i })
-       await user.click(titleElement)
- 
-       expect(mockNavigate).toHaveBeenCalledWith('/movies/550')
-     })
- 
-     it('should call navigate with different tmdbId when provided', async () => {
-       const user = userEvent.setup()
-       const log = createMockLog({ tmdbId: 278 })
-       render(<MovieLogItem log={log} />)
- 
-       const titleElement = screen.getByRole('button')
-       await user.click(titleElement)
- 
-       expect(mockNavigate).toHaveBeenCalledWith('/movies/278')
-     })
+	describe('T3.1.3: Click Handler Calls Navigate with Correct Route', () => {
+		it('should call navigate with correct route when title is clicked', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog({ tmdbId: 550 });
+			render(<MovieLogItem log={log} />);
 
-     it.each([
-       { tmdbId: 550, title: 'Fight Club' },
-       { tmdbId: 278, title: 'The Shawshank Redemption' },
-       { tmdbId: 1, title: 'Dinosaur Planet' },
-       { tmdbId: 999999, title: 'Unknown Movie' },
-     ])(
-       'should navigate to /movies/$tmdbId for various valid tmdbIds',
-       async ({ tmdbId, title }) => {
-         const user = userEvent.setup()
-         const log = createMockLog({ tmdbId, movie: { ...createMockLog().movie, title } })
-         render(<MovieLogItem log={log} />)
- 
-         await user.click(screen.getByRole('button'))
-         expect(mockNavigate).toHaveBeenCalledWith(`/movies/${tmdbId}`)
-       }
-     )
-   })
+			const titleElement = screen.getByRole('button', { name: /Fight Club/i });
+			await user.click(titleElement);
 
-  describe('T3.1.4: Navigate Called Only When tmdbId Exists', () => {
-    it('should call navigate when tmdbId is defined', async () => {
-      const user = userEvent.setup()
-      const log = createMockLog({ tmdbId: 550 })
-      render(<MovieLogItem log={log} />)
+			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
+		});
 
-      await user.click(screen.getByRole('button'))
-      expect(mockNavigate).toHaveBeenCalled()
-    })
+		it('should call navigate with different tmdbId when provided', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog({ tmdbId: 278 });
+			render(<MovieLogItem log={log} />);
 
-    it('should not call navigate when tmdbId is 0', async () => {
-      const user = userEvent.setup()
-      const log = createMockLog({ tmdbId: 0 })
-      render(<MovieLogItem log={log} />)
+			const titleElement = screen.getByRole('button');
+			await user.click(titleElement);
 
-      await user.click(screen.getByRole('button'))
-      expect(mockNavigate).not.toHaveBeenCalled()
-    })
+			expect(mockNavigate).toHaveBeenCalledWith('/movies/278');
+		});
 
-    it('should handle tmdbId gracefully when missing', () => {
-      const log = createMockLog()
-      const modifiedLog = { ...log, tmdbId: undefined }
-      render(<MovieLogItem log={modifiedLog as LogListItem} />)
-      expect(screen.getByRole('button')).toBeInTheDocument()
-    })
-  })
+		it.each([
+			{ tmdbId: 550, title: 'Fight Club' },
+			{ tmdbId: 278, title: 'The Shawshank Redemption' },
+			{ tmdbId: 1, title: 'Dinosaur Planet' },
+			{ tmdbId: 999999, title: 'Unknown Movie' },
+		])('should navigate to /movies/$tmdbId for various valid tmdbIds', async ({
+			tmdbId,
+			title,
+		}) => {
+			const user = userEvent.setup();
+			const log = createMockLog({
+				tmdbId,
+				movie: { ...createMockLog().movie, title },
+			});
+			render(<MovieLogItem log={log} />);
 
-  describe('T3.1.5: Component Renders All Expected Content', () => {
-    it('should render movie title', () => {
-      const log = createMockLog()
-      render(<MovieLogItem log={log} />)
+			await user.click(screen.getByRole('button'));
+			expect(mockNavigate).toHaveBeenCalledWith(`/movies/${tmdbId}`);
+		});
+	});
 
-      expect(screen.getByText('Fight Club')).toBeInTheDocument()
-    })
+	describe('T3.1.4: Navigate Called Only When tmdbId Exists', () => {
+		it('should call navigate when tmdbId is defined', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog({ tmdbId: 550 });
+			render(<MovieLogItem log={log} />);
 
-    it('should render poster image div', () => {
-      const log = createMockLog({ posterPath: '/path/to/poster.jpg' })
-      render(<MovieLogItem log={log} />)
+			await user.click(screen.getByRole('button'));
+			expect(mockNavigate).toHaveBeenCalled();
+		});
 
-      const titleElement = screen.getByTestId('movie-title-link')
-      expect(titleElement).toBeInTheDocument()
-    })
+		it('should not call navigate when tmdbId is 0', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog({ tmdbId: 0 });
+			render(<MovieLogItem log={log} />);
 
-    it('should render watch date', () => {
-      const log = createMockLog({ dateWatched: '2024-01-09' })
-      render(<MovieLogItem log={log} />)
+			await user.click(screen.getByRole('button'));
+			expect(mockNavigate).not.toHaveBeenCalled();
+		});
 
-      // The translation key is rendered directly in tests because we mock translation
-      expect(screen.getByText(/MovieLogItem.watched/)).toBeInTheDocument()
-    })
+		it('should handle tmdbId gracefully when missing', () => {
+			const log = createMockLog();
+			const modifiedLog = { ...log, tmdbId: undefined };
+			render(<MovieLogItem log={modifiedLog as LogListItem} />);
+			expect(screen.getByRole('button')).toBeInTheDocument();
+		});
+	});
 
-    it('should render vote average when available', () => {
-      const log = createMockLog()
-      render(<MovieLogItem log={log} />)
+	describe('T3.1.5: Component Renders All Expected Content', () => {
+		it('should render movie title', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
 
-      // There are multiple vote elements (tmdb + user rating)
-      const votes = screen.getAllByTestId('movie-vote')
-      expect(votes.length).toBeGreaterThan(0)
-    })
+			expect(screen.getByText('Fight Club')).toBeInTheDocument();
+		});
 
-    it('should render watched location when available', () => {
-      const log = createMockLog({ watchedWhere: 'cinema' })
-      render(<MovieLogItem log={log} />)
+		it('should render poster image div', () => {
+			const log = createMockLog({ posterPath: '/path/to/poster.jpg' });
+			render(<MovieLogItem log={log} />);
 
-      expect(screen.getByText(/cinema/i)).toBeInTheDocument()
-    })
+			const titleElement = screen.getByTestId('movie-title-link');
+			expect(titleElement).toBeInTheDocument();
+		});
 
-    it('should handle missing movie title gracefully', () => {
-      const log = createMockLog({ movie: undefined })
-      render(<MovieLogItem log={log} />)
+		it('should render watch date', () => {
+			const log = createMockLog({ dateWatched: '2024-01-09' });
+			render(<MovieLogItem log={log} />);
 
-      expect(screen.getByRole('button')).toBeInTheDocument()
-    })
-  })
+			// The translation key is rendered directly in tests because we mock translation
+			expect(screen.getByText(/MovieLogItem.watched/)).toBeInTheDocument();
+		});
 
-  describe('Additional: Keyboard Accessibility', () => {
-    it('should be keyboard accessible with tabIndex', () => {
-      const log = createMockLog()
-      render(<MovieLogItem log={log} />)
+		it('should render vote average when available', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
 
-      const titleElement = screen.getByRole('button')
-      expect(titleElement).toHaveAttribute('tabIndex', '0')
-    })
-  })
+			// There are multiple vote elements (tmdb + user rating)
+			const votes = screen.getAllByTestId('movie-vote');
+			expect(votes.length).toBeGreaterThan(0);
+		});
 
-   describe('Additional: Edge Cases', () => {
-     it('should render with minimal log data', () => {
-       const minimalLog: LogListItem = {
-         id: '1',
-         movieId: 'movie-1',
-         tmdbId: 1,
-         dateWatched: '2024-01-09',
-       }
-       render(<MovieLogItem log={minimalLog} />)
- 
-       expect(screen.getByRole('button')).toBeInTheDocument()
-     })
- 
-     it('should handle special characters in movie title', async () => {
-       const user = userEvent.setup()
-       const log = createMockLog()
-       render(<MovieLogItem log={log} />)
- 
-       await user.click(screen.getByRole('button'))
-       expect(mockNavigate).toHaveBeenCalledWith('/movies/550')
-     })
- 
-     it('should handle very long movie titles', () => {
-       const longTitle = 'A'.repeat(100)
-       const log = createMockLog({
-         movie: { ...createMockLog().movie, title: longTitle },
-       })
-       render(<MovieLogItem log={log} />)
- 
-       const titleElement = screen.getByRole('button')
-       expect(titleElement).toHaveClass('truncate')
-     })
+		it('should render watched location when available', () => {
+			const log = createMockLog({ watchedWhere: 'cinema' });
+			render(<MovieLogItem log={log} />);
 
-     it('should handle missing movie object gracefully', () => {
-       const log = createMockLog({ movie: undefined })
-       render(<MovieLogItem log={log} />)
+			expect(screen.getByText(/cinema/i)).toBeInTheDocument();
+		});
 
-       const titleElement = screen.getByRole('button')
-       expect(titleElement).toBeInTheDocument()
-       // Should show fallback text for unknown title
-       expect(titleElement).toHaveTextContent('MovieLogItem.unknownTitle')
-     })
+		it('should handle missing movie title gracefully', () => {
+			const log = createMockLog({ movie: undefined });
+			render(<MovieLogItem log={log} />);
 
-     it('should handle null movie title', () => {
-       const log = createMockLog({
-         movie: { ...createMockLog().movie, title: '' },
-       })
-       render(<MovieLogItem log={log} />)
+			expect(screen.getByRole('button')).toBeInTheDocument();
+		});
+	});
 
-       const titleElement = screen.getByRole('button')
-       expect(titleElement).toBeInTheDocument()
-     })
+	describe('Additional: Keyboard Accessibility', () => {
+		it('should be keyboard accessible with tabIndex', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
 
-     it('should handle missing posterPath', () => {
-       const log = createMockLog({ posterPath: undefined })
-       render(<MovieLogItem log={log} />)
+			const titleElement = screen.getByRole('button');
+			expect(titleElement).toHaveAttribute('tabIndex', '0');
+		});
+	});
 
-       const titleElement = screen.getByRole('button')
-       expect(titleElement).toBeInTheDocument()
-     })
+	describe('Additional: Edge Cases', () => {
+		it('should render with minimal log data', () => {
+			const minimalLog: LogListItem = {
+				id: '1',
+				movieId: 'movie-1',
+				tmdbId: 1,
+				dateWatched: '2024-01-09',
+			};
+			render(<MovieLogItem log={minimalLog} />);
 
-     it('should handle missing movieRating', () => {
-       const log = createMockLog({ movieRating: undefined })
-       render(<MovieLogItem log={log} />)
+			expect(screen.getByRole('button')).toBeInTheDocument();
+		});
 
-       const titleElement = screen.getByRole('button')
-       expect(titleElement).toBeInTheDocument()
-     })
+		it('should handle special characters in movie title', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
 
-     it('should handle missing watchedWhere', () => {
-       const log = createMockLog({ watchedWhere: undefined })
-       render(<MovieLogItem log={log} />)
+			await user.click(screen.getByRole('button'));
+			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
+		});
 
-       const titleElement = screen.getByRole('button')
-       expect(titleElement).toBeInTheDocument()
-     })
+		it('should handle very long movie titles', () => {
+			const longTitle = 'A'.repeat(100);
+			const log = createMockLog({
+				movie: { ...createMockLog().movie, title: longTitle },
+			});
+			render(<MovieLogItem log={log} />);
 
-     it('should handle special characters like quotes and apostrophes', async () => {
-       const user = userEvent.setup()
-       const log = createMockLog({
-         movie: { ...createMockLog().movie, title: "O'Brien's \"Story\"" },
-       })
-       render(<MovieLogItem log={log} />)
+			const titleElement = screen.getByRole('button');
+			expect(titleElement).toHaveClass('truncate');
+		});
 
-       await user.click(screen.getByRole('button'))
-       expect(mockNavigate).toHaveBeenCalledWith('/movies/550')
-     })
+		it('should handle missing movie object gracefully', () => {
+			const log = createMockLog({ movie: undefined });
+			render(<MovieLogItem log={log} />);
 
-     it('should navigate even when movie data is incomplete', async () => {
-       const user = userEvent.setup()
-       const log = createMockLog({
-         movie: undefined,
-         posterPath: undefined,
-         movieRating: undefined,
-         watchedWhere: undefined,
-       })
-       render(<MovieLogItem log={log} />)
+			const titleElement = screen.getByRole('button');
+			expect(titleElement).toBeInTheDocument();
+			// Should show fallback text for unknown title
+			expect(titleElement).toHaveTextContent('MovieLogItem.unknownTitle');
+		});
 
-       await user.click(screen.getByRole('button'))
-       expect(mockNavigate).toHaveBeenCalledWith('/movies/550')
-     })
-   })
-})
+		it('should handle null movie title', () => {
+			const log = createMockLog({
+				movie: { ...createMockLog().movie, title: '' },
+			});
+			render(<MovieLogItem log={log} />);
+
+			const titleElement = screen.getByRole('button');
+			expect(titleElement).toBeInTheDocument();
+		});
+
+		it('should handle missing posterPath', () => {
+			const log = createMockLog({ posterPath: undefined });
+			render(<MovieLogItem log={log} />);
+
+			const titleElement = screen.getByRole('button');
+			expect(titleElement).toBeInTheDocument();
+		});
+
+		it('should handle missing movieRating', () => {
+			const log = createMockLog({ movieRating: undefined });
+			render(<MovieLogItem log={log} />);
+
+			const titleElement = screen.getByRole('button');
+			expect(titleElement).toBeInTheDocument();
+		});
+
+		it('should handle missing watchedWhere', () => {
+			const log = createMockLog({ watchedWhere: undefined });
+			render(<MovieLogItem log={log} />);
+
+			const titleElement = screen.getByRole('button');
+			expect(titleElement).toBeInTheDocument();
+		});
+
+		it('should handle special characters like quotes and apostrophes', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog({
+				movie: { ...createMockLog().movie, title: 'O\'Brien\'s "Story"' },
+			});
+			render(<MovieLogItem log={log} />);
+
+			await user.click(screen.getByRole('button'));
+			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
+		});
+
+		it('should navigate even when movie data is incomplete', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog({
+				movie: undefined,
+				posterPath: undefined,
+				movieRating: undefined,
+				watchedWhere: undefined,
+			});
+			render(<MovieLogItem log={log} />);
+
+			await user.click(screen.getByRole('button'));
+			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
+		});
+	});
+});

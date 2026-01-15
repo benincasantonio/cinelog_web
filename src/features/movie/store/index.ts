@@ -1,2 +1,2 @@
-export * from "./useMovieDetailsStore";
-export * from "./useMovieRatingStore";
+export * from './useMovieDetailsStore';
+export * from './useMovieRatingStore';

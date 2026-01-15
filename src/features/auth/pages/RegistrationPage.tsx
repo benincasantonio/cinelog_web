@@ -1,31 +1,33 @@
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@antoniobenincasa/ui";
-import { AuthTabs, RegistrationForm } from "../components";
-import { useTranslation } from "react-i18next";
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@antoniobenincasa/ui';
+import { useTranslation } from 'react-i18next';
+import { AuthTabs, RegistrationForm } from '../components';
 
 const RegistrationPage = () => {
-  const { t } = useTranslation();
+	const { t } = useTranslation();
 
-  return (
-    <AuthTabs
-      children={
-        <Card className="w-full md:w-lg">
-          <CardHeader>
-            <CardTitle>{t("RegistrationPage.title")}</CardTitle>
-            <CardDescription>{t("RegistrationPage.description")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RegistrationForm />
-          </CardContent>
-        </Card>
-      }
-    />
-  );
+	return (
+		<AuthTabs
+			children={
+				<Card className="w-full md:w-lg">
+					<CardHeader>
+						<CardTitle>{t('RegistrationPage.title')}</CardTitle>
+						<CardDescription>
+							{t('RegistrationPage.description')}
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<RegistrationForm />
+					</CardContent>
+				</Card>
+			}
+		/>
+	);
 };
 
 export default RegistrationPage;

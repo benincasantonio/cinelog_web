@@ -1,6 +1,5 @@
-import type { LogListItem } from "./log-list-item";
+import type { LogListItem } from './log-list-item';
 
 export type LogListResponse = {
-  logs: LogListItem[];
+	logs: LogListItem[];
 };
-

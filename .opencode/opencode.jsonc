@@ -1,21 +1,18 @@
 {
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "context7": {
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "ctx7sk-2c222047-c855-4bed-b92c-5e8c6b7cd2fc"
-      },
-      "enabled": true
-    },
-    "playwright": {
-      "type": "local",
-      "command": [
-        "npx",
-        "@playwright/mcp@latest"
-      ],
-      "enabled": true
-    }
-  }
+	"$schema": "https://opencode.ai/config.json",
+	"mcp": {
+		"context7": {
+			"type": "remote",
+			"url": "https://mcp.context7.com/mcp",
+			"headers": {
+				"CONTEXT7_API_KEY": "ctx7sk-2c222047-c855-4bed-b92c-5e8c6b7cd2fc"
+			},
+			"enabled": true
+		},
+		"playwright": {
+			"type": "local",
+			"command": ["npx", "@playwright/mcp@latest"],
+			"enabled": true
+		}
+	}
 }

@@ -1,7 +1,7 @@
-import { MoviesWatched } from "@/features/movie/components/MoviesWatched";
+import { MoviesWatched } from '@/features/movie/components/MoviesWatched';
 
 export const ProfileMoviesWatchedPage = () => {
-  return <MoviesWatched />;
+	return <MoviesWatched />;
 };
 
 export default ProfileMoviesWatchedPage;

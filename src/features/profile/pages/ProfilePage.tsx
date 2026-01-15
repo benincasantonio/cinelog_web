@@ -1,16 +1,15 @@
-import { Profile, ProfileLoading } from "../components";
-import { useAuthStore } from "@/features/auth/stores";
+import { useAuthStore } from '@/features/auth/stores';
+import { Profile, ProfileLoading } from '../components';
 
 const ProfilePage = () => {
-  const { userInfo, isUserInfoLoading } = useAuthStore();
+	const { userInfo, isUserInfoLoading } = useAuthStore();
 
-  if (isUserInfoLoading) {
-    return <ProfileLoading />;
-  }
+	if (isUserInfoLoading) {
+		return <ProfileLoading />;
+	}
 
-  return <Profile userInfo={userInfo} />;
+	return <Profile userInfo={userInfo} />;
 };
 
 export { ProfilePage };
 export default ProfilePage;
-
