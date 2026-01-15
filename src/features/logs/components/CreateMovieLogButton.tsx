@@ -15,7 +15,7 @@ export const CreateMovieLogButton = () => {
 		<>
 			<Button
 				variant="default"
-				className="bg-primary text-white dark:bg-primary dark:text-gray-900 hover:bg-violet-700 dark:hover:bg-violet-500 hidden md:inline-flex"
+				className="bg-primary text-white hover:bg-violet-700 dark:hover:bg-violet-500 hidden md:inline-flex"
 				onClick={handleClick}
 			>
 				{t('CreateMovieLogButton.logMovie')}

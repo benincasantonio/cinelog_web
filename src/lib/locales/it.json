@@ -113,7 +113,8 @@
 	"CreateMovieLogDialog": {
 		"title": "Registra Film",
 		"description": "Aggiungi i dettagli di ciò che hai visto.",
-		"close": "Chiudi"
+		"close": "Chiudi",
+		"submit": "Registra"
 	},
 	"CreateMovieLogButton": {
 		"logMovie": "Registra Film"

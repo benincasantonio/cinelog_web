@@ -113,7 +113,8 @@
 	"CreateMovieLogDialog": {
 		"title": "Enregistrer un film",
 		"description": "Ajoutez les détails de ce que vous avez regardé.",
-		"close": "Fermer"
+		"close": "Fermer",
+		"submit": "Enregistrer"
 	},
 	"CreateMovieLogButton": {
 		"logMovie": "Enregistrer un film"

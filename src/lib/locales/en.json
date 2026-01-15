@@ -113,7 +113,8 @@
 	"CreateMovieLogDialog": {
 		"title": "Log a Movie",
 		"description": "Add the details of what you watched.",
-		"close": "Close"
+		"close": "Close",
+		"submit": "Log Movie"
 	},
 	"CreateMovieLogButton": {
 		"logMovie": "Log a Movie"
