@@ -11,7 +11,7 @@
 - `bun run dev` starts the Vite dev server.
 - `bun run build` runs `tsc -b` and produces a production bundle.
 - `bun run preview` serves the production build locally.
-- `bun run lint` runs ESLint (flat config in `eslint.config.js`).
+- `bun run lint` runs Biome (linting + formatting check via `biome check`).\n- `bun run lint:fix` runs Biome with auto-fix.
 
 ## Coding Style & Naming Conventions
 - Use TypeScript + React function components with strict typing.

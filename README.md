@@ -14,7 +14,8 @@ Cinelog Web is the React + TypeScript client for Cinelog, built with Vite (rolld
 - `bun run dev` starts the Vite dev server.
 - `bun run build` runs `tsc -b` and builds the production bundle.
 - `bun run preview` serves the production build locally.
-- `bun run lint` runs ESLint.
+- `bun run lint` runs Biome (linting + formatting check).
+- `bun run lint:fix` runs Biome with auto-fix.
 - `bun run generate:feature` scaffolds a new feature module.
 - `bun run generate:component` scaffolds a new component.
 
