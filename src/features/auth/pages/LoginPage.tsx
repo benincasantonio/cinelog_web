@@ -14,7 +14,7 @@ const LoginPage = () => {
   return (
     <AuthTabs
       children={
-        <Card className="w-full md:w-1/2">
+        <Card className="w-full md:w-lg">
           <CardHeader>
             <CardTitle>{t("LoginPage.title")}</CardTitle>
             <CardDescription>{t("LoginPage.description")}</CardDescription>

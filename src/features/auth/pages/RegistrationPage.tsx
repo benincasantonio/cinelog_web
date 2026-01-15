@@ -14,7 +14,7 @@ const RegistrationPage = () => {
   return (
     <AuthTabs
       children={
-        <Card className="w-full md:w-1/2">
+        <Card className="w-full md:w-lg">
           <CardHeader>
             <CardTitle>{t("RegistrationPage.title")}</CardTitle>
             <CardDescription>{t("RegistrationPage.description")}</CardDescription>

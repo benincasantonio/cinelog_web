@@ -15,7 +15,7 @@ export const AuthTabs = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <Tabs className="gap-6" value={activeTab} onValueChange={handleValueChange}>
+    <Tabs className="gap-6 md:flex w-full md:items-center" value={activeTab} onValueChange={handleValueChange}>
       <TabsList>
         <TabsTrigger value="login">{t("AuthTabs.login")}</TabsTrigger>
         <TabsTrigger value="registration">{t("AuthTabs.registration")}</TabsTrigger>
