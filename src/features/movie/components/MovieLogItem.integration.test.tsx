@@ -2,7 +2,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import type { LogListItem } from '@/features/logs/models';
-import { createMockLog, TestWrapper } from './MovieLogItem.test-setup';
+import { TestWrapper } from './MovieLogItem.test-setup';
+import { createMockLog } from './MovieLogItem.test-utils';
 
 describe('MovieLogItem Integration Tests', () => {
 	describe('T4.1.1: Navigation Integration with React Router', () => {
