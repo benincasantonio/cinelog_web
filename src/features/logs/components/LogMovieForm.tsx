@@ -25,7 +25,15 @@ import { createLog } from '../repositories';
 import { type LogFormSchema, logFormSchema } from '../schemas';
 import { useCreateMovieLogDialogStore } from '../store';
 
-export const LogMovieForm = () => {
+interface LogMovieFormProps {
+	formId?: string;
+	showSubmitButton?: boolean;
+}
+
+export const LogMovieForm = ({
+	formId,
+	showSubmitButton = true,
+}: LogMovieFormProps) => {
 	const { t } = useTranslation();
 	const prefilledMovie = useCreateMovieLogDialogStore(
 		(state) => state.prefilledMovie
@@ -113,6 +121,7 @@ export const LogMovieForm = () => {
 	return (
 		<Form {...form}>
 			<form
+				id={formId}
 				onSubmit={form.handleSubmit(handleSubmit)}
 				className="flex flex-col gap-3"
 			>
@@ -199,9 +208,11 @@ export const LogMovieForm = () => {
 					)}
 				/>
 
-				<Button type="submit" variant="default" disabled={loading}>
-					{loading ? t('LogMovieForm.submitting') : t('LogMovieForm.submit')}
-				</Button>
+				{showSubmitButton && (
+					<Button type="submit" disabled={loading}>
+						{loading ? t('LogMovieForm.submitting') : t('LogMovieForm.submit')}
+					</Button>
+				)}
 			</form>
 		</Form>
 	);

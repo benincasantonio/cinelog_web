@@ -21,7 +21,7 @@ export const CreateMovieLogDialog = () => {
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogContent
 				showCloseButton
-				className="w-full max-w-[425px] sm:max-w-lg"
+				className="w-full max-w-106.25 sm:max-w-lg"
 			>
 				<DialogHeader>
 					<DialogTitle>{t('CreateMovieLogDialog.title')}</DialogTitle>
@@ -30,7 +30,7 @@ export const CreateMovieLogDialog = () => {
 					</DialogDescription>
 				</DialogHeader>
 
-				<LogMovieForm />
+				<LogMovieForm formId="log-movie-form" showSubmitButton={false} />
 
 				<DialogFooter>
 					<DialogClose asChild>
@@ -38,6 +38,9 @@ export const CreateMovieLogDialog = () => {
 							{t('CreateMovieLogDialog.close')}
 						</Button>
 					</DialogClose>
+					<Button form="log-movie-form" type="submit">
+						{t('CreateMovieLogDialog.submit')}
+					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
