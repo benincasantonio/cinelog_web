@@ -41,6 +41,7 @@ export const useAuthStore = create<{
     } catch (error) {
       console.error(error);
       set({ isAuthenticated: false });
+      throw error;
     }
   },
   logout: async () => {
