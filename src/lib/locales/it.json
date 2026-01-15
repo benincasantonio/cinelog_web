@@ -1,174 +1,174 @@
 {
-  "MovieSearchPage": {
-    "title": "Ricerca Film",
-    "searchPlaceholder": "Cerca film..."
-  },
-  "ProfileDropdownMenu": {
-    "profile": "Profilo",
-    "language": "Lingua",
-    "logout": "Esci",
-    "languages": {
-      "en": "Inglese",
-      "fr": "Francese",
-      "it": "Italiano"
-    }
-  },
-  "MoviesWatched": {
-    "filterByYear": "Filtra per Anno:",
-    "selectYear": "Seleziona anno",
-    "allYears": "Tutti gli Anni",
-    "errorLoading": "Impossibile caricare i film"
-  },
-  "MovieLogList": {
-    "noMovies": "Nessun film visto ancora",
-    "movie": "Film",
-    "movies": "Film",
-    "watched": "Visti",
-    "watchedMovie_one": "{{count}} Film Visto",
-    "watchedMovie_other": "{{count}} Film Visti"
-  },
-  "MovieLogItem": {
-    "unknownTitle": "Titolo Sconosciuto",
-    "watched": "Visto:",
-    "noImage": "Nessuna Immagine"
-  },
-  "ProfileHeader": {
-    "about": "Informazioni",
-    "noBio": "Nessuna biografia disponibile."
-  },
-  "ProfileMenu": {
-    "overview": "Panoramica",
-    "moviesWatched": "Film visti",
-    "stats": "Statistiche"
-  },
-  "ProfileOverviewPage": {
-    "comingSoon": "Panoramica - Disponibile a breve"
-  },
-  "ProfileStatsPage": {
-    "comingSoon": "Statistiche - Disponibile a breve"
-  },
-  "MovieDetailsPage": {
-    "loading": "Caricamento dettagli film...",
-    "notFound": "Film non trovato.",
-    "goBack": "Torna indietro",
-    "rate": "Vota",
-    "logMovie": "Registra",
-    "overview": "Trama",
-    "noOverview": "Nessuna trama disponibile per questo film."
-  },
-  "MovieDetailsHero": {
-    "noBackdrop": "Nessuno sfondo disponibile",
-    "back": "← Indietro",
-    "noImage": "Nessuna immagine"
-  },
-  "RateMovieModal": {
-    "title": "Vota Film",
-    "description": "Condividi i tuoi pensieri e vota questo film."
-  },
-  "RateMovieForm": {
-    "yourRating": "Il tuo Voto",
-    "reviewOptional": "Recensione (Opzionale)",
-    "commentPlaceholder": "Scrivi i tuoi pensieri sul film...",
-    "cancel": "Annulla",
-    "save": "Salva Voto",
-    "validation": {
-      "rating": "Seleziona un voto"
-    }
-  },
-  "LoginPage": {
-    "title": "Accedi",
-    "description": "Accedi al tuo account"
-  },
-  "RegistrationPage": {
-    "title": "Registrazione",
-    "description": "Crea un nuovo account"
-  },
-  "LoginForm": {
-    "email": "Email",
-    "password": "Password",
-    "submit": "Accedi",
-    "submitting": "Accesso in corso...",
-    "error": "Si è verificato un errore durante l'accesso"
-  },
-  "RegistrationForm": {
-    "firstName": "Nome",
-    "lastName": "Cognome",
-    "email": "Email",
-    "password": "Password",
-    "handle": "Username",
-    "dateOfBirth": "Data di nascita",
-    "bio": "Biografia",
-    "bioPlaceholder": "Raccontaci qualcosa di te",
-    "submit": "Registrati",
-    "submitting": "Registrazione in corso...",
-    "error": "Si è verificato un errore durante la registrazione",
-    "validation": {
-      "dobPast": "La data di nascita deve essere nel passato"
-    }
-  },
-  "AuthTabs": {
-    "login": "Accedi",
-    "registration": "Registrati"
-  },
-  "CreateMovieLogDialog": {
-    "title": "Registra Film",
-    "description": "Aggiungi i dettagli di ciò che hai visto.",
-    "close": "Chiudi"
-  },
-  "CreateMovieLogButton": {
-    "logMovie": "Registra Film"
-  },
-  "LogMovieForm": {
-    "movieLabel": "Film",
-    "dateWatchedLabel": "Data di visione",
-    "watchedWhereLabel": "Dove lo hai visto (Opzionale)",
-    "watchedWherePlaceholder": "Seleziona dove lo hai visto",
-    "viewingNotesLabel": "Note di visione (Opzionale)",
-    "viewingNotesPlaceholder": "I tuoi pensieri sul film",
-    "submit": "Crea Log",
-    "submitting": "Creazione Log...",
-    "error": "Si è verificato un errore durante la creazione del log"
-  },
-  "WatchedWhere": {
-    "cinema": "Cinema",
-    "streaming": "Streaming",
-    "homeVideo": "Home Video",
-    "tv": "TV",
-    "other": "Altro"
-  },
-  "MoviesPage": {
-    "title": "Ricerca Film"
-  },
-  "MovieSearchList": {
-    "searching": "Ricerca di film...",
-    "startTyping": "Inizia a digitare per cercare film.",
-    "noMoviesFound": "Nessun film trovato. Prova a cercare qualcosa!",
-    "topResults": "Migliori Risultati"
-  },
-  "Navbar": {
-    "home": "Home",
-    "search": "Cerca",
-    "login": "Accedi",
-    "register": "Registrati"
-  },
-  "HomePage": {
-    "title": "Traccia ogni viaggio cinematografico",
-    "subtitle": "Registra dove e quando hai guardato i tuoi film preferiti e immergiti nelle tue statistiche di visione personali.",
-    "tagline": "Possiedi i tuoi dati sui film. Nessuna pubblicità, nessun tracciamento, solo te e i film.",
-    "italic": "Fatto per le persone che amano guardare le proprie statistiche tanto quanto i film stessi.",
-    "contributeTitle": "Vuoi contribuire?",
-    "contributeText": "Questo progetto è open source. Che si tratti di correggere bug, aggiungere funzionalità o migliorare la documentazione, il tuo aiuto è apprezzato!",
-    "frontend": "Sito Web Frontend",
-    "backend": "API Backend"
-  },
-  "WatchMethodPieChart": {
-    "title": "Come Guardi",
-    "cinema": "Cinema",
-    "streaming": "Streaming",
-    "homeVideo": "Home Video",
-    "tv": "TV",
-    "other": "Altro",
-    "noData": "Nessun dato disponibile"
-  }
+	"MovieSearchPage": {
+		"title": "Ricerca Film",
+		"searchPlaceholder": "Cerca film..."
+	},
+	"ProfileDropdownMenu": {
+		"profile": "Profilo",
+		"language": "Lingua",
+		"logout": "Esci",
+		"languages": {
+			"en": "Inglese",
+			"fr": "Francese",
+			"it": "Italiano"
+		}
+	},
+	"MoviesWatched": {
+		"filterByYear": "Filtra per Anno:",
+		"selectYear": "Seleziona anno",
+		"allYears": "Tutti gli Anni",
+		"errorLoading": "Impossibile caricare i film"
+	},
+	"MovieLogList": {
+		"noMovies": "Nessun film visto ancora",
+		"movie": "Film",
+		"movies": "Film",
+		"watched": "Visti",
+		"watchedMovie_one": "{{count}} Film Visto",
+		"watchedMovie_other": "{{count}} Film Visti"
+	},
+	"MovieLogItem": {
+		"unknownTitle": "Titolo Sconosciuto",
+		"watched": "Visto:",
+		"noImage": "Nessuna Immagine"
+	},
+	"ProfileHeader": {
+		"about": "Informazioni",
+		"noBio": "Nessuna biografia disponibile."
+	},
+	"ProfileMenu": {
+		"overview": "Panoramica",
+		"moviesWatched": "Film visti",
+		"stats": "Statistiche"
+	},
+	"ProfileOverviewPage": {
+		"comingSoon": "Panoramica - Disponibile a breve"
+	},
+	"ProfileStatsPage": {
+		"comingSoon": "Statistiche - Disponibile a breve"
+	},
+	"MovieDetailsPage": {
+		"loading": "Caricamento dettagli film...",
+		"notFound": "Film non trovato.",
+		"goBack": "Torna indietro",
+		"rate": "Vota",
+		"logMovie": "Registra",
+		"overview": "Trama",
+		"noOverview": "Nessuna trama disponibile per questo film."
+	},
+	"MovieDetailsHero": {
+		"noBackdrop": "Nessuno sfondo disponibile",
+		"back": "← Indietro",
+		"noImage": "Nessuna immagine"
+	},
+	"RateMovieModal": {
+		"title": "Vota Film",
+		"description": "Condividi i tuoi pensieri e vota questo film."
+	},
+	"RateMovieForm": {
+		"yourRating": "Il tuo Voto",
+		"reviewOptional": "Recensione (Opzionale)",
+		"commentPlaceholder": "Scrivi i tuoi pensieri sul film...",
+		"cancel": "Annulla",
+		"save": "Salva Voto",
+		"validation": {
+			"rating": "Seleziona un voto"
+		}
+	},
+	"LoginPage": {
+		"title": "Accedi",
+		"description": "Accedi al tuo account"
+	},
+	"RegistrationPage": {
+		"title": "Registrazione",
+		"description": "Crea un nuovo account"
+	},
+	"LoginForm": {
+		"email": "Email",
+		"password": "Password",
+		"submit": "Accedi",
+		"submitting": "Accesso in corso...",
+		"error": "Si è verificato un errore durante l'accesso"
+	},
+	"RegistrationForm": {
+		"firstName": "Nome",
+		"lastName": "Cognome",
+		"email": "Email",
+		"password": "Password",
+		"handle": "Username",
+		"dateOfBirth": "Data di nascita",
+		"bio": "Biografia",
+		"bioPlaceholder": "Raccontaci qualcosa di te",
+		"submit": "Registrati",
+		"submitting": "Registrazione in corso...",
+		"error": "Si è verificato un errore durante la registrazione",
+		"validation": {
+			"dobPast": "La data di nascita deve essere nel passato"
+		}
+	},
+	"AuthTabs": {
+		"login": "Accedi",
+		"registration": "Registrati"
+	},
+	"CreateMovieLogDialog": {
+		"title": "Registra Film",
+		"description": "Aggiungi i dettagli di ciò che hai visto.",
+		"close": "Chiudi",
+		"submit": "Registra"
+	},
+	"CreateMovieLogButton": {
+		"logMovie": "Registra Film"
+	},
+	"LogMovieForm": {
+		"movieLabel": "Film",
+		"dateWatchedLabel": "Data di visione",
+		"watchedWhereLabel": "Dove lo hai visto (Opzionale)",
+		"watchedWherePlaceholder": "Seleziona dove lo hai visto",
+		"viewingNotesLabel": "Note di visione (Opzionale)",
+		"viewingNotesPlaceholder": "I tuoi pensieri sul film",
+		"submit": "Crea Log",
+		"submitting": "Creazione Log...",
+		"error": "Si è verificato un errore durante la creazione del log"
+	},
+	"WatchedWhere": {
+		"cinema": "Cinema",
+		"streaming": "Streaming",
+		"homeVideo": "Home Video",
+		"tv": "TV",
+		"other": "Altro"
+	},
+	"MoviesPage": {
+		"title": "Ricerca Film"
+	},
+	"MovieSearchList": {
+		"searching": "Ricerca di film...",
+		"startTyping": "Inizia a digitare per cercare film.",
+		"noMoviesFound": "Nessun film trovato. Prova a cercare qualcosa!",
+		"topResults": "Migliori Risultati"
+	},
+	"Navbar": {
+		"home": "Home",
+		"search": "Cerca",
+		"login": "Accedi",
+		"register": "Registrati"
+	},
+	"HomePage": {
+		"title": "Traccia ogni viaggio cinematografico",
+		"subtitle": "Registra dove e quando hai guardato i tuoi film preferiti e immergiti nelle tue statistiche di visione personali.",
+		"tagline": "Possiedi i tuoi dati sui film. Nessuna pubblicità, nessun tracciamento, solo te e i film.",
+		"italic": "Fatto per le persone che amano guardare le proprie statistiche tanto quanto i film stessi.",
+		"contributeTitle": "Vuoi contribuire?",
+		"contributeText": "Questo progetto è open source. Che si tratti di correggere bug, aggiungere funzionalità o migliorare la documentazione, il tuo aiuto è apprezzato!",
+		"frontend": "Sito Web Frontend",
+		"backend": "API Backend"
+	},
+	"WatchMethodPieChart": {
+		"title": "Come Guardi",
+		"cinema": "Cinema",
+		"streaming": "Streaming",
+		"homeVideo": "Home Video",
+		"tv": "TV",
+		"other": "Altro",
+		"noData": "Nessun dato disponibile"
+	}
 }
-  

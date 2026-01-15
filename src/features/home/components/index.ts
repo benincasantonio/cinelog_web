@@ -1,1 +1,1 @@
-export { HomeLayout as AuthLayout } from "./HomeLayout";
+export { HomeLayout as AuthLayout } from './HomeLayout';

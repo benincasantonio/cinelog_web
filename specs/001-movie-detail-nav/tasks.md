@@ -140,7 +140,7 @@ bun install -D vitest @testing-library/react @testing-library/jest-dom jsdom @vi
 - [x] Title element has click handler
 - [x] Click handler uses `log.tmdbId` (not log.movie?.tmdbId)
 - [x] Navigation only occurs if tmdbId is defined
-- [x] ESLint passes: `bun run lint src/features/movie/components/MovieLogItem.tsx`
+- [x] Biome passes: `bun run lint src/features/movie/components/MovieLogItem.tsx`
 - [x] Component builds successfully: `bun run build`
 
 **Implementation Notes**:
@@ -514,7 +514,7 @@ bun install -D vitest @testing-library/react @testing-library/jest-dom jsdom @vi
 **Effort**: 30 minutes
 
 **Checks**:
-- [ ] Run ESLint: `bun run lint` - no errors in modified files
+- [ ] Run Biome: `bun run lint` - no errors in modified files
 - [ ] Run build: `bun run build` - completes without errors
 - [ ] Manual testing in dev server: navigate works smoothly
 - [ ] Review test file naming: `.unit.ts` and `.integration.ts` correctly named
@@ -522,7 +522,7 @@ bun install -D vitest @testing-library/react @testing-library/jest-dom jsdom @vi
 - [ ] Check code documentation (comments explain complex logic if needed)
 
 **Acceptance Criteria**:
-- [ ] ESLint passes: `bun run lint`
+- [ ] Biome passes: `bun run lint`
 - [ ] TypeScript compiles: `bun run build`
 - [ ] All tests pass: `bun run test:run`
 - [ ] Coverage report generated successfully
@@ -583,7 +583,7 @@ All tasks are considered complete when:
 - [ ] All acceptance criteria met for each task
 - [ ] All test cases pass
 - [ ] Code coverage >80% for modified components
-- [ ] ESLint passes
+- [ ] Biome passes
 - [ ] TypeScript builds without errors
 - [ ] Feature branch ready for PR review
 - [ ] Feature spec and plan documents updated if needed

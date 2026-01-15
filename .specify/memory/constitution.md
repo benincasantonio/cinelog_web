@@ -147,7 +147,7 @@ Strict Test-Driven Development is MANDATORY for all feature implementations.
 
 All PRs MUST pass before merge:
 
-1. `bun run lint` - ESLint with zero errors
+1. `bun run lint` - Biome with zero errors
 2. `bun run build` - TypeScript compilation with zero errors
 3. All tests passing (when test runner configured)
 

@@ -1,1 +1,1 @@
-export * from "./log-form.schema";
+export * from './log-form.schema';

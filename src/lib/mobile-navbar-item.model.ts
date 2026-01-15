@@ -1,5 +1,5 @@
 export interface MobileNavbarItem {
-  name: string;
-  path: string;
-  visible?: boolean;
+	name: string;
+	path: string;
+	visible?: boolean;
 }

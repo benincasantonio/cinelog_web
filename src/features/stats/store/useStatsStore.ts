@@ -1,28 +1,28 @@
-import { create } from "zustand";
+import { create } from 'zustand';
+import type { StatsResponse } from '../models';
 import {
-  getMyStats,
-  type GetStatsParams,
-} from "../repositories/stats-repository";
-import { type StatsResponse } from "../models";
+	type GetStatsParams,
+	getMyStats,
+} from '../repositories/stats-repository';
 
 interface StatsStore {
-  stats: StatsResponse | null;
-  isLoading: boolean;
-  error: string | null;
-  fetchStats: (params?: GetStatsParams) => Promise<void>;
+	stats: StatsResponse | null;
+	isLoading: boolean;
+	error: string | null;
+	fetchStats: (params?: GetStatsParams) => Promise<void>;
 }
 
 export const useStatsStore = create<StatsStore>((set) => ({
-  stats: null,
-  isLoading: false,
-  error: null,
-  fetchStats: async (params) => {
-    set({ isLoading: true, error: null });
-    try {
-      const stats = await getMyStats(params);
-      set({ stats, isLoading: false });
-    } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
-    }
-  },
+	stats: null,
+	isLoading: false,
+	error: null,
+	fetchStats: async (params) => {
+		set({ isLoading: true, error: null });
+		try {
+			const stats = await getMyStats(params);
+			set({ stats, isLoading: false });
+		} catch (error) {
+			set({ error: (error as Error).message, isLoading: false });
+		}
+	},
 }));

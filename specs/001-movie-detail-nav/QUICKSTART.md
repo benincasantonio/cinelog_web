@@ -99,7 +99,7 @@ bun run test:coverage
 ### 4. Validate (Phase 5) - 30 minutes
 ```bash
 bun run test:run        # All tests must pass
-bun run lint            # No ESLint errors
+bun run lint            # No Biome linter errors
 bun run build           # TypeScript builds cleanly
 bun run test:coverage   # >80% coverage for modified files
 ```
@@ -167,7 +167,7 @@ All of these should be true when feature is complete:
 - [ ] Skeleton screen shows while loading
 - [ ] All tests pass: `bun run test:run`
 - [ ] Coverage >80% for MovieLogItem component
-- [ ] ESLint passes: `bun run lint`
+- [ ] Biome passes: `bun run lint`
 - [ ] Builds successfully: `bun run build`
 
 ## Next Steps

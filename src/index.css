@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 @source "../node_modules/@antoniobenincasa/ui";
 
 @import "@antoniobenincasa/ui/ui.css";
@@ -10,20 +9,19 @@
 
 :root.light,
 :root {
-  --primary: var(--color-violet-600);
-  --primary-foreground: var(--color-white);
+	--primary: var(--color-violet-600);
+	--primary-foreground: var(--color-white);
 }
 :root.dark {
-  --primary: var(--color-violet-600);
-  --primary-foreground: var(--color-white);
+	--primary: var(--color-violet-600);
+	--primary-foreground: var(--color-white);
 }
 
-
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
 }

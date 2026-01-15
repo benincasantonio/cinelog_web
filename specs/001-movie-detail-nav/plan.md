@@ -217,7 +217,7 @@ vi.mock('@/features/logs/repositories')
 - [ ] Run full test suite: `bun run test`
 - [ ] Generate coverage report: `bun run test:coverage`
 - [ ] Verify all tests pass
-- [ ] Check ESLint compliance: `bun run lint`
+- [ ] Check Biome compliance: `bun run lint`
 - [ ] Manual QA in dev server
 - [ ] Update any affected documentation
 
