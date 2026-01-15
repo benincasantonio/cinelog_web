@@ -1,6 +1,6 @@
 import { MoviesWatched } from '@/features/movie/components/MoviesWatched';
 
-export const ProfileMoviesWatchedPage = () => {
+const ProfileMoviesWatchedPage = () => {
 	return <MoviesWatched />;
 };
 

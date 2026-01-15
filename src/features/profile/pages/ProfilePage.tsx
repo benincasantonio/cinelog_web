@@ -11,5 +11,4 @@ const ProfilePage = () => {
 	return <Profile userInfo={userInfo} />;
 };
 
-export { ProfilePage };
 export default ProfilePage;
