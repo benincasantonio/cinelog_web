@@ -4,6 +4,7 @@ import {
 	type UserCredential,
 } from 'firebase/auth';
 import { apiClient } from '@/lib/api/client';
+import type { ApiClientOptions } from '@/lib/models/api-client-options';
 import { auth } from '../../../lib/firebase';
 import type { RegisterRequest } from '../models/register-request';
 
@@ -24,5 +25,10 @@ export const logout = async (): Promise<void> => {
 };
 
 export const register = async (request: RegisterRequest): Promise<void> => {
-	return await apiClient.post('v1/auth/register', { json: request }).json();
+	return await apiClient
+		.post('v1/auth/register', {
+			json: request,
+			skipAuth: true,
+		} as ApiClientOptions)
+		.json();
 };
