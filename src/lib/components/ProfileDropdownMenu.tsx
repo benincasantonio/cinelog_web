@@ -31,9 +31,8 @@ export const ProfileDropdownMenu = () => {
   };
 
   const goToProfilePage = () => {
-	console.log("User info:", userInfo);
-	if(!userInfo) return;
-	console.log("Navigating to profile of:", userInfo.handle);
+    if (!userInfo) return;
+
     navigate(`/profile/${userInfo.handle}`);
   };
 
