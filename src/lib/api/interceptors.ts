@@ -2,8 +2,6 @@ import { signOut } from "firebase/auth";
 import { type KyRequest } from "ky";
 import type { ApiClientOptions } from "@/lib/models/api-client-options";
 import { auth } from "../firebase";
-import { th } from "zod/v4/locales";
-import { ThemeProvider } from "../components";
 
 /**
  * Interceptor that adds authentication headers to requests.
