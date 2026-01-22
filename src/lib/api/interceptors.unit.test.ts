@@ -106,7 +106,9 @@ describe('interceptors', () => {
 
 			const consoleSpy = vi
 				.spyOn(console, 'error')
-				.mockImplementation(() => {});
+				.mockImplementation((value) => {
+					console.log(value);
+				});
 
 			const options: ApiClientOptions = {
 				skipAuth: false,
