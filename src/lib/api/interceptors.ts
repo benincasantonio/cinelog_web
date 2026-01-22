@@ -1,7 +1,7 @@
-import { signOut } from "firebase/auth";
-import { type KyRequest } from "ky";
-import type { ApiClientOptions } from "@/lib/models/api-client-options";
-import { auth } from "../firebase";
+import { signOut } from 'firebase/auth';
+import { type KyRequest } from 'ky';
+import type { ApiClientOptions } from '@/lib/models/api-client-options';
+import { auth } from '../firebase';
 
 /**
  * Interceptor that adds authentication headers to requests.
@@ -10,17 +10,17 @@ import { auth } from "../firebase";
  * Otherwise, the current user's ID token is fetched and added to the request.
  */
 export const beforeRequestInterceptor = async (
-  request: KyRequest,
-  options: ApiClientOptions,
+	request: KyRequest,
+	options: ApiClientOptions
 ) => {
-  if (options.skipAuth) return;
+	if (options.skipAuth) return;
 
-  const user = auth.currentUser;
-  if (!user) return;
+	const user = auth.currentUser;
+	if (!user) return;
 
-  const token = await user.getIdToken();
+	const token = await user.getIdToken();
 
-  request.headers.set("Authorization", `Bearer ${token}`);
+	request.headers.set('Authorization', `Bearer ${token}`);
 };
 
 /**
@@ -30,13 +30,13 @@ export const beforeRequestInterceptor = async (
  * the user is signed out and redirected to the login page.
  */
 export const afterResponseInterceptor = async (
-  _request: Request,
-  options: ApiClientOptions,
-  response: Response,
+	_request: Request,
+	options: ApiClientOptions,
+	response: Response
 ) => {
-  if (response.status === 401 && !options.skipAuth) {
-    await signOut(auth);
-    window.location.href = "/login";
-    throw new Error("Unauthorized");
-  }
+	if (response.status === 401 && !options.skipAuth) {
+		await signOut(auth);
+		window.location.href = '/login';
+		throw new Error('Unauthorized');
+	}
 };
