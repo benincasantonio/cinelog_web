@@ -104,7 +104,9 @@ describe('interceptors', () => {
 				writable: true,
 			});
 
-			const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+			const consoleSpy = vi
+				.spyOn(console, 'error')
+				.mockImplementation(() => {});
 
 			const options: ApiClientOptions = {
 				skipAuth: false,
@@ -116,7 +118,10 @@ describe('interceptors', () => {
 			await beforeRequestInterceptor(request, options);
 
 			expect(request.headers.get('Authorization')).toBeNull();
-			expect(consoleSpy).toHaveBeenCalledWith('Failed to get ID token:', mockError);
+			expect(consoleSpy).toHaveBeenCalledWith(
+				'Failed to get ID token:',
+				mockError
+			);
 
 			// Restore original mock
 			Object.defineProperty(firebaseMock.auth, 'currentUser', {
