@@ -18,7 +18,14 @@ export const beforeRequestInterceptor = async (
 	const user = auth.currentUser;
 	if (!user) return;
 
-	const token = await user.getIdToken();
+	let token;
+
+	try {
+		token = await user.getIdToken();
+	} catch (error) {
+		console.error('Failed to get ID token:', error);
+		return;
+	}
 
 	request.headers.set('Authorization', `Bearer ${token}`);
 };
