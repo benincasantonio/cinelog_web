@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export const AuthTabs = ({ children }: { children: React.ReactNode }) => {
-	const { t } = useTranslation();
+	const { i18n } = useTranslation();
 	const location = useLocation();
 	const navigate = useNavigate();
 	const activeTab = (location.pathname.split('/').pop() || 'login') as
