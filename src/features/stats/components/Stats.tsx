@@ -2,14 +2,22 @@ import { useEffect } from 'react';
 import { useStatsStore } from '../store/useStatsStore';
 import { StatsCard } from './StatsCard';
 import { WatchMethodPieChart } from './WatchMethodPieChart';
+import { useTranslation } from 'react-i18next';
+import { humanizeMinutes } from '@/lib/utilities/date-utils';
 
 export const Stats = () => {
 	const { stats, isLoading, error, fetchStats } = useStatsStore();
+	const { i18n } = useTranslation();
 
 	useEffect(() => {
 		fetchStats();
 	}, [fetchStats]);
 
+	const humanizedValue = stats?.summary.totalMinutes
+		? humanizeMinutes(stats.summary.totalMinutes, i18n.language)
+		: 0;
+
+	console.log(humanizedValue);
 	if (isLoading) {
 		return <div>Loading stats...</div>;
 	}
@@ -31,7 +39,7 @@ export const Stats = () => {
 					title="Total Rewatches"
 					value={stats.summary.totalRewatches}
 				/>
-				<StatsCard title="Total Minutes" value={stats.summary.totalMinutes} />
+				<StatsCard title="Total Minutes" value={humanizedValue} />
 				<StatsCard
 					title="Average Rating"
 					value={stats.summary.voteAverage.toFixed(1)}
