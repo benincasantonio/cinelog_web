@@ -39,10 +39,16 @@ export const convertMinutesToTime = (
 	minutes: number;
 } => {
 	const years = Math.floor(minutes / MINS_PER_YEAR);
-	const months = Math.floor((minutes % MINS_PER_YEAR) / MINS_PER_MONTH);
-	const days = Math.floor((minutes % MINS_PER_MONTH) / MINS_PER_DAY);
-	const hours = Math.floor((minutes % MINS_PER_DAY) / MINS_PER_HOUR);
-	const minutesLeft = minutes % MINS_PER_HOUR;
+	const remainderAfterYears = minutes % MINS_PER_YEAR;
+
+	const months = Math.floor(remainderAfterYears / MINS_PER_MONTH);
+	const remainderAfterMonths = remainderAfterYears % MINS_PER_MONTH;
+
+	const days = Math.floor(remainderAfterMonths / MINS_PER_DAY);
+	const remainderAfterDays = remainderAfterMonths % MINS_PER_DAY;
+
+	const hours = Math.floor(remainderAfterDays / MINS_PER_HOUR);
+	const minutesLeft = remainderAfterDays % MINS_PER_HOUR;
 
 	return {
 		years,
