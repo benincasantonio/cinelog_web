@@ -3,6 +3,12 @@ import { convertMinutesToTime, humanizeMinutes } from './date-utils';
 
 describe('date-utils', () => {
 	describe('convertMinutesToTime', () => {
+		it('should throw an error for negative minutes', () => {
+			expect(() => convertMinutesToTime(-1)).toThrow(
+				'Minutes cannot be negative'
+			);
+		});
+
 		it('should return all zeros for 0 minutes', () => {
 			const result = convertMinutesToTime(0);
 			expect(result).toEqual({
