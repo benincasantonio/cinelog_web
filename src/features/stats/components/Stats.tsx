@@ -13,11 +13,11 @@ export const Stats = () => {
 		fetchStats();
 	}, [fetchStats]);
 
-	const humanizedValue = stats?.summary.totalMinutes
-		? humanizeMinutes(stats.summary.totalMinutes, i18n.language)
-		: 0;
+	const humanizedValue = humanizeMinutes(
+		stats?.summary?.totalMinutes ?? 0,
+		i18n.language
+	);
 
-	console.log(humanizedValue);
 	if (isLoading) {
 		return <div>Loading stats...</div>;
 	}

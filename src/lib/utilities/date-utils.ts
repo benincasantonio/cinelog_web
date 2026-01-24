@@ -12,13 +12,15 @@ function getTimeUnitsShort(locale: string): {
 	hour: string;
 	minute: string;
 } {
-	locale = Object.hasOwn(timeUnits, locale) ? locale : 'en';
+	const validLocale = (
+		Object.hasOwn(timeUnits, locale) ? locale : 'en'
+	) as keyof typeof timeUnits;
 
-	const yearLocale = timeUnits[locale].year.short;
-	const monthLocale = timeUnits[locale].month.short;
-	const dayLocale = timeUnits[locale].day.short;
-	const hourLocale = timeUnits[locale].hour.short;
-	const minuteLocale = timeUnits[locale].minute.short;
+	const yearLocale = timeUnits[validLocale].year.short;
+	const monthLocale = timeUnits[validLocale].month.short;
+	const dayLocale = timeUnits[validLocale].day.short;
+	const hourLocale = timeUnits[validLocale].hour.short;
+	const minuteLocale = timeUnits[validLocale].minute.short;
 
 	return {
 		year: yearLocale,
@@ -38,6 +40,20 @@ export const convertMinutesToTime = (
 	hours: number;
 	minutes: number;
 } => {
+	if (minutes < 0) {
+		throw new Error('Minutes cannot be negative');
+	}
+
+	if (minutes === 0) {
+		return {
+			years: 0,
+			months: 0,
+			days: 0,
+			hours: 0,
+			minutes: 0,
+		};
+	}
+
 	const years = Math.floor(minutes / MINS_PER_YEAR);
 	const remainderAfterYears = minutes % MINS_PER_YEAR;
 
