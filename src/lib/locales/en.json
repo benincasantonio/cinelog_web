@@ -170,5 +170,14 @@
 		"tv": "TV",
 		"other": "Other",
 		"noData": "No watch data available"
+	},
+	"Stats": {
+		"totalWatched": "Total Watched",
+		"uniqueTitles": "Unique Titles",
+		"totalRewatches": "Total Rewatches",
+		"timeWatched": "Time Watched",
+		"averageRating": "Average Rating",
+		"loading": "Loading stats...",
+		"noStats": "No stats available"
 	}
 }

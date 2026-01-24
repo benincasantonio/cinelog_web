@@ -170,5 +170,14 @@
 		"tv": "TV",
 		"other": "Altro",
 		"noData": "Nessun dato disponibile"
+	},
+	"Stats": {
+		"totalWatched": "Totale Visti",
+		"uniqueTitles": "Titoli Unici",
+		"totalRewatches": "Totale Rivisti",
+		"timeWatched": "Tempo di Visione",
+		"averageRating": "Voto Medio",
+		"loading": "Caricamento statistiche...",
+		"noStats": "Nessuna statistica disponibile"
 	}
 }

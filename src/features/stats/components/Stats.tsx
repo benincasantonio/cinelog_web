@@ -7,7 +7,7 @@ import { WatchMethodPieChart } from './WatchMethodPieChart';
 
 export const Stats = () => {
 	const { stats, isLoading, error, fetchStats } = useStatsStore();
-	const { i18n } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	useEffect(() => {
 		fetchStats();
@@ -19,7 +19,7 @@ export const Stats = () => {
 	);
 
 	if (isLoading) {
-		return <div>Loading stats...</div>;
+		return <div>{t('Stats.loading')}</div>;
 	}
 
 	if (error) {
@@ -27,21 +27,27 @@ export const Stats = () => {
 	}
 
 	if (!stats) {
-		return <div>No stats available</div>;
+		return <div>{t('Stats.noStats')}</div>;
 	}
 
 	return (
 		<div className="space-y-6">
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-				<StatsCard title="Total Watched" value={stats.summary.totalWatches} />
-				<StatsCard title="Unique Titles" value={stats.summary.uniqueTitles} />
 				<StatsCard
-					title="Total Rewatches"
+					title={t('Stats.totalWatched')}
+					value={stats.summary.totalWatches}
+				/>
+				<StatsCard
+					title={t('Stats.uniqueTitles')}
+					value={stats.summary.uniqueTitles}
+				/>
+				<StatsCard
+					title={t('Stats.totalRewatches')}
 					value={stats.summary.totalRewatches}
 				/>
-				<StatsCard title="Total Minutes" value={humanizedValue} />
+				<StatsCard title={t('Stats.timeWatched')} value={humanizedValue} />
 				<StatsCard
-					title="Average Rating"
+					title={t('Stats.averageRating')}
 					value={stats.summary.voteAverage.toFixed(1)}
 				/>
 			</div>
