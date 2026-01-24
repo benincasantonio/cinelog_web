@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { humanizeMinutes } from '@/lib/utilities/date-utils';
 import { useStatsStore } from '../store/useStatsStore';
 import { StatsCard } from './StatsCard';
 import { WatchMethodPieChart } from './WatchMethodPieChart';
-import { useTranslation } from 'react-i18next';
-import { humanizeMinutes } from '@/lib/utilities/date-utils';
 
 export const Stats = () => {
 	const { stats, isLoading, error, fetchStats } = useStatsStore();
