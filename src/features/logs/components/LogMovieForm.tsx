@@ -48,6 +48,8 @@ export const LogMovieForm = ({
 
 	const movieToEdit = useMovieLogDialogStore((state) => state.movieToEdit);
 
+	const triggerUpdate = useMovieLogDialogStore((state) => state.triggerUpdate);
+
 	const formValue = useMemo(
 		() => ({
 			tmdbId: movieToEdit?.tmdbId ?? prefilledMovie?.tmdbId ?? undefined,
@@ -98,7 +100,6 @@ export const LogMovieForm = ({
 	};
 
 	const onValueChange = (value: string) => {
-		console.log(value);
 		if (!value) {
 			form.setValue('tmdbId', 0);
 			return;
@@ -123,6 +124,7 @@ export const LogMovieForm = ({
 			clearPrefilledMovie();
 
 			onMovieLogUpdated?.();
+			triggerUpdate();
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				setError(err.message);
@@ -151,6 +153,7 @@ export const LogMovieForm = ({
 			clearPrefilledMovie();
 
 			onMovieLogCreated?.();
+			triggerUpdate();
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				setError(err.message);

@@ -16,6 +16,7 @@ export const CreateMovieLogDialog = () => {
 	const { t } = useTranslation();
 	const isOpen = useMovieLogDialogStore((state) => state.isOpen);
 	const setIsOpen = useMovieLogDialogStore((state) => state.setIsOpen);
+	const close = useMovieLogDialogStore((state) => state.close);
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -1,5 +1,4 @@
 import {
-	Button,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
@@ -88,7 +87,7 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 			<div className="ml-auto">
 				<DropdownMenu>
 					<DropdownMenuTrigger className="outline-none">
-						<MoreVertical className="w-4 h-4" size={5} />
+						<MoreVertical className="h-5 w-5" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
 						<DropdownMenuItem onClick={editMovieLog}>
