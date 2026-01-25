@@ -28,6 +28,7 @@ import { useMovieLogDialogStore } from '../store';
 interface LogMovieFormProps {
 	formId?: string;
 	showSubmitButton?: boolean;
+	onLoading?: (value: boolean) => void;
 	onMovieLogCreated?: () => void;
 	onMovieLogUpdated?: () => void;
 }
@@ -37,6 +38,7 @@ export const LogMovieForm = ({
 	showSubmitButton = true,
 	onMovieLogCreated,
 	onMovieLogUpdated,
+	onLoading,
 }: LogMovieFormProps) => {
 	const { t } = useTranslation();
 	const prefilledMovie = useMovieLogDialogStore(
@@ -87,6 +89,14 @@ export const LogMovieForm = ({
 			},
 		]);
 	}, [movieToEdit, prefilledMovie]);
+
+	useEffect(() => {
+		if (!onLoading) {
+			return;
+		}
+
+		onLoading?.(loading);
+	}, [loading, onLoading]);
 
 	const onFilterChange = async (value: string) => {
 		const results = await search(value);
@@ -181,6 +191,7 @@ export const LogMovieForm = ({
 				className="flex flex-col gap-3"
 			>
 				{error && <div className="text-red-500 text-sm">{error}</div>}
+				{loading ? 'true' : 'false'}
 				<FormField
 					control={form.control}
 					name="tmdbId"
