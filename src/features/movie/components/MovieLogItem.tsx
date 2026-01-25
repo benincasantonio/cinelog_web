@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import type { LogListItem } from '@/features/logs/models';
 import { MovieVote } from './MovieVote';
 import { MoreVertical } from 'lucide-react';
+import { useMovieLogDialogStore } from '@/features/logs';
 
 interface MovieLogItemProps {
 	log: LogListItem;
@@ -19,10 +20,17 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 
+	const { open } = useMovieLogDialogStore();
 	const handleTitleClick = () => {
 		if (log.tmdbId) {
 			navigate(`/movies/${log.tmdbId}`);
 		}
+	};
+
+	const editMovieLog = () => {
+		open({
+			movieToEdit: log,
+		});
 	};
 
 	return (
@@ -83,7 +91,9 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 						<MoreVertical className="w-4 h-4" size={5} />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuItem>{t('MovieLogItem.edit')}</DropdownMenuItem>
+						<DropdownMenuItem onClick={editMovieLog}>
+							{t('MovieLogItem.edit')}
+						</DropdownMenuItem>
 						<DropdownMenuItem variant="destructive">
 							{' '}
 							{t('MovieLogItem.delete')}
