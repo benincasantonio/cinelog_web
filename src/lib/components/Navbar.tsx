@@ -16,9 +16,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/lib/hooks/useTheme';
 import { useIsMobile } from '../hooks';
 import type { MobileNavbarItem } from '../mobile-navbar-item.model';
+import { Logo } from './Logo';
 import { MobileNavbar } from './MobileNavbar';
 import { ProfileDropdownMenu } from './ProfileDropdownMenu';
-import { Logo } from './Logo';
 
 export const Navbar = () => {
 	const { t } = useTranslation();

@@ -5,12 +5,12 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@antoniobenincasa/ui';
+import { MoreVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useMovieLogDialogStore } from '@/features/logs';
 import type { LogListItem } from '@/features/logs/models';
 import { MovieVote } from './MovieVote';
-import { MoreVertical } from 'lucide-react';
-import { useMovieLogDialogStore } from '@/features/logs';
 
 interface MovieLogItemProps {
 	log: LogListItem;
