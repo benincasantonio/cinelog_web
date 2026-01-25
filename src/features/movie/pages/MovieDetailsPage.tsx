@@ -138,7 +138,10 @@ const MovieDetailsPage = () => {
 
 					<button
 						onClick={() =>
-							tmdbId && openLogDialog({ tmdbId: Number(tmdbId), title })
+							tmdbId &&
+							openLogDialog({
+								prefilledMovie: { tmdbId: Number(tmdbId), title },
+							})
 						}
 						className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-600/10 text-green-600 hover:bg-green-600/20 transition-colors font-medium cursor-pointer"
 					>

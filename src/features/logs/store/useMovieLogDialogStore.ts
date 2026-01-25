@@ -22,6 +22,8 @@ type MovieLogDialogStore = {
 	open: (options?: MovieDialogOptions) => void;
 	close: () => void;
 	clearPrefilledMovie: () => void;
+	triggerCount: number;
+	triggerUpdate: () => void;
 };
 
 type MovieDialogOptions = {
@@ -50,4 +52,8 @@ export const useMovieLogDialogStore = create<MovieLogDialogStore>((set) => ({
 	},
 	close: () => set({ isOpen: false, prefilledMovie: null, movieToEdit: null }),
 	clearPrefilledMovie: () => set({ prefilledMovie: null }),
+	triggerCount: 0,
+	triggerUpdate: () => {
+		set((state) => ({ ...state, triggerCount: state.triggerCount + 1 }));
+	},
 }));

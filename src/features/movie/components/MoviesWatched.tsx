@@ -7,6 +7,7 @@ import {
 } from '@antoniobenincasa/ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMovieLogDialogStore } from '@/features/logs';
 import type { LogListItem } from '@/features/logs/models';
 import { type GetLogsParams, getLogs } from '@/features/logs/repositories';
 import { MovieLogList } from './MovieLogList';
@@ -20,6 +21,7 @@ export const MoviesWatched = () => {
 	const [selectedYear, setSelectedYear] = useState<string>(
 		new Date().getFullYear().toString()
 	);
+	const refreshCounter = useMovieLogDialogStore((state) => state.triggerCount);
 
 	const currentYear = new Date().getFullYear();
 	const years = Array.from({ length: 11 }, (_, i) => currentYear - i);
@@ -51,7 +53,7 @@ export const MoviesWatched = () => {
 		};
 
 		fetchLogs();
-	}, [selectedYear]);
+	}, [selectedYear, refreshCounter]);
 
 	if (isLoading) {
 		return <MoviesWatchedLoading />;
