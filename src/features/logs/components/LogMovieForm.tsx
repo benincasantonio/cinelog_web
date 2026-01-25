@@ -191,7 +191,7 @@ export const LogMovieForm = ({
 				className="flex flex-col gap-3"
 			>
 				{error && <div className="text-red-500 text-sm">{error}</div>}
-				{loading ? 'true' : 'false'}
+
 				<FormField
 					control={form.control}
 					name="tmdbId"
