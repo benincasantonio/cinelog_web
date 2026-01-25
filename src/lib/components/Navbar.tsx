@@ -18,6 +18,7 @@ import { useIsMobile } from '../hooks';
 import type { MobileNavbarItem } from '../mobile-navbar-item.model';
 import { MobileNavbar } from './MobileNavbar';
 import { ProfileDropdownMenu } from './ProfileDropdownMenu';
+import { Logo } from './Logo';
 
 export const Navbar = () => {
 	const { t } = useTranslation();
@@ -76,12 +77,7 @@ export const Navbar = () => {
 						className="md:hidden cursor-pointer"
 						onClick={() => setIsOpen(true)}
 					></Menu>
-					<Link
-						to="/"
-						className="text-xl font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-violet-400 transition-colors"
-					>
-						CineLog
-					</Link>
+					<Logo isAlpha={true} />
 
 					<NavigationMenu className="hidden md:block" viewport={isMobile}>
 						<NavigationMenuList className="flex-wrap">
