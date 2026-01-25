@@ -21,18 +21,22 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { search } from '@/features/movie-search/repositories';
 import { WATCHED_WHERE_VALUES } from '../models';
-import { createLog } from '../repositories';
+import { createLog, updateLog } from '../repositories';
 import { type LogFormSchema, logFormSchema } from '../schemas';
 import { useMovieLogDialogStore } from '../store';
 
 interface LogMovieFormProps {
 	formId?: string;
-	showSubmitButton?: boolean;
+  showSubmitButton?: boolean;
+  onMovieLogCreated?: () => void;
+	onMovieLogUpdated?: () => void;
 }
 
 export const LogMovieForm = ({
 	formId,
-	showSubmitButton = true,
+  showSubmitButton = true,
+	onMovieLogCreated,
+	onMovieLogUpdated
 }: LogMovieFormProps) => {
 	const { t } = useTranslation();
 	const prefilledMovie = useMovieLogDialogStore(
@@ -103,7 +107,34 @@ export const LogMovieForm = ({
 		form.setValue('tmdbId', parseInt(value, 10));
 	};
 
-	const handleSubmit = async (data: LogFormSchema) => {
+	const updateMovieLog = async (data: LogFormSchema) => {
+		setLoading(true);
+		setError(null);
+
+		try {
+			await updateLog(movieToEdit!.id, {
+				dateWatched: data.dateWatched,
+				viewingNotes: data.viewingNotes ?? null,
+				watchedWhere: data.watchedWhere ?? null,
+			});
+
+			// Reset form on success
+			form.reset();
+      clearPrefilledMovie();
+
+      onMovieLogUpdated?.();
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else {
+				setError(t('LogMovieForm.error'));
+			}
+		} finally {
+			setLoading(false);
+		}
+  };
+
+	const createMovieLog = async (data: LogFormSchema) => {
 		setLoading(true);
 		setError(null);
 
@@ -117,7 +148,9 @@ export const LogMovieForm = ({
 
 			// Reset form on success
 			form.reset();
-			clearPrefilledMovie();
+      clearPrefilledMovie();
+
+      onMovieLogCreated?.();
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				setError(err.message);
@@ -128,6 +161,14 @@ export const LogMovieForm = ({
 			setLoading(false);
 		}
 	};
+
+  const handleSubmit = async (data: LogFormSchema) => {
+    if (!!movieToEdit) {
+      await updateMovieLog(data);
+    } else {
+      await createMovieLog(data);
+    }
+  };
 
 	return (
 		<Form {...form}>
