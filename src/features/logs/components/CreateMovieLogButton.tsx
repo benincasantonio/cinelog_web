@@ -1,11 +1,11 @@
 import { Button } from '@antoniobenincasa/ui';
 import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useCreateMovieLogDialogStore } from '../store';
+import { useMovieLogDialogStore } from '../store';
 
 export const CreateMovieLogButton = () => {
 	const { t } = useTranslation();
-	const open = useCreateMovieLogDialogStore((state) => state.open);
+	const open = useMovieLogDialogStore((state) => state.open);
 
 	const handleClick = () => {
 		open();

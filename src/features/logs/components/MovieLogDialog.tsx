@@ -9,13 +9,13 @@ import {
 	DialogTitle,
 } from '@antoniobenincasa/ui';
 import { useTranslation } from 'react-i18next';
-import { useCreateMovieLogDialogStore } from '../store';
+import { useMovieLogDialogStore } from '../store';
 import { LogMovieForm } from './LogMovieForm';
 
 export const CreateMovieLogDialog = () => {
 	const { t } = useTranslation();
-	const isOpen = useCreateMovieLogDialogStore((state) => state.isOpen);
-	const setIsOpen = useCreateMovieLogDialogStore((state) => state.setIsOpen);
+	const isOpen = useMovieLogDialogStore((state) => state.isOpen);
+	const setIsOpen = useMovieLogDialogStore((state) => state.setIsOpen);
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>

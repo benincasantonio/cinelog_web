@@ -16,14 +16,14 @@ import {
 	Textarea,
 } from '@antoniobenincasa/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { search } from '@/features/movie-search/repositories';
 import { WATCHED_WHERE_VALUES } from '../models';
 import { createLog } from '../repositories';
 import { type LogFormSchema, logFormSchema } from '../schemas';
-import { useCreateMovieLogDialogStore } from '../store';
+import { useMovieLogDialogStore } from '../store';
 
 interface LogMovieFormProps {
 	formId?: string;
@@ -35,21 +35,28 @@ export const LogMovieForm = ({
 	showSubmitButton = true,
 }: LogMovieFormProps) => {
 	const { t } = useTranslation();
-	const prefilledMovie = useCreateMovieLogDialogStore(
+	const prefilledMovie = useMovieLogDialogStore(
 		(state) => state.prefilledMovie
 	);
-	const clearPrefilledMovie = useCreateMovieLogDialogStore(
+	const clearPrefilledMovie = useMovieLogDialogStore(
 		(state) => state.clearPrefilledMovie
+	);
+
+	const movieToEdit = useMovieLogDialogStore((state) => state.movieToEdit);
+
+	const formValue = useMemo(
+		() => ({
+			tmdbId: movieToEdit?.tmdbId ?? prefilledMovie?.tmdbId ?? undefined,
+			dateWatched: movieToEdit?.dateWatched ?? '',
+			viewingNotes: movieToEdit?.viewingNotes ?? undefined,
+			watchedWhere: movieToEdit?.watchedWhere ?? undefined,
+		}),
+		[movieToEdit, prefilledMovie]
 	);
 
 	const form = useForm<LogFormSchema>({
 		resolver: zodResolver(logFormSchema),
-		defaultValues: {
-			tmdbId: undefined,
-			dateWatched: '',
-			viewingNotes: null,
-			watchedWhere: null,
-		},
+		values: formValue as LogFormSchema,
 		mode: 'onBlur',
 	});
 
@@ -59,18 +66,21 @@ export const LogMovieForm = ({
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	// Prefill the form when a movie is provided
 	useEffect(() => {
-		if (prefilledMovie) {
-			form.setValue('tmdbId', prefilledMovie.tmdbId);
-			setSearchItems([
-				{
-					label: prefilledMovie.title,
-					value: prefilledMovie.tmdbId.toString(),
-				},
-			]);
+		if (!movieToEdit && !prefilledMovie) {
+			return;
 		}
-	}, [prefilledMovie, form]);
+		const label = movieToEdit?.movie?.title ?? prefilledMovie?.title;
+		const value =
+			movieToEdit?.tmdbId?.toString() ?? prefilledMovie?.tmdbId?.toString();
+
+		setSearchItems([
+			{
+				label: label ?? '',
+				value: value ?? '',
+			},
+		]);
+	}, [movieToEdit, prefilledMovie]);
 
 	const onFilterChange = async (value: string) => {
 		const results = await search(value);
@@ -84,6 +94,7 @@ export const LogMovieForm = ({
 	};
 
 	const onValueChange = (value: string) => {
+		console.log(value);
 		if (!value) {
 			form.setValue('tmdbId', 0);
 			return;
@@ -134,7 +145,7 @@ export const LogMovieForm = ({
 							<FormLabel>{t('LogMovieForm.movieLabel')}</FormLabel>
 							<FormControl>
 								<Autocomplete
-									value={field.value?.toString() ?? undefined}
+									value={field.value?.toString() ?? ''}
 									items={searchItems}
 									onFilterChange={onFilterChange}
 									onValueChange={onValueChange}
@@ -167,10 +178,10 @@ export const LogMovieForm = ({
 							<FormLabel>{t('LogMovieForm.watchedWhereLabel')}</FormLabel>
 							<FormControl>
 								<Select
-									value={field.value ?? undefined}
-									onValueChange={field.onChange}
+									value={field.value ?? ''}
+									onValueChange={(value) => field.onChange(value)}
 								>
-									<SelectTrigger>
+									<SelectTrigger className="w-full">
 										<SelectValue
 											placeholder={t('LogMovieForm.watchedWherePlaceholder')}
 										/>

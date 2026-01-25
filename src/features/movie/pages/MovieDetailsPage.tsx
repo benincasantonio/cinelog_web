@@ -3,7 +3,7 @@ import { Clapperboard, Star } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCreateMovieLogDialogStore } from '@/features/logs/store';
+import { useMovieLogDialogStore } from '@/features/logs/store';
 import { MovieDetailsHero } from '../components/MovieDetailsHero';
 import { MovieGenres } from '../components/MovieGenres';
 import { MovieRuntime } from '../components/MovieRuntime';
@@ -34,7 +34,7 @@ const MovieDetailsPage = () => {
 	);
 	const setMovieRating = useMovieDetailsStore((state) => state.setMovieRating);
 	const openRateModal = useMovieRatingStore((state) => state.openModal);
-	const openLogDialog = useCreateMovieLogDialogStore((state) => state.open);
+	const openLogDialog = useMovieLogDialogStore((state) => state.open);
 
 	useEffect(() => {
 		if (tmdbId) {

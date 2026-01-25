@@ -1,2 +1,2 @@
 export * from './CreateMovieLogButton';
-export * from './CreateMovieLogDialog';
+export * from './MovieLogDialog';
