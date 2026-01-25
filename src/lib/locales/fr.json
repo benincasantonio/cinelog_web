@@ -30,7 +30,9 @@
 	"MovieLogItem": {
 		"unknownTitle": "Titre Inconnu",
 		"watched": "Regardé:",
-		"noImage": "Pas d'Image"
+		"noImage": "Pas d'Image",
+		"edit": "Modifier",
+		"delete": "Supprimer"
 	},
 	"ProfileHeader": {
 		"about": "À propos",

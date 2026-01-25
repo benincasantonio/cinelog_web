@@ -1,7 +1,15 @@
+import {
+	Button,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@antoniobenincasa/ui';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { LogListItem } from '@/features/logs/models';
 import { MovieVote } from './MovieVote';
+import { MoreVertical } from 'lucide-react';
 
 interface MovieLogItemProps {
 	log: LogListItem;
@@ -67,6 +75,21 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 						<MovieVote vote={log.movieRating || 0} source="user" />
 					)}
 				</div>
+			</div>
+
+			<div className="ml-auto">
+				<DropdownMenu>
+					<DropdownMenuTrigger className="outline-none">
+						<MoreVertical className="w-4 h-4" size={5} />
+					</DropdownMenuTrigger>
+					<DropdownMenuContent>
+						<DropdownMenuItem>{t('MovieLogItem.edit')}</DropdownMenuItem>
+						<DropdownMenuItem variant="destructive">
+							{' '}
+							{t('MovieLogItem.delete')}
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</div>
 		</div>
 	);
