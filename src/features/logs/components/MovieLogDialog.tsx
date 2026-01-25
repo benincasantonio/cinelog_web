@@ -8,6 +8,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@antoniobenincasa/ui';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMovieLogDialogStore } from '../store';
 import { LogMovieForm } from './LogMovieForm';
@@ -17,6 +18,8 @@ export const CreateMovieLogDialog = () => {
 	const isOpen = useMovieLogDialogStore((state) => state.isOpen);
 	const setIsOpen = useMovieLogDialogStore((state) => state.setIsOpen);
 	const close = useMovieLogDialogStore((state) => state.close);
+
+	const [loading, setLoading] = useState(false);
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -36,6 +39,7 @@ export const CreateMovieLogDialog = () => {
 					showSubmitButton={false}
 					onMovieLogCreated={close}
 					onMovieLogUpdated={close}
+					onLoading={(value) => setLoading(value)}
 				/>
 
 				<DialogFooter>
@@ -44,7 +48,7 @@ export const CreateMovieLogDialog = () => {
 							{t('CreateMovieLogDialog.close')}
 						</Button>
 					</DialogClose>
-					<Button form="log-movie-form" type="submit">
+					<Button form="log-movie-form" type="submit" disabled={loading}>
 						{t('CreateMovieLogDialog.submit')}
 					</Button>
 				</DialogFooter>
