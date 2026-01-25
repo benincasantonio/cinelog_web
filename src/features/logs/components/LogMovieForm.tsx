@@ -27,16 +27,16 @@ import { useMovieLogDialogStore } from '../store';
 
 interface LogMovieFormProps {
 	formId?: string;
-  showSubmitButton?: boolean;
-  onMovieLogCreated?: () => void;
+	showSubmitButton?: boolean;
+	onMovieLogCreated?: () => void;
 	onMovieLogUpdated?: () => void;
 }
 
 export const LogMovieForm = ({
 	formId,
-  showSubmitButton = true,
+	showSubmitButton = true,
 	onMovieLogCreated,
-	onMovieLogUpdated
+	onMovieLogUpdated,
 }: LogMovieFormProps) => {
 	const { t } = useTranslation();
 	const prefilledMovie = useMovieLogDialogStore(
@@ -120,9 +120,9 @@ export const LogMovieForm = ({
 
 			// Reset form on success
 			form.reset();
-      clearPrefilledMovie();
+			clearPrefilledMovie();
 
-      onMovieLogUpdated?.();
+			onMovieLogUpdated?.();
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				setError(err.message);
@@ -132,7 +132,7 @@ export const LogMovieForm = ({
 		} finally {
 			setLoading(false);
 		}
-  };
+	};
 
 	const createMovieLog = async (data: LogFormSchema) => {
 		setLoading(true);
@@ -148,9 +148,9 @@ export const LogMovieForm = ({
 
 			// Reset form on success
 			form.reset();
-      clearPrefilledMovie();
+			clearPrefilledMovie();
 
-      onMovieLogCreated?.();
+			onMovieLogCreated?.();
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				setError(err.message);
@@ -162,13 +162,13 @@ export const LogMovieForm = ({
 		}
 	};
 
-  const handleSubmit = async (data: LogFormSchema) => {
-    if (!!movieToEdit) {
-      await updateMovieLog(data);
-    } else {
-      await createMovieLog(data);
-    }
-  };
+	const handleSubmit = async (data: LogFormSchema) => {
+		if (movieToEdit) {
+			await updateMovieLog(data);
+		} else {
+			await createMovieLog(data);
+		}
+	};
 
 	return (
 		<Form {...form}>

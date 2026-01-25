@@ -30,7 +30,12 @@ export const CreateMovieLogDialog = () => {
 					</DialogDescription>
 				</DialogHeader>
 
-				<LogMovieForm formId="log-movie-form" showSubmitButton={false} onMovieLogCreated={close} onMovieLogUpdated={close} />
+				<LogMovieForm
+					formId="log-movie-form"
+					showSubmitButton={false}
+					onMovieLogCreated={close}
+					onMovieLogUpdated={close}
+				/>
 
 				<DialogFooter>
 					<DialogClose asChild>
