@@ -21,24 +21,18 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { search } from '@/features/movie-search/repositories';
 import { WATCHED_WHERE_VALUES } from '../models';
-import { createLog, updateLog } from '../repositories';
 import { type LogFormSchema, logFormSchema } from '../schemas';
 import { useMovieLogDialogStore } from '../store';
+import { useMovieLogStore } from '../store/movieLogStore';
 
 interface LogMovieFormProps {
 	formId?: string;
 	showSubmitButton?: boolean;
-	onLoading?: (value: boolean) => void;
-	onMovieLogCreated?: () => void;
-	onMovieLogUpdated?: () => void;
 }
 
 export const LogMovieForm = ({
 	formId,
 	showSubmitButton = true,
-	onMovieLogCreated,
-	onMovieLogUpdated,
-	onLoading,
 }: LogMovieFormProps) => {
 	const { t } = useTranslation();
 	const prefilledMovie = useMovieLogDialogStore(
@@ -48,9 +42,13 @@ export const LogMovieForm = ({
 		(state) => state.clearPrefilledMovie
 	);
 
-	const movieToEdit = useMovieLogDialogStore((state) => state.movieToEdit);
+	const createLog = useMovieLogStore((state) => state.createLog);
+	const updateLog = useMovieLogStore((state) => state.updateLog);
+	const isLoading = useMovieLogStore((state) => state.isLoading);
+	const error = useMovieLogStore((state) => state.error);
+	const clearError = useMovieLogStore((state) => state.clearError);
 
-	const triggerUpdate = useMovieLogDialogStore((state) => state.triggerUpdate);
+	const movieToEdit = useMovieLogDialogStore((state) => state.movieToEdit);
 
 	const formValue = useMemo(
 		() => ({
@@ -71,8 +69,6 @@ export const LogMovieForm = ({
 	const [searchItems, setSearchItems] = useState<
 		Array<{ label: string; value: string }>
 	>([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!movieToEdit && !prefilledMovie) {
@@ -89,14 +85,6 @@ export const LogMovieForm = ({
 			},
 		]);
 	}, [movieToEdit, prefilledMovie]);
-
-	useEffect(() => {
-		if (!onLoading) {
-			return;
-		}
-
-		onLoading?.(loading);
-	}, [loading, onLoading]);
 
 	const onFilterChange = async (value: string) => {
 		const results = await search(value);
@@ -118,68 +106,23 @@ export const LogMovieForm = ({
 		form.setValue('tmdbId', parseInt(value, 10));
 	};
 
-	const updateMovieLog = async (data: LogFormSchema) => {
-		setLoading(true);
-		setError(null);
-
-		try {
-			await updateLog(movieToEdit!.id, {
-				dateWatched: data.dateWatched,
-				viewingNotes: data.viewingNotes ?? null,
-				watchedWhere: data.watchedWhere ?? null,
-			});
-
-			// Reset form on success
-			form.reset();
-			clearPrefilledMovie();
-
-			onMovieLogUpdated?.();
-			triggerUpdate();
-		} catch (err: unknown) {
-			if (err instanceof Error) {
-				setError(err.message);
-			} else {
-				setError(t('LogMovieForm.error'));
-			}
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	const createMovieLog = async (data: LogFormSchema) => {
-		setLoading(true);
-		setError(null);
-
-		try {
-			await createLog({
-				tmdbId: data.tmdbId,
-				dateWatched: data.dateWatched,
-				viewingNotes: data.viewingNotes ?? null,
-				watchedWhere: data.watchedWhere ?? null,
-			});
-
-			// Reset form on success
-			form.reset();
-			clearPrefilledMovie();
-
-			onMovieLogCreated?.();
-			triggerUpdate();
-		} catch (err: unknown) {
-			if (err instanceof Error) {
-				setError(err.message);
-			} else {
-				setError(t('LogMovieForm.error'));
-			}
-		} finally {
-			setLoading(false);
-		}
-	};
-
 	const handleSubmit = async (data: LogFormSchema) => {
-		if (movieToEdit) {
-			await updateMovieLog(data);
-		} else {
-			await createMovieLog(data);
+		clearError();
+		try {
+			if (movieToEdit) {
+				await updateLog(movieToEdit.id, {
+					dateWatched: data.dateWatched,
+					watchedWhere: data.watchedWhere,
+					viewingNotes: data.viewingNotes,
+				});
+			} else {
+				await createLog(data);
+			}
+
+			form.reset();
+			clearPrefilledMovie();
+		} catch {
+			// Error is already set in the store
 		}
 	};
 
@@ -275,8 +218,10 @@ export const LogMovieForm = ({
 				/>
 
 				{showSubmitButton && (
-					<Button type="submit" disabled={loading}>
-						{loading ? t('LogMovieForm.submitting') : t('LogMovieForm.submit')}
+					<Button type="submit" disabled={isLoading}>
+						{isLoading
+							? t('LogMovieForm.submitting')
+							: t('LogMovieForm.submit')}
 					</Button>
 				)}
 			</form>
