@@ -1,1 +1,1 @@
-export * from './useMovieLogDialogStore';
+export * from './movieLogDialogStore';
