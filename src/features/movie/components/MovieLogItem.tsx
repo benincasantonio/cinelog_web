@@ -93,10 +93,11 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 						<DropdownMenuItem onClick={editMovieLog}>
 							{t('MovieLogItem.edit')}
 						</DropdownMenuItem>
-						<DropdownMenuItem variant="destructive">
+						{/* TODO: Implement delete functionality - see GitHub issue */}
+						{/* <DropdownMenuItem variant="destructive">
 							{' '}
 							{t('MovieLogItem.delete')}
-						</DropdownMenuItem>
+						</DropdownMenuItem> */}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
