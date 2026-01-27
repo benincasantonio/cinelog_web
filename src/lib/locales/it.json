@@ -121,7 +121,7 @@
 	"CreateMovieLogButton": {
 		"logMovie": "Registra Film"
 	},
-	"LogMovieForm": {
+	"MovieLogForm": {
 		"movieLabel": "Film",
 		"dateWatchedLabel": "Data di visione",
 		"watchedWhereLabel": "Dove lo hai visto (Opzionale)",

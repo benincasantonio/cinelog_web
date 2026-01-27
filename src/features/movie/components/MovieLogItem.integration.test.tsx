@@ -1,9 +1,45 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { LogListItem } from '@/features/logs/models';
 import { TestWrapper } from './MovieLogItem.test-setup';
 import { createMockLog } from './MovieLogItem.test-utils';
+
+// Mock Firebase to prevent initialization error
+vi.mock('@/lib/firebase', () => ({
+	auth: {
+		currentUser: null,
+	},
+}));
+
+// Mock useMovieLogDialogStore
+vi.mock('@/features/logs', () => ({
+	useMovieLogDialogStore: () => ({
+		open: vi.fn(),
+	}),
+}));
+
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
+// Mock MovieVote component
+vi.mock('./MovieVote', () => ({
+	MovieVote: ({ vote }: { vote: number }) => (
+		<div data-testid="movie-vote">{vote}</div>
+	),
+}));
+
+// Mock DropdownMenu components to prevent multiple button issues
+vi.mock('@antoniobenincasa/ui', () => ({
+	DropdownMenu: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-menu">{children}</div>,
+	DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-trigger">{children}</div>,
+	DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-content">{children}</div>,
+	DropdownMenuItem: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-item">{children}</div>,
+}));
 
 describe('MovieLogItem Integration Tests', () => {
 	describe('T4.1.1: Navigation Integration with React Router', () => {

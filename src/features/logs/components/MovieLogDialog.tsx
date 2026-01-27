@@ -11,7 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useMovieLogDialogStore } from '../store';
 import { useMovieLogStore } from '../store/movieLogStore';
-import { LogMovieForm } from './LogMovieForm';
+import { MovieLogForm } from './MovieLogForm';
 
 export const CreateMovieLogDialog = () => {
 	const { t } = useTranslation();
@@ -33,7 +33,7 @@ export const CreateMovieLogDialog = () => {
 					</DialogDescription>
 				</DialogHeader>
 
-				<LogMovieForm
+				<MovieLogForm
 					formId="log-movie-form"
 					showSubmitButton={false}
 				/>
@@ -46,8 +46,8 @@ export const CreateMovieLogDialog = () => {
 					</DialogClose>
 					<Button form="log-movie-form" type="submit" disabled={isFormLoading}>
 						{isFormLoading
-							? t('LogMovieForm.submitting')
-							: t('LogMovieForm.submit')}
+							? t('MovieLogForm.submitting')
+							: t('MovieLogForm.submit')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

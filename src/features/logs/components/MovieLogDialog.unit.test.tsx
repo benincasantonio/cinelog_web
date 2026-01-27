@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -41,9 +40,9 @@ vi.mock('../store/movieLogStore', () => ({
         selector(mockMovieLogStore.getState()),
 }));
 
-// Mock LogMovieForm component
-vi.mock('./LogMovieForm', () => ({
-    LogMovieForm: ({ formId }: { formId: string }) => (
+// Mock MovieLogForm component
+vi.mock('./MovieLogForm', () => ({
+    MovieLogForm: ({ formId }: { formId: string }) => (
         <form id={formId} data-testid="log-movie-form">
             Mock Form
         </form>
@@ -177,7 +176,7 @@ describe('CreateMovieLogDialog', () => {
             ).toBeInTheDocument();
         });
 
-        it('should render the LogMovieForm component', () => {
+        it('should render the MovieLogForm component', () => {
             render(<CreateMovieLogDialog />);
 
             expect(screen.getByTestId('log-movie-form')).toBeInTheDocument();
@@ -194,7 +193,7 @@ describe('CreateMovieLogDialog', () => {
         it('should render the submit button', () => {
             render(<CreateMovieLogDialog />);
 
-            expect(screen.getByText('LogMovieForm.submit')).toBeInTheDocument();
+            expect(screen.getByText('MovieLogForm.submit')).toBeInTheDocument();
         });
     });
 
@@ -209,7 +208,7 @@ describe('CreateMovieLogDialog', () => {
             render(<CreateMovieLogDialog />);
 
             const submitButton = screen.getByRole('button', {
-                name: 'LogMovieForm.submit',
+                name: 'MovieLogForm.submit',
             });
             expect(submitButton).toBeInTheDocument();
             expect(submitButton).not.toBeDisabled();
@@ -220,7 +219,7 @@ describe('CreateMovieLogDialog', () => {
 
             render(<CreateMovieLogDialog />);
 
-            expect(screen.getByText('LogMovieForm.submitting')).toBeInTheDocument();
+            expect(screen.getByText('MovieLogForm.submitting')).toBeInTheDocument();
         });
 
         it('should disable submit button when loading', () => {
@@ -229,7 +228,7 @@ describe('CreateMovieLogDialog', () => {
             render(<CreateMovieLogDialog />);
 
             const submitButton = screen.getByRole('button', {
-                name: 'LogMovieForm.submitting',
+                name: 'MovieLogForm.submitting',
             });
             expect(submitButton).toBeDisabled();
         });
@@ -238,7 +237,7 @@ describe('CreateMovieLogDialog', () => {
             render(<CreateMovieLogDialog />);
 
             const submitButton = screen.getByRole('button', {
-                name: 'LogMovieForm.submit',
+                name: 'MovieLogForm.submit',
             });
             expect(submitButton).toHaveAttribute('form', 'log-movie-form');
             expect(submitButton).toHaveAttribute('type', 'submit');
@@ -250,7 +249,7 @@ describe('CreateMovieLogDialog', () => {
             mockMovieLogDialogStore.setState({ isOpen: true });
         });
 
-        it('should pass correct formId to LogMovieForm', () => {
+        it('should pass correct formId to MovieLogForm', () => {
             render(<CreateMovieLogDialog />);
 
             const form = screen.getByTestId('log-movie-form');
