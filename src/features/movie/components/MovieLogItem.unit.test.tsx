@@ -4,6 +4,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LogListItem } from '@/features/logs/models';
 import { MovieLogItem } from './MovieLogItem';
 
+// Mock Firebase to prevent initialization error
+vi.mock('@/lib/firebase', () => ({
+	auth: {
+		currentUser: null,
+	},
+}));
+
+// Mock useMovieLogDialogStore
+vi.mock('@/features/logs', () => ({
+	useMovieLogDialogStore: () => ({
+		open: vi.fn(),
+	}),
+}));
+
 // Mock useNavigate from react-router-dom
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -26,6 +40,14 @@ vi.mock('./MovieVote', () => ({
 	MovieVote: ({ vote }: { vote: number }) => (
 		<div data-testid="movie-vote">{vote}</div>
 	),
+}));
+
+// Mock DropdownMenu components to prevent multiple button issues
+vi.mock('@antoniobenincasa/ui', () => ({
+	DropdownMenu: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-menu">{children}</div>,
+	DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-trigger">{children}</div>,
+	DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-content">{children}</div>,
+	DropdownMenuItem: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-item">{children}</div>,
 }));
 
 // Create mock log data factory

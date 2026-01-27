@@ -25,15 +25,15 @@ import { type LogFormSchema, logFormSchema } from '../schemas';
 import { useMovieLogDialogStore } from '../store';
 import { useMovieLogStore } from '../store/movieLogStore';
 
-interface LogMovieFormProps {
+interface MovieLogFormProps {
 	formId?: string;
 	showSubmitButton?: boolean;
 }
 
-export const LogMovieForm = ({
+export const MovieLogForm = ({
 	formId,
 	showSubmitButton = true,
-}: LogMovieFormProps) => {
+}: MovieLogFormProps) => {
 	const { t } = useTranslation();
 	const prefilledMovie = useMovieLogDialogStore(
 		(state) => state.prefilledMovie
@@ -140,7 +140,7 @@ export const LogMovieForm = ({
 					name="tmdbId"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{t('LogMovieForm.movieLabel')}</FormLabel>
+							<FormLabel>{t('MovieLogForm.movieLabel')}</FormLabel>
 							<FormControl>
 								<Autocomplete
 									value={field.value?.toString() ?? ''}
@@ -159,7 +159,7 @@ export const LogMovieForm = ({
 					name="dateWatched"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{t('LogMovieForm.dateWatchedLabel')}</FormLabel>
+							<FormLabel>{t('MovieLogForm.dateWatchedLabel')}</FormLabel>
 							<FormControl>
 								<Input {...field} type="date" />
 							</FormControl>
@@ -173,7 +173,7 @@ export const LogMovieForm = ({
 					name="watchedWhere"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{t('LogMovieForm.watchedWhereLabel')}</FormLabel>
+							<FormLabel>{t('MovieLogForm.watchedWhereLabel')}</FormLabel>
 							<FormControl>
 								<Select
 									value={field.value ?? ''}
@@ -181,7 +181,7 @@ export const LogMovieForm = ({
 								>
 									<SelectTrigger className="w-full">
 										<SelectValue
-											placeholder={t('LogMovieForm.watchedWherePlaceholder')}
+											placeholder={t('MovieLogForm.watchedWherePlaceholder')}
 										/>
 									</SelectTrigger>
 									<SelectContent>
@@ -203,12 +203,12 @@ export const LogMovieForm = ({
 					name="viewingNotes"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{t('LogMovieForm.viewingNotesLabel')}</FormLabel>
+							<FormLabel>{t('MovieLogForm.viewingNotesLabel')}</FormLabel>
 							<FormControl>
 								<Textarea
 									{...field}
 									value={field.value ?? ''}
-									placeholder={t('LogMovieForm.viewingNotesPlaceholder')}
+									placeholder={t('MovieLogForm.viewingNotesPlaceholder')}
 									rows={4}
 								/>
 							</FormControl>
@@ -220,8 +220,8 @@ export const LogMovieForm = ({
 				{showSubmitButton && (
 					<Button type="submit" disabled={isLoading}>
 						{isLoading
-							? t('LogMovieForm.submitting')
-							: t('LogMovieForm.submit')}
+							? t('MovieLogForm.submitting')
+							: t('MovieLogForm.submit')}
 					</Button>
 				)}
 			</form>

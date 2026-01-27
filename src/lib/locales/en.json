@@ -121,7 +121,7 @@
 	"CreateMovieLogButton": {
 		"logMovie": "Log a Movie"
 	},
-	"LogMovieForm": {
+	"MovieLogForm": {
 		"movieLabel": "Movie",
 		"dateWatchedLabel": "Date Watched",
 		"watchedWhereLabel": "Watched Where (Optional)",
