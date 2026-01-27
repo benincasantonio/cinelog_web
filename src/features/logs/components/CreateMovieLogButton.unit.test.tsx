@@ -5,76 +5,78 @@ import { CreateMovieLogButton } from './CreateMovieLogButton';
 
 // Mock react-i18next
 vi.mock('react-i18next', () => ({
-    useTranslation: () => ({
-        t: (key: string) => key,
-    }),
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
 }));
 
 // Mock useMovieLogDialogStore
 const mockOpen = vi.fn();
 vi.mock('../store', () => ({
-    useMovieLogDialogStore: (selector: (state: { open: () => void }) => unknown) => {
-        const state = { open: mockOpen };
-        return selector(state);
-    },
+	useMovieLogDialogStore: (
+		selector: (state: { open: () => void }) => unknown
+	) => {
+		const state = { open: mockOpen };
+		return selector(state);
+	},
 }));
 
 describe('CreateMovieLogButton', () => {
-    beforeEach(() => {
-        mockOpen.mockClear();
-    });
+	beforeEach(() => {
+		mockOpen.mockClear();
+	});
 
-    describe('Rendering', () => {
-        it('should render the desktop button with translated text', () => {
-            render(<CreateMovieLogButton />);
+	describe('Rendering', () => {
+		it('should render the desktop button with translated text', () => {
+			render(<CreateMovieLogButton />);
 
-            const button = screen.getByRole('button', {
-                name: 'CreateMovieLogButton.logMovie',
-            });
-            expect(button).toBeInTheDocument();
-        });
+			const button = screen.getByRole('button', {
+				name: 'CreateMovieLogButton.logMovie',
+			});
+			expect(button).toBeInTheDocument();
+		});
 
-        it('should render the button with correct styling classes', () => {
-            render(<CreateMovieLogButton />);
+		it('should render the button with correct styling classes', () => {
+			render(<CreateMovieLogButton />);
 
-            const button = screen.getByRole('button', {
-                name: 'CreateMovieLogButton.logMovie',
-            });
-            expect(button).toHaveClass('hidden', 'md:inline-flex');
-        });
+			const button = screen.getByRole('button', {
+				name: 'CreateMovieLogButton.logMovie',
+			});
+			expect(button).toHaveClass('hidden', 'md:inline-flex');
+		});
 
-        it('should render the Plus icon for mobile', () => {
-            render(<CreateMovieLogButton />);
+		it('should render the Plus icon for mobile', () => {
+			render(<CreateMovieLogButton />);
 
-            // The Plus icon should be visible on mobile (has md:hidden class)
-            const plusIcon = document.querySelector('.md\\:hidden');
-            expect(plusIcon).toBeInTheDocument();
-        });
-    });
+			// The Plus icon should be visible on mobile (has md:hidden class)
+			const plusIcon = document.querySelector('.md\\:hidden');
+			expect(plusIcon).toBeInTheDocument();
+		});
+	});
 
-    describe('Interactions', () => {
-        it('should call open when desktop button is clicked', async () => {
-            const user = userEvent.setup();
-            render(<CreateMovieLogButton />);
+	describe('Interactions', () => {
+		it('should call open when desktop button is clicked', async () => {
+			const user = userEvent.setup();
+			render(<CreateMovieLogButton />);
 
-            const button = screen.getByRole('button', {
-                name: 'CreateMovieLogButton.logMovie',
-            });
-            await user.click(button);
+			const button = screen.getByRole('button', {
+				name: 'CreateMovieLogButton.logMovie',
+			});
+			await user.click(button);
 
-            expect(mockOpen).toHaveBeenCalledTimes(1);
-        });
+			expect(mockOpen).toHaveBeenCalledTimes(1);
+		});
 
-        it('should call open when Plus icon is clicked', async () => {
-            const user = userEvent.setup();
-            render(<CreateMovieLogButton />);
+		it('should call open when Plus icon is clicked', async () => {
+			const user = userEvent.setup();
+			render(<CreateMovieLogButton />);
 
-            const plusIcon = document.querySelector('.md\\:hidden');
-            expect(plusIcon).toBeInTheDocument();
+			const plusIcon = document.querySelector('.md\\:hidden');
+			expect(plusIcon).toBeInTheDocument();
 
-            await user.click(plusIcon!);
+			await user.click(plusIcon!);
 
-            expect(mockOpen).toHaveBeenCalledTimes(1);
-        });
-    });
+			expect(mockOpen).toHaveBeenCalledTimes(1);
+		});
+	});
 });

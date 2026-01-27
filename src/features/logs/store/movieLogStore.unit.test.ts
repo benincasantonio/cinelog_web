@@ -4,8 +4,8 @@ import { useMovieLogStore } from './movieLogStore';
 
 // Mock the repository functions
 vi.mock('../repositories', () => ({
-    createLog: vi.fn(),
-    updateLog: vi.fn(),
+	createLog: vi.fn(),
+	updateLog: vi.fn(),
 }));
 
 import { createLog, updateLog } from '../repositories';
@@ -14,212 +14,215 @@ const mockCreateLog = vi.mocked(createLog);
 const mockUpdateLog = vi.mocked(updateLog);
 
 describe('useMovieLogStore', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-        // Reset the store before each test
-        const { result } = renderHook(() => useMovieLogStore());
-        act(() => {
-            result.current.clearError();
-        });
-    });
+	beforeEach(() => {
+		vi.clearAllMocks();
+		// Reset the store before each test
+		const { result } = renderHook(() => useMovieLogStore());
+		act(() => {
+			result.current.clearError();
+		});
+	});
 
-    describe('initial state', () => {
-        it('should have isLoading as false initially', () => {
-            const { result } = renderHook(() => useMovieLogStore());
-            expect(result.current.isLoading).toBe(false);
-        });
+	describe('initial state', () => {
+		it('should have isLoading as false initially', () => {
+			const { result } = renderHook(() => useMovieLogStore());
+			expect(result.current.isLoading).toBe(false);
+		});
 
-        it('should have error as null initially', () => {
-            const { result } = renderHook(() => useMovieLogStore());
-            expect(result.current.error).toBeNull();
-        });
-    });
+		it('should have error as null initially', () => {
+			const { result } = renderHook(() => useMovieLogStore());
+			expect(result.current.error).toBeNull();
+		});
+	});
 
-    describe('createLog', () => {
-        const mockLogData = {
-            tmdbId: 550,
-            dateWatched: '2024-01-09',
-            watchedWhere: 'cinema' as const,
-        };
+	describe('createLog', () => {
+		const mockLogData = {
+			tmdbId: 550,
+			dateWatched: '2024-01-09',
+			watchedWhere: 'cinema' as const,
+		};
 
-        it('should set isLoading to true while creating log', async () => {
-            mockCreateLog.mockImplementation(
-                () => new Promise((resolve) => setTimeout(resolve, 100))
-            );
+		it('should set isLoading to true while creating log', async () => {
+			mockCreateLog.mockImplementation(
+				() => new Promise((resolve) => setTimeout(resolve, 100))
+			);
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            act(() => {
-                result.current.createLog(mockLogData);
-            });
+			act(() => {
+				result.current.createLog(mockLogData);
+			});
 
-            expect(result.current.isLoading).toBe(true);
-        });
+			expect(result.current.isLoading).toBe(true);
+		});
 
-        it('should set isLoading to false after successful create', async () => {
-            mockCreateLog.mockResolvedValueOnce({ id: '1', ...mockLogData });
+		it('should set isLoading to false after successful create', async () => {
+			mockCreateLog.mockResolvedValueOnce({ id: '1', ...mockLogData });
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await act(async () => {
-                await result.current.createLog(mockLogData);
-            });
+			await act(async () => {
+				await result.current.createLog(mockLogData);
+			});
 
-            expect(result.current.isLoading).toBe(false);
-            expect(result.current.error).toBeNull();
-        });
+			expect(result.current.isLoading).toBe(false);
+			expect(result.current.error).toBeNull();
+		});
 
-        it('should set error on failed create', async () => {
-            const errorMessage = 'Network error';
-            mockCreateLog.mockRejectedValueOnce(new Error(errorMessage));
+		it('should set error on failed create', async () => {
+			const errorMessage = 'Network error';
+			mockCreateLog.mockRejectedValueOnce(new Error(errorMessage));
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await act(async () => {
-                try {
-                    await result.current.createLog(mockLogData);
-                } catch {
-                    // Expected to throw
-                }
-            });
+			await act(async () => {
+				try {
+					await result.current.createLog(mockLogData);
+				} catch {
+					// Expected to throw
+				}
+			});
 
-            expect(result.current.isLoading).toBe(false);
-            expect(result.current.error).toBe(errorMessage);
-        });
+			expect(result.current.isLoading).toBe(false);
+			expect(result.current.error).toBe(errorMessage);
+		});
 
-        it('should throw error on failed create', async () => {
-            const errorMessage = 'Network error';
-            mockCreateLog.mockRejectedValueOnce(new Error(errorMessage));
+		it('should throw error on failed create', async () => {
+			const errorMessage = 'Network error';
+			mockCreateLog.mockRejectedValueOnce(new Error(errorMessage));
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await expect(
-                act(async () => {
-                    await result.current.createLog(mockLogData);
-                })
-            ).rejects.toThrow(errorMessage);
-        });
+			await expect(
+				act(async () => {
+					await result.current.createLog(mockLogData);
+				})
+			).rejects.toThrow(errorMessage);
+		});
 
-        it('should set default error message when error is not an Error instance', async () => {
-            mockCreateLog.mockRejectedValueOnce('Unknown error');
+		it('should set default error message when error is not an Error instance', async () => {
+			mockCreateLog.mockRejectedValueOnce('Unknown error');
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await act(async () => {
-                try {
-                    await result.current.createLog(mockLogData);
-                } catch {
-                    // Expected to throw
-                }
-            });
+			await act(async () => {
+				try {
+					await result.current.createLog(mockLogData);
+				} catch {
+					// Expected to throw
+				}
+			});
 
-            expect(result.current.error).toBe('Failed to create movie log');
-        });
-    });
+			expect(result.current.error).toBe('Failed to create movie log');
+		});
+	});
 
-    describe('updateLog', () => {
-        const movieId = 'movie-1';
-        const mockUpdateData = {
-            dateWatched: '2024-01-10',
-            watchedWhere: 'streaming' as const,
-        };
+	describe('updateLog', () => {
+		const movieId = 'movie-1';
+		const mockUpdateData = {
+			dateWatched: '2024-01-10',
+			watchedWhere: 'streaming' as const,
+		};
 
-        it('should set isLoading to true while updating log', async () => {
-            mockUpdateLog.mockImplementation(
-                () => new Promise((resolve) => setTimeout(resolve, 100))
-            );
+		it('should set isLoading to true while updating log', async () => {
+			mockUpdateLog.mockImplementation(
+				() => new Promise((resolve) => setTimeout(resolve, 100))
+			);
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            act(() => {
-                result.current.updateLog(movieId, mockUpdateData);
-            });
+			act(() => {
+				result.current.updateLog(movieId, mockUpdateData);
+			});
 
-            expect(result.current.isLoading).toBe(true);
-        });
+			expect(result.current.isLoading).toBe(true);
+		});
 
-        it('should set isLoading to false after successful update', async () => {
-            mockUpdateLog.mockResolvedValueOnce({ id: movieId, ...mockUpdateData });
+		it('should set isLoading to false after successful update', async () => {
+			mockUpdateLog.mockResolvedValueOnce({ id: movieId, ...mockUpdateData });
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await act(async () => {
-                await result.current.updateLog(movieId, mockUpdateData);
-            });
+			await act(async () => {
+				await result.current.updateLog(movieId, mockUpdateData);
+			});
 
-            expect(result.current.isLoading).toBe(false);
-            expect(result.current.error).toBeNull();
-        });
+			expect(result.current.isLoading).toBe(false);
+			expect(result.current.error).toBeNull();
+		});
 
-        it('should set error on failed update', async () => {
-            const errorMessage = 'Update failed';
-            mockUpdateLog.mockRejectedValueOnce(new Error(errorMessage));
+		it('should set error on failed update', async () => {
+			const errorMessage = 'Update failed';
+			mockUpdateLog.mockRejectedValueOnce(new Error(errorMessage));
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await act(async () => {
-                try {
-                    await result.current.updateLog(movieId, mockUpdateData);
-                } catch {
-                    // Expected to throw
-                }
-            });
+			await act(async () => {
+				try {
+					await result.current.updateLog(movieId, mockUpdateData);
+				} catch {
+					// Expected to throw
+				}
+			});
 
-            expect(result.current.isLoading).toBe(false);
-            expect(result.current.error).toBe(errorMessage);
-        });
+			expect(result.current.isLoading).toBe(false);
+			expect(result.current.error).toBe(errorMessage);
+		});
 
-        it('should throw error on failed update', async () => {
-            const errorMessage = 'Update failed';
-            mockUpdateLog.mockRejectedValueOnce(new Error(errorMessage));
+		it('should throw error on failed update', async () => {
+			const errorMessage = 'Update failed';
+			mockUpdateLog.mockRejectedValueOnce(new Error(errorMessage));
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await expect(
-                act(async () => {
-                    await result.current.updateLog(movieId, mockUpdateData);
-                })
-            ).rejects.toThrow(errorMessage);
-        });
+			await expect(
+				act(async () => {
+					await result.current.updateLog(movieId, mockUpdateData);
+				})
+			).rejects.toThrow(errorMessage);
+		});
 
-        it('should set default error message when error is not an Error instance', async () => {
-            mockUpdateLog.mockRejectedValueOnce('Unknown error');
+		it('should set default error message when error is not an Error instance', async () => {
+			mockUpdateLog.mockRejectedValueOnce('Unknown error');
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await act(async () => {
-                try {
-                    await result.current.updateLog(movieId, mockUpdateData);
-                } catch {
-                    // Expected to throw
-                }
-            });
+			await act(async () => {
+				try {
+					await result.current.updateLog(movieId, mockUpdateData);
+				} catch {
+					// Expected to throw
+				}
+			});
 
-            expect(result.current.error).toBe('Failed to update movie log');
-        });
-    });
+			expect(result.current.error).toBe('Failed to update movie log');
+		});
+	});
 
-    describe('clearError', () => {
-        it('should clear error', async () => {
-            mockCreateLog.mockRejectedValueOnce(new Error('Some error'));
+	describe('clearError', () => {
+		it('should clear error', async () => {
+			mockCreateLog.mockRejectedValueOnce(new Error('Some error'));
 
-            const { result } = renderHook(() => useMovieLogStore());
+			const { result } = renderHook(() => useMovieLogStore());
 
-            await act(async () => {
-                try {
-                    await result.current.createLog({ tmdbId: 550, dateWatched: '2024-01-09' });
-                } catch {
-                    // Expected to throw
-                }
-            });
+			await act(async () => {
+				try {
+					await result.current.createLog({
+						tmdbId: 550,
+						dateWatched: '2024-01-09',
+					});
+				} catch {
+					// Expected to throw
+				}
+			});
 
-            expect(result.current.error).not.toBeNull();
+			expect(result.current.error).not.toBeNull();
 
-            act(() => {
-                result.current.clearError();
-            });
+			act(() => {
+				result.current.clearError();
+			});
 
-            expect(result.current.error).toBeNull();
-        });
-    });
+			expect(result.current.error).toBeNull();
+		});
+	});
 });
