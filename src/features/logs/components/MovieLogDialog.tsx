@@ -33,10 +33,7 @@ export const CreateMovieLogDialog = () => {
 					</DialogDescription>
 				</DialogHeader>
 
-				<MovieLogForm
-					formId="log-movie-form"
-					showSubmitButton={false}
-				/>
+				<MovieLogForm formId="log-movie-form" showSubmitButton={false} />
 
 				<DialogFooter>
 					<DialogClose asChild>

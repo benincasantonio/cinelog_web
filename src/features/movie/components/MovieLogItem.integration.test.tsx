@@ -35,10 +35,18 @@ vi.mock('./MovieVote', () => ({
 
 // Mock DropdownMenu components to prevent multiple button issues
 vi.mock('@antoniobenincasa/ui', () => ({
-	DropdownMenu: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-menu">{children}</div>,
-	DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-trigger">{children}</div>,
-	DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-content">{children}</div>,
-	DropdownMenuItem: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-item">{children}</div>,
+	DropdownMenu: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid="dropdown-menu">{children}</div>
+	),
+	DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid="dropdown-trigger">{children}</div>
+	),
+	DropdownMenuContent: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid="dropdown-content">{children}</div>
+	),
+	DropdownMenuItem: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid="dropdown-item">{children}</div>
+	),
 }));
 
 describe('MovieLogItem Integration Tests', () => {
