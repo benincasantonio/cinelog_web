@@ -8,15 +8,17 @@ vi.mock('../repositories', () => ({
 	updateLog: vi.fn(),
 }));
 
-import { createLog, updateLog } from '../repositories';
 import { LogCreateResponse } from '../models';
+import { createLog, updateLog } from '../repositories';
 
 const mockCreateLog = vi.mocked(createLog);
 const mockUpdateLog = vi.mocked(updateLog);
 
 describe('useMovieLogStore', () => {
 	// Mock console.error to suppress expected error logs during tests
-	const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+	const consoleErrorSpy = vi
+		.spyOn(console, 'error')
+		.mockImplementation(() => undefined);
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -65,7 +67,10 @@ describe('useMovieLogStore', () => {
 		});
 
 		it('should set isLoading to false after successful create', async () => {
-			mockCreateLog.mockResolvedValueOnce({ id: '1', ...mockLogData } as LogCreateResponse);
+			mockCreateLog.mockResolvedValueOnce({
+				id: '1',
+				...mockLogData,
+			} as LogCreateResponse);
 
 			const { result } = renderHook(() => useMovieLogStore());
 
@@ -147,7 +152,10 @@ describe('useMovieLogStore', () => {
 		});
 
 		it('should set isLoading to false after successful update', async () => {
-			mockUpdateLog.mockResolvedValueOnce({ id: movieId, ...mockUpdateData } as LogCreateResponse);
+			mockUpdateLog.mockResolvedValueOnce({
+				id: movieId,
+				...mockUpdateData,
+			} as LogCreateResponse);
 
 			const { result } = renderHook(() => useMovieLogStore());
 
