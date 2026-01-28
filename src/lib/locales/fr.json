@@ -113,7 +113,8 @@
 		"registration": "Inscription"
 	},
 	"CreateMovieLogDialog": {
-		"title": "Enregistrer un film",
+		"titleCreate": "Enregistrer un film",
+		"titleUpdate": "Modifier le journal",
 		"description": "Ajoutez les détails de ce que vous avez regardé.",
 		"close": "Fermer",
 		"submit": "Enregistrer"
@@ -128,8 +129,10 @@
 		"watchedWherePlaceholder": "Sélectionnez où vous avez regardé",
 		"viewingNotesLabel": "Notes de visionnage (Optionnel)",
 		"viewingNotesPlaceholder": "Vos pensées sur le film",
-		"submit": "Créer le journal",
-		"submitting": "Création du journal...",
+		"submitCreate": "Créer le journal",
+		"submittingCreate": "Création du journal...",
+		"submitUpdate": "Mettre à jour le journal",
+		"submittingUpdate": "Mise à jour du journal...",
 		"error": "Une erreur s'est produite lors de la création du journal"
 	},
 	"WatchedWhere": {

@@ -16,18 +16,39 @@ import { MovieLogForm } from './MovieLogForm';
 export const CreateMovieLogDialog = () => {
 	const { t } = useTranslation();
 	const isOpen = useMovieLogDialogStore((state) => state.isOpen);
-	const setIsOpen = useMovieLogDialogStore((state) => state.setIsOpen);
+	const close = useMovieLogDialogStore((state) => state.close);
 
+	const movieToEdit = useMovieLogDialogStore((state) => state.movieToEdit);
 	const isFormLoading = useMovieLogStore((state) => state.isLoading);
 
+	const editMode = !!movieToEdit;
+
+	const submitText = editMode
+		? t('CreateMovieLogDialog.submitUpdate')
+		: t('CreateMovieLogDialog.submitCreate');
+
+	const submittingText = editMode
+		? t('CreateMovieLogDialog.submittingUpdate')
+		: t('CreateMovieLogDialog.submittingCreate');
+
+	const onOpenChange = (open: boolean) => {
+		if (!open) {
+			close();
+		}
+	};
+
 	return (
-		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+		<Dialog open={isOpen} onOpenChange={onOpenChange}>
 			<DialogContent
 				showCloseButton
 				className="w-full max-w-106.25 sm:max-w-lg"
 			>
 				<DialogHeader>
-					<DialogTitle>{t('CreateMovieLogDialog.title')}</DialogTitle>
+					<DialogTitle>
+						{editMode
+							? t('CreateMovieLogDialog.titleUpdate')
+							: t('CreateMovieLogDialog.titleCreate')}
+					</DialogTitle>
 					<DialogDescription>
 						{t('CreateMovieLogDialog.description')}
 					</DialogDescription>
@@ -42,9 +63,7 @@ export const CreateMovieLogDialog = () => {
 						</Button>
 					</DialogClose>
 					<Button form="log-movie-form" type="submit" disabled={isFormLoading}>
-						{isFormLoading
-							? t('MovieLogForm.submitting')
-							: t('MovieLogForm.submit')}
+						{isFormLoading ? submittingText : submitText}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

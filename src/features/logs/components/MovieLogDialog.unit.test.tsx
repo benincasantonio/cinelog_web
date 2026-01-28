@@ -11,12 +11,10 @@ const { mockMovieLogDialogStore, mockMovieLogStore } = vi.hoisted(() => {
 		isOpen: boolean;
 		prefilledMovie: null;
 		movieToEdit: null;
-		setIsOpen: (isOpen: boolean) => void;
 	}>((set: (state: Partial<{ isOpen: boolean }>) => void) => ({
 		isOpen: false,
 		prefilledMovie: null,
 		movieToEdit: null,
-		setIsOpen: (isOpen: boolean) => set({ isOpen }),
 	}));
 
 	const mockMovieLogStore = create<{
@@ -135,7 +133,7 @@ describe('CreateMovieLogDialog', () => {
 			render(<CreateMovieLogDialog />);
 
 			expect(
-				screen.queryByText('CreateMovieLogDialog.title')
+				screen.queryByText('CreateMovieLogDialog.titleCreate')
 			).not.toBeInTheDocument();
 		});
 
@@ -145,7 +143,7 @@ describe('CreateMovieLogDialog', () => {
 			render(<CreateMovieLogDialog />);
 
 			expect(
-				screen.getByText('CreateMovieLogDialog.title')
+				screen.getByText('CreateMovieLogDialog.titleCreate')
 			).toBeInTheDocument();
 			expect(
 				screen.getByText('CreateMovieLogDialog.description')
@@ -162,7 +160,7 @@ describe('CreateMovieLogDialog', () => {
 			render(<CreateMovieLogDialog />);
 
 			expect(
-				screen.getByText('CreateMovieLogDialog.title')
+				screen.getByText('CreateMovieLogDialog.titleCreate')
 			).toBeInTheDocument();
 		});
 
@@ -191,7 +189,9 @@ describe('CreateMovieLogDialog', () => {
 		it('should render the submit button', () => {
 			render(<CreateMovieLogDialog />);
 
-			expect(screen.getByText('MovieLogForm.submit')).toBeInTheDocument();
+			expect(
+				screen.getByText('CreateMovieLogDialog.submitCreate')
+			).toBeInTheDocument();
 		});
 	});
 
@@ -206,7 +206,7 @@ describe('CreateMovieLogDialog', () => {
 			render(<CreateMovieLogDialog />);
 
 			const submitButton = screen.getByRole('button', {
-				name: 'MovieLogForm.submit',
+				name: 'CreateMovieLogDialog.submitCreate',
 			});
 			expect(submitButton).toBeInTheDocument();
 			expect(submitButton).not.toBeDisabled();
@@ -217,7 +217,9 @@ describe('CreateMovieLogDialog', () => {
 
 			render(<CreateMovieLogDialog />);
 
-			expect(screen.getByText('MovieLogForm.submitting')).toBeInTheDocument();
+			expect(
+				screen.getByText('CreateMovieLogDialog.submittingCreate')
+			).toBeInTheDocument();
 		});
 
 		it('should disable submit button when loading', () => {
@@ -226,7 +228,7 @@ describe('CreateMovieLogDialog', () => {
 			render(<CreateMovieLogDialog />);
 
 			const submitButton = screen.getByRole('button', {
-				name: 'MovieLogForm.submitting',
+				name: 'CreateMovieLogDialog.submittingCreate',
 			});
 			expect(submitButton).toBeDisabled();
 		});
@@ -235,7 +237,7 @@ describe('CreateMovieLogDialog', () => {
 			render(<CreateMovieLogDialog />);
 
 			const submitButton = screen.getByRole('button', {
-				name: 'MovieLogForm.submit',
+				name: 'CreateMovieLogDialog.submitCreate',
 			});
 			expect(submitButton).toHaveAttribute('form', 'log-movie-form');
 			expect(submitButton).toHaveAttribute('type', 'submit');
@@ -252,6 +254,48 @@ describe('CreateMovieLogDialog', () => {
 
 			const form = screen.getByTestId('log-movie-form');
 			expect(form).toHaveAttribute('id', 'log-movie-form');
+		});
+	});
+
+	describe('Edit Mode', () => {
+		beforeEach(() => {
+			mockMovieLogDialogStore.setState({
+				isOpen: true,
+				movieToEdit: {
+					id: '1',
+					tmdbId: 123,
+					movie: { title: 'Test Movie' },
+					dateWatched: '2024-01-01',
+					viewingNotes: null,
+					watchedWhere: null,
+				},
+			});
+		});
+
+		it('should render the edit dialog title', () => {
+			render(<CreateMovieLogDialog />);
+
+			expect(
+				screen.getByText('CreateMovieLogDialog.titleUpdate')
+			).toBeInTheDocument();
+		});
+
+		it('should show update submit text', () => {
+			render(<CreateMovieLogDialog />);
+
+			expect(
+				screen.getByText('CreateMovieLogDialog.submitUpdate')
+			).toBeInTheDocument();
+		});
+
+		it('should show updating text when loading', () => {
+			mockMovieLogStore.setState({ isLoading: true });
+
+			render(<CreateMovieLogDialog />);
+
+			expect(
+				screen.getByText('CreateMovieLogDialog.submittingUpdate')
+			).toBeInTheDocument();
 		});
 	});
 });

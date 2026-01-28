@@ -145,35 +145,6 @@ describe('useMovieLogDialogStore', () => {
 		});
 	});
 
-	describe('setIsOpen', () => {
-		it('should set isOpen to true', () => {
-			const { result } = renderHook(() => useMovieLogDialogStore());
-
-			act(() => {
-				result.current.setIsOpen(true);
-			});
-
-			expect(result.current.isOpen).toBe(true);
-		});
-
-		it('should set isOpen to false and clear prefilledMovie', () => {
-			const { result } = renderHook(() => useMovieLogDialogStore());
-
-			act(() => {
-				result.current.open({
-					prefilledMovie: { tmdbId: 550, title: 'Fight Club' },
-				});
-			});
-
-			act(() => {
-				result.current.setIsOpen(false);
-			});
-
-			expect(result.current.isOpen).toBe(false);
-			expect(result.current.prefilledMovie).toBeNull();
-		});
-	});
-
 	describe('clearPrefilledMovie', () => {
 		it('should clear prefilledMovie without affecting other state', () => {
 			const { result } = renderHook(() => useMovieLogDialogStore());

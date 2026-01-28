@@ -113,7 +113,8 @@
 		"registration": "Registrati"
 	},
 	"CreateMovieLogDialog": {
-		"title": "Registra Film",
+		"titleCreate": "Registra Film",
+		"titleUpdate": "Modifica Log Film",
 		"description": "Aggiungi i dettagli di ciò che hai visto.",
 		"close": "Chiudi",
 		"submit": "Registra"
@@ -128,8 +129,10 @@
 		"watchedWherePlaceholder": "Seleziona dove lo hai visto",
 		"viewingNotesLabel": "Note di visione (Opzionale)",
 		"viewingNotesPlaceholder": "I tuoi pensieri sul film",
-		"submit": "Crea Log",
-		"submitting": "Creazione Log...",
+		"submitCreate": "Crea Log",
+		"submittingCreate": "Creazione Log...",
+		"submitUpdate": "Aggiorna Log",
+		"submittingUpdate": "Aggiornamento Log...",
 		"error": "Si è verificato un errore durante la creazione del log"
 	},
 	"WatchedWhere": {
