@@ -12,9 +12,10 @@ vi.mock('@/lib/firebase', () => ({
 }));
 
 // Mock useMovieLogDialogStore
+const mockOpen = vi.fn();
 vi.mock('@/features/logs', () => ({
 	useMovieLogDialogStore: () => ({
-		open: vi.fn(),
+		open: mockOpen,
 	}),
 }));
 
@@ -53,8 +54,13 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	DropdownMenuContent: ({ children }: { children: React.ReactNode }) => (
 		<div data-testid="dropdown-content">{children}</div>
 	),
-	DropdownMenuItem: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="dropdown-item">{children}</div>
+	DropdownMenuItem: ({
+		children,
+		onClick,
+	}: { children: React.ReactNode; onClick?: () => void }) => (
+		<button type="button" data-testid="dropdown-item" onClick={onClick}>
+			{children}
+		</button>
 	),
 }));
 
@@ -83,6 +89,7 @@ const createMockLog = (overrides?: Partial<LogListItem>): LogListItem => ({
 describe('MovieLogItem', () => {
 	beforeEach(() => {
 		mockNavigate.mockClear();
+		mockOpen.mockClear();
 	});
 
 	describe('T3.1.1: Component Renders Without Crashing', () => {
@@ -107,7 +114,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog();
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			expect(titleElement).toHaveAttribute(
 				'aria-label',
 				expect.stringContaining('Fight Club')
@@ -140,7 +147,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog({ tmdbId: 278 });
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			await user.click(titleElement);
 
 			expect(mockNavigate).toHaveBeenCalledWith('/movies/278');
@@ -162,7 +169,7 @@ describe('MovieLogItem', () => {
 			});
 			render(<MovieLogItem log={log} />);
 
-			await user.click(screen.getByRole('button'));
+			await user.click(screen.getByTestId('movie-title-link'));
 			expect(mockNavigate).toHaveBeenCalledWith(`/movies/${tmdbId}`);
 		});
 	});
@@ -173,7 +180,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog({ tmdbId: 550 });
 			render(<MovieLogItem log={log} />);
 
-			await user.click(screen.getByRole('button'));
+			await user.click(screen.getByTestId('movie-title-link'));
 			expect(mockNavigate).toHaveBeenCalled();
 		});
 
@@ -182,7 +189,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog({ tmdbId: 0 });
 			render(<MovieLogItem log={log} />);
 
-			await user.click(screen.getByRole('button'));
+			await user.click(screen.getByTestId('movie-title-link'));
 			expect(mockNavigate).not.toHaveBeenCalled();
 		});
 
@@ -190,7 +197,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog();
 			const modifiedLog = { ...log, tmdbId: undefined };
 			render(<MovieLogItem log={modifiedLog as LogListItem} />);
-			expect(screen.getByRole('button')).toBeInTheDocument();
+			expect(screen.getByTestId('movie-title-link')).toBeInTheDocument();
 		});
 	});
 
@@ -238,7 +245,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog({ movie: undefined });
 			render(<MovieLogItem log={log} />);
 
-			expect(screen.getByRole('button')).toBeInTheDocument();
+			expect(screen.getByTestId('movie-title-link')).toBeInTheDocument();
 		});
 	});
 
@@ -247,8 +254,23 @@ describe('MovieLogItem', () => {
 			const log = createMockLog();
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			expect(titleElement).toHaveAttribute('tabIndex', '0');
+		});
+	});
+
+	describe('Edit Movie Log', () => {
+		it('should call open with movieToEdit when edit menu item is clicked', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog();
+			render(<MovieLogItem log={log} />);
+
+			const editButton = screen.getByTestId('dropdown-item');
+			await user.click(editButton);
+
+			expect(mockOpen).toHaveBeenCalledWith({
+				movieToEdit: log,
+			});
 		});
 	});
 
@@ -262,7 +284,7 @@ describe('MovieLogItem', () => {
 			};
 			render(<MovieLogItem log={minimalLog} />);
 
-			expect(screen.getByRole('button')).toBeInTheDocument();
+			expect(screen.getByTestId('movie-title-link')).toBeInTheDocument();
 		});
 
 		it('should handle special characters in movie title', async () => {
@@ -270,7 +292,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog();
 			render(<MovieLogItem log={log} />);
 
-			await user.click(screen.getByRole('button'));
+			await user.click(screen.getByTestId('movie-title-link'));
 			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
 		});
 
@@ -281,7 +303,7 @@ describe('MovieLogItem', () => {
 			});
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			expect(titleElement).toHaveClass('truncate');
 		});
 
@@ -289,7 +311,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog({ movie: undefined });
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			expect(titleElement).toBeInTheDocument();
 			// Should show fallback text for unknown title
 			expect(titleElement).toHaveTextContent('MovieLogItem.unknownTitle');
@@ -301,7 +323,7 @@ describe('MovieLogItem', () => {
 			});
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			expect(titleElement).toBeInTheDocument();
 		});
 
@@ -309,7 +331,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog({ posterPath: undefined });
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			expect(titleElement).toBeInTheDocument();
 		});
 
@@ -317,7 +339,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog({ movieRating: undefined });
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			expect(titleElement).toBeInTheDocument();
 		});
 
@@ -325,7 +347,7 @@ describe('MovieLogItem', () => {
 			const log = createMockLog({ watchedWhere: undefined });
 			render(<MovieLogItem log={log} />);
 
-			const titleElement = screen.getByRole('button');
+			const titleElement = screen.getByTestId('movie-title-link');
 			expect(titleElement).toBeInTheDocument();
 		});
 
@@ -336,7 +358,7 @@ describe('MovieLogItem', () => {
 			});
 			render(<MovieLogItem log={log} />);
 
-			await user.click(screen.getByRole('button'));
+			await user.click(screen.getByTestId('movie-title-link'));
 			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
 		});
 
@@ -350,7 +372,7 @@ describe('MovieLogItem', () => {
 			});
 			render(<MovieLogItem log={log} />);
 
-			await user.click(screen.getByRole('button'));
+			await user.click(screen.getByTestId('movie-title-link'));
 			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
 		});
 	});
