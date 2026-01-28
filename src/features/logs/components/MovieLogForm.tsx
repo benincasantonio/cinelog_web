@@ -28,11 +28,13 @@ import { useMovieLogStore } from '../store/movieLogStore';
 interface MovieLogFormProps {
 	formId?: string;
 	showSubmitButton?: boolean;
+	onSuccess?: () => void;
 }
 
 export const MovieLogForm = ({
 	formId,
 	showSubmitButton = true,
+	onSuccess,
 }: MovieLogFormProps) => {
 	const { t } = useTranslation();
 	const prefilledMovie = useMovieLogDialogStore(
@@ -129,6 +131,7 @@ export const MovieLogForm = ({
 
 			form.reset();
 			clearPrefilledMovie();
+			onSuccess?.();
 		} catch {
 			// Error is already set in the store
 		}
