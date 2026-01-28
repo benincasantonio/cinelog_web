@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -7,20 +7,15 @@ const { mockMovieLogDialogStore, mockMovieLogStore } = vi.hoisted(() => {
 	// biome-ignore lint/style/noCommonJs: require is needed inside vi.hoisted
 	const { create } = require('zustand');
 
-	const mockMovieLogDialogStore = create<{
-		isOpen: boolean;
-		prefilledMovie: null;
-		movieToEdit: null;
-	}>((set: (state: Partial<{ isOpen: boolean }>) => void) => ({
+	const mockMovieLogDialogStore = create(() => ({
 		isOpen: false,
 		prefilledMovie: null,
 		movieToEdit: null,
+		close: vi.fn(),
+		triggerUpdate: vi.fn(),
 	}));
 
-	const mockMovieLogStore = create<{
-		isLoading: boolean;
-		error: string | null;
-	}>(() => ({
+	const mockMovieLogStore = create(() => ({
 		isLoading: false,
 		error: null,
 	}));
@@ -41,9 +36,17 @@ vi.mock('../store/movieLogStore', () => ({
 
 // Mock MovieLogForm component
 vi.mock('./MovieLogForm', () => ({
-	MovieLogForm: ({ formId }: { formId: string }) => (
+	MovieLogForm: ({
+		formId,
+		onSuccess,
+	}: {
+		formId: string;
+		onSuccess?: () => void;
+	}) => (
 		<form id={formId} data-testid="log-movie-form">
-			Mock Form
+			<button type="button" onClick={onSuccess} data-testid="trigger-success">
+				Trigger Success
+			</button>
 		</form>
 	),
 }));
@@ -119,6 +122,9 @@ describe('CreateMovieLogDialog', () => {
 			isOpen: false,
 			prefilledMovie: null,
 			movieToEdit: null,
+			// Reset mocks
+			close: vi.fn(),
+			triggerUpdate: vi.fn(),
 		});
 		mockMovieLogStore.setState({
 			isLoading: false,
@@ -254,6 +260,18 @@ describe('CreateMovieLogDialog', () => {
 
 			const form = screen.getByTestId('log-movie-form');
 			expect(form).toHaveAttribute('id', 'log-movie-form');
+		});
+
+		it('should close dialog and trigger update on form success', () => {
+			render(<CreateMovieLogDialog />);
+
+			const triggerSuccessButton = screen.getByTestId('trigger-success');
+			fireEvent.click(triggerSuccessButton);
+
+			expect(mockMovieLogDialogStore.getState().close).toHaveBeenCalled();
+			expect(
+				mockMovieLogDialogStore.getState().triggerUpdate
+			).toHaveBeenCalled();
 		});
 	});
 

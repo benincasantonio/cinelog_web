@@ -17,6 +17,7 @@ export const CreateMovieLogDialog = () => {
 	const { t } = useTranslation();
 	const isOpen = useMovieLogDialogStore((state) => state.isOpen);
 	const close = useMovieLogDialogStore((state) => state.close);
+	const triggerUpdate = useMovieLogDialogStore((state) => state.triggerUpdate);
 
 	const movieToEdit = useMovieLogDialogStore((state) => state.movieToEdit);
 	const isFormLoading = useMovieLogStore((state) => state.isLoading);
@@ -54,7 +55,14 @@ export const CreateMovieLogDialog = () => {
 					</DialogDescription>
 				</DialogHeader>
 
-				<MovieLogForm formId="log-movie-form" showSubmitButton={false} />
+				<MovieLogForm
+					formId="log-movie-form"
+					showSubmitButton={false}
+					onSuccess={() => {
+						close();
+						triggerUpdate();
+					}}
+				/>
 
 				<DialogFooter>
 					<DialogClose asChild>
