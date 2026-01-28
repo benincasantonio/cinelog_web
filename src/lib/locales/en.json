@@ -113,10 +113,14 @@
 		"registration": "Registration"
 	},
 	"CreateMovieLogDialog": {
-		"title": "Log a Movie",
+		"titleCreate": "Log a Movie",
+		"titleUpdate": "Edit Movie Log",
 		"description": "Add the details of what you watched.",
 		"close": "Close",
-		"submit": "Log Movie"
+		"submitCreate": "Log Movie",
+		"submittingCreate": "Logging Movie...",
+		"submitUpdate": "Update Log",
+		"submittingUpdate": "Updating Log..."
 	},
 	"CreateMovieLogButton": {
 		"logMovie": "Log a Movie"
@@ -128,8 +132,10 @@
 		"watchedWherePlaceholder": "Select where you watched",
 		"viewingNotesLabel": "Viewing Notes (Optional)",
 		"viewingNotesPlaceholder": "Your thoughts about the movie",
-		"submit": "Create Log",
-		"submitting": "Creating Log...",
+		"submitCreate": "Create Log",
+		"submittingCreate": "Creating Log...",
+		"submitUpdate": "Update Log",
+		"submittingUpdate": "Updating Log...",
 		"error": "An error occurred while creating the log"
 	},
 	"WatchedWhere": {

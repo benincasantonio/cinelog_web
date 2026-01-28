@@ -60,6 +60,14 @@ export const MovieLogForm = ({
 		[movieToEdit, prefilledMovie]
 	);
 
+	const submitText = movieToEdit
+		? t('MovieLogForm.submitUpdate')
+		: t('MovieLogForm.submitCreate');
+
+	const submittingText = movieToEdit
+		? t('MovieLogForm.submittingUpdate')
+		: t('MovieLogForm.submittingCreate');
+
 	const form = useForm<LogFormSchema>({
 		resolver: zodResolver(logFormSchema),
 		values: formValue as LogFormSchema,
@@ -219,9 +227,7 @@ export const MovieLogForm = ({
 
 				{showSubmitButton && (
 					<Button type="submit" disabled={isLoading}>
-						{isLoading
-							? t('MovieLogForm.submitting')
-							: t('MovieLogForm.submit')}
+						{isLoading ? submittingText : submitText}
 					</Button>
 				)}
 			</form>

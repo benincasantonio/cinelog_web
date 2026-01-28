@@ -18,7 +18,6 @@ type MovieLogDialogStore = {
 	 *
 	 */
 	movieToEdit: LogListItem | null;
-	setIsOpen: (isOpen: boolean) => void;
 	open: (options?: MovieDialogOptions) => void;
 	close: () => void;
 	clearPrefilledMovie: () => void;
@@ -35,8 +34,6 @@ export const useMovieLogDialogStore = create<MovieLogDialogStore>((set) => ({
 	isOpen: false,
 	prefilledMovie: null,
 	movieToEdit: null,
-	setIsOpen: (isOpen) =>
-		set({ isOpen, prefilledMovie: isOpen ? undefined : null }),
 	open: (options?: MovieDialogOptions) => {
 		if (options?.movieToEdit && options?.prefilledMovie) {
 			throw new Error(

@@ -282,7 +282,7 @@ describe('MovieLogForm', () => {
 			render(<MovieLogForm />);
 
 			expect(screen.getByTestId('submit-button')).toBeInTheDocument();
-			expect(screen.getByText('MovieLogForm.submit')).toBeInTheDocument();
+			expect(screen.getByText('MovieLogForm.submitCreate')).toBeInTheDocument();
 		});
 
 		it('should hide submit button when showSubmitButton is false', () => {
@@ -296,7 +296,49 @@ describe('MovieLogForm', () => {
 
 			render(<MovieLogForm />);
 
-			expect(screen.getByText('MovieLogForm.submitting')).toBeInTheDocument();
+			expect(
+				screen.getByText('MovieLogForm.submittingCreate')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('MovieLogForm.submittingCreate')
+			).toBeInTheDocument();
+		});
+
+		it('should show update text when in edit mode', () => {
+			mockMovieLogDialogStore.setState({
+				movieToEdit: {
+					id: '1',
+					tmdbId: 123,
+					movie: { title: 'Test Movie' },
+					dateWatched: '2024-01-01',
+					viewingNotes: null,
+					watchedWhere: null,
+				},
+			});
+
+			render(<MovieLogForm />);
+
+			expect(screen.getByText('MovieLogForm.submitUpdate')).toBeInTheDocument();
+		});
+
+		it('should show updating text when loading in edit mode', () => {
+			mockMovieLogDialogStore.setState({
+				movieToEdit: {
+					id: '1',
+					tmdbId: 123,
+					movie: { title: 'Test Movie' },
+					dateWatched: '2024-01-01',
+					viewingNotes: null,
+					watchedWhere: null,
+				},
+			});
+			mockMovieLogStore.setState({ isLoading: true });
+
+			render(<MovieLogForm />);
+
+			expect(
+				screen.getByText('MovieLogForm.submittingUpdate')
+			).toBeInTheDocument();
 		});
 
 		it('should disable submit button when loading', () => {
