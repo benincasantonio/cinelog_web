@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMovieLogStore } from './movieLogStore';
 
 // Mock the repository functions
@@ -9,11 +9,15 @@ vi.mock('../repositories', () => ({
 }));
 
 import { createLog, updateLog } from '../repositories';
+import { LogCreateResponse } from '../models';
 
 const mockCreateLog = vi.mocked(createLog);
 const mockUpdateLog = vi.mocked(updateLog);
 
 describe('useMovieLogStore', () => {
+	// Mock console.error to suppress expected error logs during tests
+	const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
 	beforeEach(() => {
 		vi.clearAllMocks();
 		// Reset the store before each test
@@ -21,6 +25,10 @@ describe('useMovieLogStore', () => {
 		act(() => {
 			result.current.clearError();
 		});
+	});
+
+	afterEach(() => {
+		consoleErrorSpy.mockClear();
 	});
 
 	describe('initial state', () => {
@@ -57,7 +65,7 @@ describe('useMovieLogStore', () => {
 		});
 
 		it('should set isLoading to false after successful create', async () => {
-			mockCreateLog.mockResolvedValueOnce({ id: '1', ...mockLogData });
+			mockCreateLog.mockResolvedValueOnce({ id: '1', ...mockLogData } as LogCreateResponse);
 
 			const { result } = renderHook(() => useMovieLogStore());
 
@@ -139,7 +147,7 @@ describe('useMovieLogStore', () => {
 		});
 
 		it('should set isLoading to false after successful update', async () => {
-			mockUpdateLog.mockResolvedValueOnce({ id: movieId, ...mockUpdateData });
+			mockUpdateLog.mockResolvedValueOnce({ id: movieId, ...mockUpdateData } as LogCreateResponse);
 
 			const { result } = renderHook(() => useMovieLogStore());
 
