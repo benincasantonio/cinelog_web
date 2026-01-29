@@ -1,7 +1,7 @@
 import { Button } from '@antoniobenincasa/ui';
 import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useMovieLogDialogStore } from '../store';
+import { useMovieLogDialogStore } from '../stores';
 
 export const CreateMovieLogButton = () => {
 	const { t } = useTranslation();

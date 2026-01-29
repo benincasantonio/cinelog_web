@@ -1,4 +1,4 @@
-import { Stats } from '@/features/stats';
+import { Stats } from '@/features/stats/components';
 
 const ProfileStatsPage = () => {
 	return (

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { humanizeMinutes } from '@/lib/utilities/date-utils';
-import { useStatsStore } from '../store/useStatsStore';
+import { useStatsStore } from '../stores/useStatsStore';
 import { StatsCard } from './StatsCard';
 import { WatchMethodPieChart } from './WatchMethodPieChart';
 

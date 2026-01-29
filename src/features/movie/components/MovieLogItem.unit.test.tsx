@@ -13,7 +13,7 @@ vi.mock('@/lib/firebase', () => ({
 
 // Mock useMovieLogDialogStore
 const mockOpen = vi.fn();
-vi.mock('@/features/logs', () => ({
+vi.mock('@/features/logs/stores', () => ({
 	useMovieLogDialogStore: () => ({
 		open: mockOpen,
 	}),

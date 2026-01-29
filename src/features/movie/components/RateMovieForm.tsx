@@ -5,7 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import type { MovieRatingResponse } from '../models';
-import { useMovieRatingStore } from '../store/useMovieRatingStore';
+import { useMovieRatingStore } from '../stores/useMovieRatingStore';
 import { RateMovie } from './RateMovie';
 
 type RateMovieFormData = {

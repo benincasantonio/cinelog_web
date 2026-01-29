@@ -24,12 +24,12 @@ const { mockMovieLogDialogStore, mockMovieLogStore } = vi.hoisted(() => {
 });
 
 // Mock the stores first
-vi.mock('../store', () => ({
+vi.mock('../stores', () => ({
 	useMovieLogDialogStore: (selector: (state: unknown) => unknown) =>
 		selector(mockMovieLogDialogStore.getState()),
 }));
 
-vi.mock('../store/movieLogStore', () => ({
+vi.mock('../stores/movieLogStore', () => ({
 	useMovieLogStore: (selector: (state: unknown) => unknown) =>
 		selector(mockMovieLogStore.getState()),
 }));

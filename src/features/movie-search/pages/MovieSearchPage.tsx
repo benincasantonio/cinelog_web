@@ -2,7 +2,7 @@ import { Input } from '@antoniobenincasa/ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MovieSearchList } from '../components';
-import { useMoviesStore } from '../store';
+import { useMoviesStore } from '../stores';
 
 const MoviesPage = () => {
 	const { t } = useTranslation();

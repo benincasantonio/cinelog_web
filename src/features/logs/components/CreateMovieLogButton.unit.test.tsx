@@ -12,9 +12,9 @@ vi.mock('react-i18next', () => ({
 
 // Mock useMovieLogDialogStore
 const mockOpen = vi.fn();
-vi.mock('../store', () => ({
+vi.mock('../stores', () => ({
 	useMovieLogDialogStore: (
-		selector: (state: { open: () => void }) => unknown
+		selector: (state: { open: (data?: unknown) => void }) => unknown
 	) => {
 		const state = { open: mockOpen };
 		return selector(state);

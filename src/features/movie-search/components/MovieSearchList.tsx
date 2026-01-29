@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useMoviesStore } from '../store/useMoviesStore';
+import { useMoviesStore } from '../stores/useMoviesStore';
 
 export const MovieSearchList = () => {
 	const { t } = useTranslation();
