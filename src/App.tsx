@@ -1,7 +1,7 @@
 import './App.css';
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { useAuthStore } from './features/auth/stores/useAuthStore';
+import { useAuthStore } from '@/features/auth/stores';
 import { ThemeProvider } from './lib/components/ThemeProvider';
 import { AppRoutes } from './routes';
 

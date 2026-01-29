@@ -9,8 +9,8 @@ import {
 	DialogTitle,
 } from '@antoniobenincasa/ui';
 import { useTranslation } from 'react-i18next';
-import { useMovieLogDialogStore } from '../store';
-import { useMovieLogStore } from '../store/movieLogStore';
+import { useMovieLogDialogStore } from '../stores';
+import { useMovieLogStore } from '../stores/movieLogStore';
 import { MovieLogForm } from './MovieLogForm';
 
 export const CreateMovieLogDialog = () => {

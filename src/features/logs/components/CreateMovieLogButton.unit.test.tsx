@@ -12,13 +12,13 @@ vi.mock('react-i18next', () => ({
 
 // Mock useMovieLogDialogStore
 const mockOpen = vi.fn();
-vi.mock('../store', () => ({
-	useMovieLogDialogStore: (
-		selector: (state: { open: () => void }) => unknown
-	) => {
-		const state = { open: mockOpen };
-		return selector(state);
-	},
+vi.mock('../stores', () => ({
+	useMovieLogDialogStore: vi.fn(
+		(selector: (state: { open: () => void }) => unknown) => {
+			const state = { open: mockOpen };
+			return selector(state);
+		}
+	),
 }));
 
 describe('CreateMovieLogButton', () => {

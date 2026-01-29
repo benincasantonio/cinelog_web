@@ -3,15 +3,15 @@ import { Clapperboard, Star } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useMovieLogDialogStore } from '@/features/logs/store';
+import { useMovieLogDialogStore } from '@/features/logs/stores';
 import { MovieDetailsHero } from '../components/MovieDetailsHero';
 import { MovieGenres } from '../components/MovieGenres';
 import { MovieRuntime } from '../components/MovieRuntime';
 import { MovieVote } from '../components/MovieVote';
 import { RateMovieModal } from '../components/RateMovieModal';
 import type { MovieRatingResponse } from '../models';
-import { useMovieDetailsStore } from '../store/useMovieDetailsStore';
-import { useMovieRatingStore } from '../store/useMovieRatingStore';
+import { useMovieDetailsStore } from '../stores/useMovieDetailsStore';
+import { useMovieRatingStore } from '../stores/useMovieRatingStore';
 
 const MovieDetailsPage = () => {
 	const { t } = useTranslation();

@@ -7,9 +7,9 @@ import {
 } from '@antoniobenincasa/ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMovieLogDialogStore } from '@/features/logs';
 import type { LogListItem } from '@/features/logs/models';
 import { type GetLogsParams, getLogs } from '@/features/logs/repositories';
+import { useMovieLogDialogStore } from '@/features/logs/stores';
 import { MovieLogList } from './MovieLogList';
 import { MoviesWatchedLoading } from './MoviesWatchedLoading';
 

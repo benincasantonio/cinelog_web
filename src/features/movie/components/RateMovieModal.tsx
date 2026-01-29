@@ -7,7 +7,7 @@ import {
 } from '@antoniobenincasa/ui';
 import { useTranslation } from 'react-i18next';
 import type { MovieRatingResponse } from '../models';
-import { useMovieRatingStore } from '../store/useMovieRatingStore';
+import { useMovieRatingStore } from '../stores/useMovieRatingStore';
 import { RateMovieForm } from './RateMovieForm';
 
 type RateMovieModalProps = {

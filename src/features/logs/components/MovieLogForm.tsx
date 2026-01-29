@@ -22,8 +22,8 @@ import { useTranslation } from 'react-i18next';
 import { search } from '@/features/movie-search/repositories';
 import { WATCHED_WHERE_VALUES } from '../models';
 import { type LogFormSchema, logFormSchema } from '../schemas';
-import { useMovieLogDialogStore } from '../store';
-import { useMovieLogStore } from '../store/movieLogStore';
+import { useMovieLogDialogStore } from '../stores';
+import { useMovieLogStore } from '../stores/movieLogStore';
 
 interface MovieLogFormProps {
 	formId?: string;

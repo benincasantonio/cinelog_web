@@ -7,8 +7,8 @@ import {
 import { MoreVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useMovieLogDialogStore } from '@/features/logs';
 import type { LogListItem } from '@/features/logs/models';
+import { useMovieLogDialogStore } from '@/features/logs/stores';
 import { MovieVote } from './MovieVote';
 
 interface MovieLogItemProps {
