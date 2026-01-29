@@ -9,30 +9,13 @@ const { mockMovieLogDialogStore, mockMovieLogStore, mockSearch } = vi.hoisted(
 		// biome-ignore lint/style/noCommonJs: require is needed inside vi.hoisted
 		const { create } = require('zustand');
 
-		const mockMovieLogDialogStore = create<{
-			prefilledMovie: null | { tmdbId: number; title: string };
-			movieToEdit: null | {
-				id: string;
-				tmdbId: number;
-				movie: { title: string };
-				dateWatched: string;
-				viewingNotes: string | null;
-				watchedWhere: string | null;
-			};
-			clearPrefilledMovie: () => void;
-		}>(() => ({
+		const mockMovieLogDialogStore = create(() => ({
 			prefilledMovie: null,
 			movieToEdit: null,
 			clearPrefilledMovie: vi.fn(),
 		}));
 
-		const mockMovieLogStore = create<{
-			isLoading: boolean;
-			error: string | null;
-			createLog: () => Promise<void>;
-			updateLog: () => Promise<void>;
-			clearError: () => void;
-		}>(() => ({
+		const mockMovieLogStore = create(() => ({
 			isLoading: false,
 			error: null,
 			createLog: vi.fn().mockResolvedValue(undefined),
@@ -50,11 +33,13 @@ const { mockMovieLogDialogStore, mockMovieLogStore, mockSearch } = vi.hoisted(
 
 // Mock the stores first
 vi.mock('../stores', () => ({
-	useMovieLogDialogStore: vi.fn(),
+	useMovieLogDialogStore: (selector: (state: unknown) => unknown) =>
+		selector(mockMovieLogDialogStore.getState()),
 }));
 
 vi.mock('../stores/movieLogStore', () => ({
-	useMovieLogStore: vi.fn(),
+	useMovieLogStore: (selector: (state: unknown) => unknown) =>
+		selector(mockMovieLogStore.getState()),
 }));
 
 // Mock movie search repository
