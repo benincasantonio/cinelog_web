@@ -12,21 +12,24 @@ const RegistrationPage = () => {
 	const { t } = useTranslation();
 
 	return (
-		<AuthTabs
-			children={
-				<Card className="w-full md:w-lg">
-					<CardHeader>
-						<CardTitle>{t('RegistrationPage.title')}</CardTitle>
-						<CardDescription>
-							{t('RegistrationPage.description')}
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<RegistrationForm />
-					</CardContent>
-				</Card>
-			}
-		/>
+		<>
+			<title>{t('RegistrationPage.pageTitle')}</title>
+			<AuthTabs
+				children={
+					<Card className="w-full md:w-lg">
+						<CardHeader>
+							<CardTitle>{t('RegistrationPage.title')}</CardTitle>
+							<CardDescription>
+								{t('RegistrationPage.description')}
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<RegistrationForm />
+						</CardContent>
+					</Card>
+				}
+			/>
+		</>
 	);
 };
 

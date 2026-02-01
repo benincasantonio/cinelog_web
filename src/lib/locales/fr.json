@@ -82,10 +82,12 @@
 		}
 	},
 	"LoginPage": {
+		"pageTitle": "Cinelog - Connexion",
 		"title": "Connexion",
 		"description": "Connectez-vous à votre compte"
 	},
 	"RegistrationPage": {
+		"pageTitle": "Cinelog - Inscription",
 		"title": "Inscription",
 		"description": "Créer un nouveau compte"
 	},
