@@ -28,18 +28,23 @@ const MoviesPage = () => {
 	}, [query]);
 
 	return (
-		<div className="flex flex-col">
-			<h1 className="text-2xl font-bold mb-4">{t('MovieSearchPage.title')}</h1>
-			<Input
-				placeholder={t('MovieSearchPage.searchPlaceholder')}
-				className="mb-4"
-				value={query}
-				autoFocus
-				onChange={(e) => setQuery(e.target.value)}
-			/>
+		<>
+			<title>{t('MovieSearchPage.pageTitle')}</title>
+			<div className="flex flex-col">
+				<h1 className="text-2xl font-bold mb-4">
+					{t('MovieSearchPage.title')}
+				</h1>
+				<Input
+					placeholder={t('MovieSearchPage.searchPlaceholder')}
+					className="mb-4"
+					value={query}
+					autoFocus
+					onChange={(e) => setQuery(e.target.value)}
+				/>
 
-			<MovieSearchList />
-		</div>
+				<MovieSearchList />
+			</div>
+		</>
 	);
 };
 

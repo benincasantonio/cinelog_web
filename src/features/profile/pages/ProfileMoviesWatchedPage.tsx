@@ -1,7 +1,15 @@
+import { useTranslation } from 'react-i18next';
 import { MoviesWatched } from '@/features/movie/components/MoviesWatched';
 
 const ProfileMoviesWatchedPage = () => {
-	return <MoviesWatched />;
+	const { t } = useTranslation();
+
+	return (
+		<>
+			<title>{t('ProfileMoviesWatchedPage.pageTitle')}</title>
+			<MoviesWatched />
+		</>
+	);
 };
 
 export default ProfileMoviesWatchedPage;

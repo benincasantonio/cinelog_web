@@ -1,5 +1,6 @@
 {
 	"MovieSearchPage": {
+		"pageTitle": "Cinelog - Cerca",
 		"title": "Ricerca Film",
 		"searchPlaceholder": "Cerca film..."
 	},
@@ -44,12 +45,15 @@
 		"stats": "Statistiche"
 	},
 	"ProfileOverviewPage": {
+		"pageTitle": "Cinelog - Panoramica",
 		"comingSoon": "Panoramica - Disponibile a breve"
 	},
 	"ProfileStatsPage": {
+		"pageTitle": "Cinelog - Statistiche",
 		"comingSoon": "Statistiche - Disponibile a breve"
 	},
 	"MovieDetailsPage": {
+		"pageTitle": "Cinelog - {{title}}",
 		"loading": "Caricamento dettagli film...",
 		"notFound": "Film non trovato.",
 		"goBack": "Torna indietro",
@@ -78,10 +82,12 @@
 		}
 	},
 	"LoginPage": {
+		"pageTitle": "Cinelog - Accedi",
 		"title": "Accedi",
 		"description": "Accedi al tuo account"
 	},
 	"RegistrationPage": {
+		"pageTitle": "Cinelog - Registrazione",
 		"title": "Registrazione",
 		"description": "Crea un nuovo account"
 	},
@@ -158,6 +164,7 @@
 		"register": "Registrati"
 	},
 	"HomePage": {
+		"pageTitle": "Cinelog - Home",
 		"title": "Traccia ogni viaggio cinematografico",
 		"subtitle": "Registra dove e quando hai guardato i tuoi film preferiti e immergiti nelle tue statistiche di visione personali.",
 		"tagline": "Possiedi i tuoi dati sui film. Nessuna pubblicità, nessun tracciamento, solo te e i film.",
@@ -184,5 +191,8 @@
 		"averageRating": "Voto Medio",
 		"loading": "Caricamento statistiche...",
 		"noStats": "Nessuna statistica disponibile"
+	},
+	"ProfileMoviesWatchedPage": {
+		"pageTitle": "Cinelog - Film Visti"
 	}
 }
