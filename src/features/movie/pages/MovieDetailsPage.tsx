@@ -91,77 +91,80 @@ const MovieDetailsPage = () => {
 	} = movieDetails;
 
 	return (
-		<div className="flex flex-col h-full overflow-y-auto">
-			<MovieDetailsHero
-				title={title}
-				posterPath={posterPath}
-				backdropPath={backdropPath}
-				releaseDate={releaseDate}
-				tagline={tagline}
-			/>
+		<>
+			<title>{t('MovieDetailsPage.pageTitle', { title })}</title>
+			<div className="flex flex-col h-full overflow-y-auto">
+				<MovieDetailsHero
+					title={title}
+					posterPath={posterPath}
+					backdropPath={backdropPath}
+					releaseDate={releaseDate}
+					tagline={tagline}
+				/>
 
-			{/* Content Section */}
-			<div className="px-4 md:px-8 pt-20 pb-8 space-y-6">
-				{/* Mobile Tagline */}
-				{tagline && (
-					<p className="md:hidden text-gray-600 dark:text-gray-400 italic border-l-4 border-primary pl-3">
-						{tagline}
-					</p>
-				)}
+				{/* Content Section */}
+				<div className="px-4 md:px-8 pt-20 pb-8 space-y-6">
+					{/* Mobile Tagline */}
+					{tagline && (
+						<p className="md:hidden text-gray-600 dark:text-gray-400 italic border-l-4 border-primary pl-3">
+							{tagline}
+						</p>
+					)}
 
-				{/* Meta Data */}
-				<div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-					<MovieRuntime runtime={runtime} />
-					<MovieVote vote={voteAverage} source="tmdb" />
+					{/* Meta Data */}
+					<div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+						<MovieRuntime runtime={runtime} />
+						<MovieVote vote={voteAverage} source="tmdb" />
 
-					{isMovieRatingLoading && <Skeleton className="w-16 h-4" />}
+						{isMovieRatingLoading && <Skeleton className="w-16 h-4" />}
 
-					{!isMovieRatingLoading && !movieRating && (
+						{!isMovieRatingLoading && !movieRating && (
+							<button
+								onClick={() => tmdbId && openRateModal(tmdbId)}
+								className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium cursor-pointer"
+							>
+								<Star className="w-4 h-4" />
+								<span>{t('MovieDetailsPage.rate')}</span>
+							</button>
+						)}
+
+						{!isMovieRatingLoading && movieRating && (
+							<MovieVote
+								className="cursor-pointer"
+								vote={movieRating?.rating || 0}
+								source="user"
+								onClick={() => tmdbId && openRateModal(tmdbId, movieRating)}
+							/>
+						)}
+						<MovieGenres genres={genres} />
+
 						<button
-							onClick={() => tmdbId && openRateModal(tmdbId)}
-							className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium cursor-pointer"
+							onClick={() =>
+								tmdbId &&
+								openLogDialog({
+									prefilledMovie: { tmdbId: Number(tmdbId), title },
+								})
+							}
+							className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-600/10 text-green-600 hover:bg-green-600/20 transition-colors font-medium cursor-pointer"
 						>
-							<Star className="w-4 h-4" />
-							<span>{t('MovieDetailsPage.rate')}</span>
+							<Clapperboard className="w-4 h-4" />
+							<span>{t('MovieDetailsPage.logMovie')}</span>
 						</button>
-					)}
+					</div>
 
-					{!isMovieRatingLoading && movieRating && (
-						<MovieVote
-							className="cursor-pointer"
-							vote={movieRating?.rating || 0}
-							source="user"
-							onClick={() => tmdbId && openRateModal(tmdbId, movieRating)}
-						/>
-					)}
-					<MovieGenres genres={genres} />
-
-					<button
-						onClick={() =>
-							tmdbId &&
-							openLogDialog({
-								prefilledMovie: { tmdbId: Number(tmdbId), title },
-							})
-						}
-						className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-600/10 text-green-600 hover:bg-green-600/20 transition-colors font-medium cursor-pointer"
-					>
-						<Clapperboard className="w-4 h-4" />
-						<span>{t('MovieDetailsPage.logMovie')}</span>
-					</button>
+					{/* Overview */}
+					<div className="space-y-2">
+						<h3 className="text-lg font-bold text-gray-900 dark:text-white">
+							{t('MovieDetailsPage.overview')}
+						</h3>
+						<p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+							{overview || t('MovieDetailsPage.noOverview')}
+						</p>
+					</div>
 				</div>
-
-				{/* Overview */}
-				<div className="space-y-2">
-					<h3 className="text-lg font-bold text-gray-900 dark:text-white">
-						{t('MovieDetailsPage.overview')}
-					</h3>
-					<p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-						{overview || t('MovieDetailsPage.noOverview')}
-					</p>
-				</div>
+				<RateMovieModal onSuccess={onRateMovieUpdated} />
 			</div>
-			<RateMovieModal onSuccess={onRateMovieUpdated} />
-		</div>
+		</>
 	);
 };
 

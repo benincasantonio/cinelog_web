@@ -1,5 +1,6 @@
 {
 	"MovieSearchPage": {
+		"pageTitle": "Cinelog - Recherche",
 		"title": "Recherche de Films",
 		"searchPlaceholder": "Rechercher des films..."
 	},
@@ -44,12 +45,15 @@
 		"stats": "Statistiques"
 	},
 	"ProfileOverviewPage": {
+		"pageTitle": "Cinelog - Aperçu",
 		"comingSoon": "Aperçu - Bientôt disponible"
 	},
 	"ProfileStatsPage": {
+		"pageTitle": "Cinelog - Statistiques",
 		"comingSoon": "Statistiques - Bientôt disponible"
 	},
 	"MovieDetailsPage": {
+		"pageTitle": "Cinelog - {{title}}",
 		"loading": "Chargement des détails du film...",
 		"notFound": "Film introuvable.",
 		"goBack": "Retour",
@@ -158,6 +162,7 @@
 		"register": "S'inscrire"
 	},
 	"HomePage": {
+		"pageTitle": "Cinelog - Accueil",
 		"title": "Suivez chaque voyage cinématographique",
 		"subtitle": "Enregistrez où et quand vous avez regardé vos films préférés et plongez dans vos statistiques de visionnage personnelles.",
 		"tagline": "Possédez vos données de films. Pas de pubs, pas de suivi, juste vous et les films.",
@@ -184,5 +189,8 @@
 		"averageRating": "Note Moyenne",
 		"loading": "Chargement des statistiques...",
 		"noStats": "Aucune statistique disponible"
+	},
+	"ProfileMoviesWatchedPage": {
+		"pageTitle": "Cinelog - Films Vus"
 	}
 }

@@ -1,5 +1,6 @@
 {
 	"MovieSearchPage": {
+		"pageTitle": "Cinelog - Search",
 		"title": "Movie Search",
 		"searchPlaceholder": "Search for movies..."
 	},
@@ -44,12 +45,15 @@
 		"stats": "Stats"
 	},
 	"ProfileOverviewPage": {
+		"pageTitle": "Cinelog - Overview",
 		"comingSoon": "Overview - Coming soon"
 	},
 	"ProfileStatsPage": {
+		"pageTitle": "Cinelog - Stats",
 		"comingSoon": "Stats - Coming soon"
 	},
 	"MovieDetailsPage": {
+		"pageTitle": "Cinelog - {{title}}",
 		"loading": "Loading movie details...",
 		"notFound": "Movie not found.",
 		"goBack": "Go back",
@@ -117,6 +121,7 @@
 		"titleUpdate": "Edit Movie Log",
 		"description": "Add the details of what you watched.",
 		"close": "Close",
+		"submit": "Log Movie",
 		"submitCreate": "Log Movie",
 		"submittingCreate": "Logging Movie...",
 		"submitUpdate": "Update Log",
@@ -161,6 +166,7 @@
 		"register": "Register"
 	},
 	"HomePage": {
+		"pageTitle": "Cinelog - Home",
 		"title": "Track every cinematic journey",
 		"subtitle": "Log where and when you watched your favorite movies and dive into your personal viewing statistics.",
 		"tagline": "Own your movie data. No ads, no tracking, just you and the movies.",
@@ -187,5 +193,8 @@
 		"averageRating": "Average Rating",
 		"loading": "Loading stats...",
 		"noStats": "No stats available"
+	},
+	"ProfileMoviesWatchedPage": {
+		"pageTitle": "Cinelog - Movies Watched"
 	}
 }
