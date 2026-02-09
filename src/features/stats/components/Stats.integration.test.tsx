@@ -97,6 +97,9 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	ChartLegendContent: () => <div />,
 	ChartTooltip: () => <div />,
 	ChartTooltipContent: () => <div />,
+	Skeleton: ({ className }: { className?: string }) => (
+		<div data-testid="skeleton" className={className} />
+	),
 }));
 
 vi.mock('recharts', () => ({
@@ -332,8 +335,6 @@ describe('Stats Integration Tests', () => {
 	describe('filter and apply flow', () => {
 		it('should enable apply button when year filter is changed', async () => {
 			mockGetMyStats.mockResolvedValueOnce(createMockStats());
-
-			const user = userEvent.setup();
 			render(<Stats />);
 
 			await waitFor(() => {

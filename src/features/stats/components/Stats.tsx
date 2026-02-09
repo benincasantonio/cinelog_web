@@ -4,6 +4,7 @@ import { humanizeMinutes } from '@/lib/utilities/date-utils';
 import { useStatsStore } from '../stores/useStatsStore';
 import { StatsCard } from './StatsCard';
 import { StatsFilter } from './StatsFilter';
+import { StatsLoading } from './StatsLoading';
 import { WatchMethodPieChart } from './WatchMethodPieChart';
 
 export const Stats = () => {
@@ -20,7 +21,7 @@ export const Stats = () => {
 	);
 
 	if (isLoading) {
-		return <div data-testid="stats-loading">{t('Stats.loading')}</div>;
+		return <StatsLoading />;
 	}
 
 	if (error) {

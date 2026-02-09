@@ -1,4 +1,9 @@
-export type StatsFilterPreset = 'allTime' | 'thisYear' | 'lastYear' | 'last5Years' | 'custom';
+export type StatsFilterPreset =
+	| 'allTime'
+	| 'thisYear'
+	| 'lastYear'
+	| 'last5Years'
+	| 'custom';
 
 export interface StatsFilterPresetConfig {
 	key: StatsFilterPreset;
