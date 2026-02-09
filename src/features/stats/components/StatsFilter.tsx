@@ -129,10 +129,7 @@ export const StatsFilter = () => {
 			{Object.keys(errors).length > 0 && (
 				<div className="flex flex-col gap-1 text-right">
 					{errors.yearFrom && (
-						<span
-							className="text-red-500 text-sm"
-							data-testid="error-yearFrom"
-						>
+						<span className="text-red-500 text-sm" data-testid="error-yearFrom">
 							{t(
 								`StatsFilter.validation.${
 									errors.yearFrom.message === 'bothYearsRequired'
