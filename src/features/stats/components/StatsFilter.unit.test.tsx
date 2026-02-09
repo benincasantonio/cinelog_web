@@ -384,6 +384,26 @@ describe('StatsFilter', () => {
 				'1900'
 			);
 		});
+
+		it('should render both year inputs with max set to current year', () => {
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				isAllTime: () => false,
+				filters: { yearFrom: 2024, yearTo: 2025 },
+			});
+
+			render(<StatsFilter />);
+
+			const currentYear = new Date().getFullYear().toString();
+			expect(screen.getByTestId('input-StatsFilter.yearFrom')).toHaveAttribute(
+				'max',
+				currentYear
+			);
+			expect(screen.getByTestId('input-StatsFilter.yearTo')).toHaveAttribute(
+				'max',
+				currentYear
+			);
+		});
 	});
 
 	describe('validation errors', () => {

@@ -6,12 +6,13 @@ import { z } from 'zod';
 import { useStatsStore } from '../stores';
 
 const MIN_YEAR = 1900;
+const MAX_YEAR = new Date().getFullYear();
 
 const formSchema = z
 	.object({
 		isAllTime: z.boolean(),
-		yearFrom: z.number().min(MIN_YEAR).nullable(),
-		yearTo: z.number().min(MIN_YEAR).nullable(),
+		yearFrom: z.number().min(MIN_YEAR).max(MAX_YEAR).nullable(),
+		yearTo: z.number().min(MIN_YEAR).max(MAX_YEAR).nullable(),
 	})
 	.refine(
 		(data) => {
@@ -68,7 +69,6 @@ export const StatsFilter = () => {
 						<Checkbox
 							checked={field.value}
 							onChange={(e) => {
-								field.onChange(e.target.checked);
 								setAllTime(e.target.checked);
 							}}
 						/>
@@ -87,13 +87,13 @@ export const StatsFilter = () => {
 								<Input
 									type="number"
 									min={MIN_YEAR}
+									max={MAX_YEAR}
 									placeholder={t('StatsFilter.yearFrom')}
 									value={field.value ?? ''}
 									onChange={(e) => {
 										const value = e.target.value
 											? Number(e.target.value)
 											: null;
-										field.onChange(value);
 										setYearFrom(value);
 									}}
 								/>
@@ -107,13 +107,13 @@ export const StatsFilter = () => {
 								<Input
 									type="number"
 									min={MIN_YEAR}
+									max={MAX_YEAR}
 									placeholder={t('StatsFilter.yearTo')}
 									value={field.value ?? ''}
 									onChange={(e) => {
 										const value = e.target.value
 											? Number(e.target.value)
 											: null;
-										field.onChange(value);
 										setYearTo(value);
 									}}
 								/>

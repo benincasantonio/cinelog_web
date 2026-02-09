@@ -204,6 +204,7 @@
 		"resetFilters": "Reset",
 		"validation": {
 			"minYear": "Year must be {{min}} or later",
+			"maxYear": "Year cannot be later than {{max}}",
 			"yearToBeforeYearFrom": "End year must be equal to or later than start year"
 		}
 	},
