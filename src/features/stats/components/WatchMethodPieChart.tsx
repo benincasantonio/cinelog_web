@@ -60,7 +60,10 @@ export const WatchMethodPieChart = ({ byMethod }: WatchMethodPieChartProps) => {
 
 	if (total === 0) {
 		return (
-			<div className="flex items-center justify-center h-75 text-gray-500 dark:text-gray-400">
+			<div
+				className="flex items-center justify-center h-75 text-gray-500 dark:text-gray-400"
+				data-testid="pie-chart-no-data"
+			>
 				{t('WatchMethodPieChart.noData')}
 			</div>
 		);
@@ -68,7 +71,10 @@ export const WatchMethodPieChart = ({ byMethod }: WatchMethodPieChartProps) => {
 
 	return (
 		<div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
-			<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+			<h3
+				className="text-lg font-semibold text-gray-900 dark:text-white mb-4"
+				data-testid="pie-chart-title"
+			>
 				{t('WatchMethodPieChart.title')}
 			</h3>
 			<ChartContainer config={chartConfig} className="h-75 w-full">

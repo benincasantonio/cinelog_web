@@ -5,7 +5,7 @@
     "": {
       "name": "cinelog_web",
       "dependencies": {
-        "@antoniobenincasa/ui": "^0.9.1",
+        "@antoniobenincasa/ui": "^0.10.0",
         "@hookform/resolvers": "^5.2.2",
         "firebase": "^12.6.0",
         "i18next": "^25.7.4",
@@ -54,7 +54,7 @@
 
     "@adobe/css-tools": ["@adobe/css-tools@4.4.4", "", {}, "sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg=="],
 
-    "@antoniobenincasa/ui": ["@antoniobenincasa/ui@0.9.1", "", { "dependencies": { "@radix-ui/react-alert-dialog": "^1.1.15", "@radix-ui/react-dialog": "^1.1.15", "@radix-ui/react-dropdown-menu": "^2.1.16", "@radix-ui/react-label": "^2.1.8", "@radix-ui/react-navigation-menu": "^1.2.14", "@radix-ui/react-popover": "^1.1.15", "@radix-ui/react-select": "^2.2.6", "@radix-ui/react-slot": "^1.2.4", "@radix-ui/react-tabs": "^1.1.13", "class-variance-authority": "^0.7.1", "clsx": "^2.1.1", "cmdk": "^1.1.1", "recharts": "2.15.4", "tailwind-merge": "^3.4.0" }, "peerDependencies": { "@hookform/resolvers": "^5.2.2", "lucide-react": "^0.562.0", "react": "^19.2.0", "react-dom": "^19.2.0", "react-hook-form": "^7.68.0", "tailwindcss": "^4.1.17", "zod": "^4.1.13" } }, "sha512-G6bsbL3uEy2p7tVQZcJ7B/Me2ySiQ++nrq2QxQYXWLAehFo3o+gUmIDE453cpqrP3ZEzDoF7yFCkj46iSohlvQ=="],
+    "@antoniobenincasa/ui": ["@antoniobenincasa/ui@0.10.0", "", { "dependencies": { "@radix-ui/react-alert-dialog": "^1.1.15", "@radix-ui/react-dialog": "^1.1.15", "@radix-ui/react-dropdown-menu": "^2.1.16", "@radix-ui/react-label": "^2.1.8", "@radix-ui/react-navigation-menu": "^1.2.14", "@radix-ui/react-popover": "^1.1.15", "@radix-ui/react-select": "^2.2.6", "@radix-ui/react-slot": "^1.2.4", "@radix-ui/react-tabs": "^1.1.13", "class-variance-authority": "^0.7.1", "clsx": "^2.1.1", "cmdk": "^1.1.1", "recharts": "2.15.4", "tailwind-merge": "^3.4.0" }, "peerDependencies": { "@hookform/resolvers": "^5.2.2", "lucide-react": "^0.562.0", "react": "^19.2.0", "react-dom": "^19.2.0", "react-hook-form": "^7.68.0", "tailwindcss": "^4.1.17", "zod": "^4.1.13" } }, "sha512-++Gsbskj9sH0i8PxwYiNs4/SwJAZgI+Mrd2Rf8dE9xNJ3KCVi3zd0Oyr3ghEe3Golzht0VDBku9KqqfiI2j8BA=="],
 
     "@asamuzakjp/css-color": ["@asamuzakjp/css-color@4.1.1", "", { "dependencies": { "@csstools/css-calc": "^2.1.4", "@csstools/css-color-parser": "^3.1.0", "@csstools/css-parser-algorithms": "^3.0.5", "@csstools/css-tokenizer": "^3.0.4", "lru-cache": "^11.2.4" } }, "sha512-B0Hv6G3gWGMn0xKJ0txEi/jM5iFpT3MfDxmhZFb4W047GvytCf1DHQ1D69W3zHI4yWe2aTZAA0JnbMZ7Xc8DuQ=="],
 
