@@ -371,10 +371,10 @@ describe('useStatsStore', () => {
 			});
 		});
 
-		it('should set appliedFilters to undefined when filters is null', async () => {
+		it('should set appliedFilters to null when filters is null', async () => {
 			mockGetMyStats.mockResolvedValueOnce(createMockStats());
 			await getState().fetchStats();
-			expect(getState().appliedFilters).toBeUndefined();
+			expect(getState().appliedFilters).toBeNull();
 		});
 
 		it('should set error message on failure', async () => {
