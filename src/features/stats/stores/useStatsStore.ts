@@ -18,7 +18,7 @@ interface StatsStore {
 	setYearFrom: (yearFrom: number | null) => void;
 	setYearTo: (yearTo: number | null) => void;
 	resetFilters: () => void;
-	fetchStats: (params?: GetStatsParams) => Promise<void>;
+	fetchStats: () => Promise<void>;
 }
 
 export const useStatsStore = create<StatsStore>((set, get) => ({
@@ -84,7 +84,11 @@ export const useStatsStore = create<StatsStore>((set, get) => ({
 		try {
 			const { filters } = get();
 			const stats = await getMyStats(filters ?? undefined);
-			set({ stats, isLoading: false, appliedFilters: filters ?? undefined });
+			set({
+				stats,
+				isLoading: false,
+				appliedFilters: filters ? { ...filters } : null,
+			});
 		} catch (error) {
 			set({ error: (error as Error).message, isLoading: false });
 		}
