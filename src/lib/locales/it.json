@@ -200,6 +200,7 @@
 		"resetFilters": "Reimposta",
 		"validation": {
 			"minYear": "L'anno deve essere {{min}} o successivo",
+			"maxYear": "L'anno non può essere successivo a {{max}}",
 			"yearToBeforeYearFrom": "L'anno finale deve essere uguale o successivo all'anno iniziale"
 		}
 	},
