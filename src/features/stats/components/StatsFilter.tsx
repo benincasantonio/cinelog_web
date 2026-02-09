@@ -3,46 +3,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
+import {
+	MAX_YEAR,
+	MIN_YEAR,
+	type StatsFilterSchema,
+	statsFilterSchema,
+} from '../schemas';
 import { useStatsStore } from '../stores';
-
-const MIN_YEAR = 1900;
-const MAX_YEAR = new Date().getFullYear();
-
-const formSchema = z
-	.object({
-		yearFrom: z.number().min(MIN_YEAR).max(MAX_YEAR).nullable(),
-		yearTo: z.number().min(MIN_YEAR).max(MAX_YEAR).nullable(),
-	})
-	.superRefine((data, context) => {
-		if (data.yearFrom != null && data.yearTo == null) {
-			context.addIssue({
-				code: 'custom',
-				message: 'bothYearsRequired',
-				path: ['yearTo'],
-			});
-		}
-
-		if (data.yearTo != null && data.yearFrom == null) {
-			context.addIssue({
-				code: 'custom',
-				message: 'bothYearsRequired',
-				path: ['yearFrom'],
-			});
-		}
-
-		if (data.yearFrom == null || data.yearTo == null) return;
-
-		if (data.yearTo < data.yearFrom) {
-			context.addIssue({
-				code: 'custom',
-				message: 'yearToBeforeYearFrom',
-				path: ['yearTo'],
-			});
-		}
-	});
-
-type FormValues = z.infer<typeof formSchema>;
+import { StatsFilterPresets } from './StatsFilterPresets';
 
 export const StatsFilter = () => {
 	const { t } = useTranslation();
@@ -52,8 +20,6 @@ export const StatsFilter = () => {
 	const setYearTo = useStatsStore((state) => state.setYearTo);
 	const fetchStats = useStatsStore((state) => state.fetchStats);
 	const resetFilters = useStatsStore((state) => state.resetFilters);
-	const activePreset = useStatsStore((state) => state.activePreset());
-	const applyPreset = useStatsStore((state) => state.applyPreset);
 
 	const defaultValues = useMemo(
 		() => ({
@@ -68,8 +34,8 @@ export const StatsFilter = () => {
 		handleSubmit,
 		formState: { isDirty, errors },
 		reset,
-	} = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	} = useForm<StatsFilterSchema>({
+		resolver: zodResolver(statsFilterSchema),
 		mode: 'onChange',
 		defaultValues,
 	});
@@ -78,7 +44,7 @@ export const StatsFilter = () => {
 		reset(defaultValues);
 	}, [defaultValues, reset]);
 
-	function onSubmit(data: FormValues) {
+	function onSubmit(data: StatsFilterSchema) {
 		setYearFrom(data.yearFrom);
 		setYearTo(data.yearTo);
 		fetchStats();
@@ -89,48 +55,7 @@ export const StatsFilter = () => {
 			onSubmit={handleSubmit(onSubmit)}
 			className="flex flex-col gap-3 items-end"
 		>
-			<div className="w-full flex items-center gap-1 overflow-x-auto pb-1">
-				<Button
-					type="button"
-					size="sm"
-					variant={activePreset === 'allTime' ? 'default' : 'outline'}
-					onClick={() => applyPreset('allTime')}
-					data-testid="preset-allTime"
-					data-active={activePreset === 'allTime'}
-				>
-					{t('StatsFilter.allTime')}
-				</Button>
-				<Button
-					type="button"
-					size="sm"
-					variant={activePreset === 'thisYear' ? 'default' : 'outline'}
-					onClick={() => applyPreset('thisYear')}
-					data-testid="preset-thisYear"
-					data-active={activePreset === 'thisYear'}
-				>
-					{t('StatsFilter.thisYear')}
-				</Button>
-				<Button
-					type="button"
-					size="sm"
-					variant={activePreset === 'lastYear' ? 'default' : 'outline'}
-					onClick={() => applyPreset('lastYear')}
-					data-testid="preset-lastYear"
-					data-active={activePreset === 'lastYear'}
-				>
-					{t('StatsFilter.lastYear')}
-				</Button>
-				<Button
-					type="button"
-					size="sm"
-					variant={activePreset === 'last5Years' ? 'default' : 'outline'}
-					onClick={() => applyPreset('last5Years')}
-					data-testid="preset-last5Years"
-					data-active={activePreset === 'last5Years'}
-				>
-					{t('StatsFilter.last5Years')}
-				</Button>
-			</div>
+			<StatsFilterPresets />
 
 			<div className="flex flex-col md:flex-row items-end gap-2 md:gap-5">
 				<div className="flex flex-col gap-0.5">

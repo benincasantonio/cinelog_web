@@ -60,7 +60,7 @@ export const useStatsStore = create<StatsStore>((set, get) => ({
 	activePreset(): StatsFilterPreset {
 		const { filters } = get();
 		const preset = STATS_FILTER_PRESETS.find(
-			(p) => p.from === filters?.yearFrom && p.to === filters?.yearTo,
+			(p) => p.from === filters?.yearFrom && p.to === filters?.yearTo
 		);
 		return preset?.key ?? 'custom';
 	},

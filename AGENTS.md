@@ -22,6 +22,7 @@
   - Stores: `use<Thing>Store.ts` (e.g., `src/features/auth/stores/useAuthStore.ts`)
   - Schemas: `*.schema.ts` (e.g., `src/features/auth/schemas/login.schema.ts`)
   - Feature folders: `kebab-case/`
+- Zod validation schemas MUST be placed in `schemas/*.schema.ts` files within the feature module (e.g., `src/features/auth/schemas/login.schema.ts`), never inline in components. Export the schema, the inferred TypeScript type, and any related constants (e.g. `MIN_YEAR`).
 
 ## Testing Guidelines
 - No test runner is configured yet (no `test` script).
