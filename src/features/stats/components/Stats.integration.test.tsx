@@ -67,7 +67,6 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		<input
 			{...props}
 			onChange={(e) => {
-				console.error('MockInput onChange called', e.target.value);
 				onChange?.(e);
 			}}
 			data-testid={`input-${props.placeholder}`}
