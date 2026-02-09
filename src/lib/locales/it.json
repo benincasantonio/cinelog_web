@@ -194,6 +194,10 @@
 	},
 	"StatsFilter": {
 		"allTime": "Sempre",
+		"thisYear": "Quest'anno",
+		"lastYear": "Anno scorso",
+		"last5Years": "Ultimi 5 anni",
+		"yearRange": "Intervallo anni",
 		"yearFrom": "Anno Da",
 		"yearTo": "Anno A",
 		"applyFilters": "Applica",
@@ -201,6 +205,7 @@
 		"validation": {
 			"minYear": "L'anno deve essere {{min}} o successivo",
 			"maxYear": "L'anno non può essere successivo a {{max}}",
+			"bothYearsRequired": "Sono richiesti entrambi gli anni",
 			"yearToBeforeYearFrom": "L'anno finale deve essere uguale o successivo all'anno iniziale"
 		}
 	},

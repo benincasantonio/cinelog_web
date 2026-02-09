@@ -198,6 +198,10 @@
 	},
 	"StatsFilter": {
 		"allTime": "All Time",
+		"thisYear": "This Year",
+		"lastYear": "Last Year",
+		"last5Years": "Last 5 Years",
+		"yearRange": "Year Range",
 		"yearFrom": "Year From",
 		"yearTo": "Year To",
 		"applyFilters": "Apply",
@@ -205,6 +209,7 @@
 		"validation": {
 			"minYear": "Year must be {{min}} or later",
 			"maxYear": "Year cannot be later than {{max}}",
+			"bothYearsRequired": "Both years are required",
 			"yearToBeforeYearFrom": "End year must be equal to or later than start year"
 		}
 	},

@@ -1,4 +1,12 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+/// <reference types="@testing-library/jest-dom" />
+import '@testing-library/jest-dom/vitest';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -28,6 +36,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		onClick,
 		size,
 		variant,
+		...rest
 	}: {
 		children: ReactNode;
 		disabled?: boolean;
@@ -35,32 +44,34 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		onClick?: () => void;
 		size?: string;
 		variant?: string;
+		'data-testid'?: string;
+		'data-active'?: boolean;
 	}) => (
 		<button
 			disabled={disabled}
 			type={type as 'button' | 'submit' | 'reset' | undefined}
 			onClick={onClick}
-			data-testid={type === 'submit' ? 'apply-button' : 'reset-button'}
+			data-testid={
+				rest['data-testid'] ??
+				(type === 'submit' ? 'apply-button' : 'reset-button')
+			}
+			data-active={rest['data-active']?.toString()}
 		>
 			{children}
 		</button>
 	),
-	Checkbox: ({
-		checked,
+	Input: ({
 		onChange,
-	}: {
-		checked: boolean;
-		onChange: (e: { target: { checked: boolean } }) => void;
-	}) => (
+		...props
+	}: React.InputHTMLAttributes<HTMLInputElement>) => (
 		<input
-			type="checkbox"
-			data-testid="all-time-checkbox"
-			checked={checked}
-			onChange={onChange}
+			{...props}
+			onChange={(e) => {
+				console.error('MockInput onChange called', e.target.value);
+				onChange?.(e);
+			}}
+			data-testid={`input-${props.placeholder}`}
 		/>
-	),
-	Input: (props: React.InputHTMLAttributes<HTMLInputElement>) => (
-		<input {...props} data-testid={`input-${props.placeholder}`} />
 	),
 	Card: ({
 		children,
@@ -129,7 +140,15 @@ import { Stats } from './Stats';
 
 describe('Stats Integration Tests', () => {
 	beforeEach(async () => {
-		vi.clearAllMocks();
+		vi.resetAllMocks();
+		mockGetMyStats.mockReset(); // Explicitly reset the mock
+		// Restore default mock implementation if needed, though useStatsStore uses it directly.
+		// But since we use resetAllMocks, we might lose the mock implementation defined in vi.mock factory?
+		// No, resetAllMocks restores to initial implementation?
+		// "Resets the state of all mocks... to the state when it was created."
+		// If created with vi.fn(), it resets to generic mock.
+		// If created with vi.fn(() => implementation), it restores that?
+		// Let's verify documentation behavior or just verify.
 		await act(() => {
 			useStatsStore.setState({
 				stats: null,
@@ -241,7 +260,9 @@ describe('Stats Integration Tests', () => {
 			render(<Stats />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
 			});
 		});
 
@@ -255,12 +276,28 @@ describe('Stats Integration Tests', () => {
 			);
 
 			render(<Stats />);
-			expect(screen.queryByTestId('all-time-checkbox')).not.toBeInTheDocument();
+			expect(
+				screen.queryByTestId('input-StatsFilter.yearFrom')
+			).not.toBeInTheDocument();
 
 			// Resolve to avoid dangling promise
 			await act(async () => {
 				resolveStats!(createMockStats());
 			});
+		});
+
+		it('should not render StatsFilter when stats is null (no-data state)', async () => {
+			mockGetMyStats.mockResolvedValueOnce(null as unknown as StatsResponse);
+
+			render(<Stats />);
+
+			await waitFor(() => {
+				expect(screen.getByTestId('stats-no-data')).toBeInTheDocument();
+			});
+
+			expect(
+				screen.queryByTestId('input-StatsFilter.yearFrom')
+			).not.toBeInTheDocument();
 		});
 
 		it('should not render StatsFilter on error', async () => {
@@ -272,47 +309,22 @@ describe('Stats Integration Tests', () => {
 				expect(screen.getByTestId('stats-error')).toBeInTheDocument();
 			});
 
-			expect(screen.queryByTestId('all-time-checkbox')).not.toBeInTheDocument();
+			expect(
+				screen.queryByTestId('input-StatsFilter.yearFrom')
+			).not.toBeInTheDocument();
 		});
 
-		it('should show all time checkbox as checked initially', async () => {
+		it('should show all time button as active initially', async () => {
 			mockGetMyStats.mockResolvedValueOnce(createMockStats());
 
 			render(<Stats />);
 
 			await waitFor(() => {
 				expect(screen.getByTestId('stat-total-watched')).toBeInTheDocument();
-				expect(screen.getByTestId('all-time-checkbox')).toBeChecked();
-			});
-		});
-
-		it('should show and hide year inputs when toggling all time checkbox', async () => {
-			mockGetMyStats.mockResolvedValue(createMockStats());
-
-			const user = userEvent.setup();
-			render(<Stats />);
-
-			// Wait for stats to fully load
-			await waitFor(() => {
-				expect(screen.getByTestId('stat-total-watched')).toBeInTheDocument();
-			});
-
-			// Uncheck to show inputs
-			await user.click(screen.getByTestId('all-time-checkbox'));
-
-			await waitFor(() => {
-				expect(
-					screen.getByTestId('input-StatsFilter.yearFrom')
-				).toBeInTheDocument();
-			});
-
-			// Re-check to hide inputs
-			await user.click(screen.getByTestId('all-time-checkbox'));
-
-			await waitFor(() => {
-				expect(
-					screen.queryByTestId('input-StatsFilter.yearFrom')
-				).not.toBeInTheDocument();
+				expect(screen.getByTestId('preset-allTime')).toHaveAttribute(
+					'data-active',
+					'true'
+				);
 			});
 		});
 	});
@@ -325,11 +337,14 @@ describe('Stats Integration Tests', () => {
 			render(<Stats />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
 			});
 
-			// Uncheck all time
-			await user.click(screen.getByTestId('all-time-checkbox'));
+			// Change filters to enable apply button
+			const yearFromInput = screen.getByTestId('input-StatsFilter.yearFrom');
+			fireEvent.change(yearFromInput, { target: { value: '2023' } });
 
 			await waitFor(() => {
 				expect(screen.getByTestId('apply-button')).not.toBeDisabled();
@@ -344,11 +359,12 @@ describe('Stats Integration Tests', () => {
 
 			// Wait for initial load
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
 			});
 
 			// Uncheck all time to show year inputs
-			await user.click(screen.getByTestId('all-time-checkbox'));
 
 			await waitFor(() => {
 				expect(
@@ -381,11 +397,14 @@ describe('Stats Integration Tests', () => {
 			render(<Stats />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
 			});
 
-			// Uncheck all time
-			await user.click(screen.getByTestId('all-time-checkbox'));
+			// Change year filter to enable reset button
+			const yearFromInput = screen.getByTestId('input-StatsFilter.yearFrom');
+			await user.type(yearFromInput, '2020');
 
 			await waitFor(() => {
 				expect(screen.getByTestId('reset-button')).not.toBeDisabled();
@@ -394,9 +413,12 @@ describe('Stats Integration Tests', () => {
 			// Click reset
 			await user.click(screen.getByTestId('reset-button'));
 
-			// After reset, checkbox should be checked again (all time)
+			// After reset, all time button should be active again
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeChecked();
+				expect(screen.getByTestId('preset-allTime')).toHaveAttribute(
+					'data-active',
+					'true'
+				);
 			});
 		});
 	});
@@ -409,11 +431,12 @@ describe('Stats Integration Tests', () => {
 			render(<Stats />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
 			});
 
 			// Uncheck all time
-			await user.click(screen.getByTestId('all-time-checkbox'));
 
 			await waitFor(() => {
 				expect(
@@ -435,6 +458,33 @@ describe('Stats Integration Tests', () => {
 			expect(mockGetMyStats.mock.calls.length).toBe(callCountBeforeApply);
 		});
 
+		it('should show error and not call fetchStats when only yearFrom is provided', async () => {
+			mockGetMyStats.mockResolvedValue(createMockStats());
+
+			const user = userEvent.setup();
+			render(<Stats />);
+
+			await waitFor(() => {
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
+			});
+
+			const yearFromInput = screen.getByTestId('input-StatsFilter.yearFrom');
+			await user.clear(yearFromInput);
+			await user.type(yearFromInput, '2025');
+
+			const callCountBeforeApply = mockGetMyStats.mock.calls.length;
+
+			await user.click(screen.getByTestId('apply-button'));
+
+			await waitFor(() => {
+				expect(screen.getByTestId('error-yearTo')).toBeInTheDocument();
+			});
+
+			expect(mockGetMyStats.mock.calls.length).toBe(callCountBeforeApply);
+		});
+
 		it('should not call fetchStats when yearTo is before yearFrom', async () => {
 			mockGetMyStats.mockResolvedValue(createMockStats());
 
@@ -442,10 +492,10 @@ describe('Stats Integration Tests', () => {
 			render(<Stats />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
 			});
-
-			await user.click(screen.getByTestId('all-time-checkbox'));
 
 			await waitFor(() => {
 				expect(
@@ -479,10 +529,10 @@ describe('Stats Integration Tests', () => {
 			render(<Stats />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
 			});
-
-			await user.click(screen.getByTestId('all-time-checkbox'));
 
 			await waitFor(() => {
 				expect(
@@ -514,10 +564,10 @@ describe('Stats Integration Tests', () => {
 			render(<Stats />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('input-StatsFilter.yearFrom')
+				).toBeInTheDocument();
 			});
-
-			await user.click(screen.getByTestId('all-time-checkbox'));
 
 			await waitFor(() => {
 				expect(
@@ -579,8 +629,11 @@ describe('Stats Integration Tests', () => {
 				).toHaveTextContent('42');
 			});
 
-			// Uncheck all time and apply
-			await user.click(screen.getByTestId('all-time-checkbox'));
+			// Change filters to enable apply button
+			const yearFromInput = screen.getByTestId('input-StatsFilter.yearFrom');
+			const yearToInput = screen.getByTestId('input-StatsFilter.yearTo');
+			await user.type(yearFromInput, '2023');
+			await user.type(yearToInput, '2023');
 
 			await waitFor(() => {
 				expect(screen.getByTestId('apply-button')).not.toBeDisabled();
@@ -611,8 +664,14 @@ describe('Stats Integration Tests', () => {
 				expect(screen.getByTestId('stat-total-watched')).toBeInTheDocument();
 			});
 
-			// Uncheck all time and apply
-			await user.click(screen.getByTestId('all-time-checkbox'));
+			// Change filters to enable apply button
+			const yearFromInput = screen.getByTestId('input-StatsFilter.yearFrom');
+			const yearToInput = screen.getByTestId('input-StatsFilter.yearTo');
+			fireEvent.change(yearFromInput, { target: { value: '2023' } });
+			fireEvent.change(yearToInput, { target: { value: '2023' } });
+
+			// Debug: Verify input has value
+			expect(yearFromInput).toHaveValue(2023);
 
 			await waitFor(() => {
 				expect(screen.getByTestId('apply-button')).not.toBeDisabled();
@@ -682,7 +741,7 @@ describe('Stats Integration Tests', () => {
 		});
 
 		it('should display zero values correctly', async () => {
-			const stats = createMockStats({
+			const zeroStats = createMockStats({
 				summary: {
 					totalWatches: 0,
 					uniqueTitles: 0,
@@ -690,10 +749,27 @@ describe('Stats Integration Tests', () => {
 					totalMinutes: 0,
 					voteAverage: 0,
 				},
+				distribution: {
+					byMethod: {
+						cinema: 0,
+						streaming: 0,
+						homeVideo: 0,
+						tv: 0,
+						other: 0,
+					},
+				},
 			});
-			mockGetMyStats.mockResolvedValueOnce(stats);
+			mockGetMyStats.mockResolvedValue(zeroStats);
 
 			render(<Stats />);
+
+			await waitFor(() => {
+				expect(screen.getByTestId('stat-total-watched')).toBeInTheDocument();
+			});
+
+			expect(screen.getByTestId('stat-total-watched-value')).toHaveTextContent(
+				'0'
+			);
 
 			await waitFor(() => {
 				expect(
@@ -707,38 +783,31 @@ describe('Stats Integration Tests', () => {
 	});
 
 	describe('multiple fetch cycles', () => {
-		it('should handle switching between all time and year range multiple times', async () => {
+		it('should fetch stats when preset buttons are clicked (auto-apply)', async () => {
 			mockGetMyStats.mockResolvedValue(createMockStats());
 
 			const user = userEvent.setup();
 			render(<Stats />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
-			});
-
-			// Toggle all time off
-			await user.click(screen.getByTestId('all-time-checkbox'));
-			await waitFor(() => {
 				expect(
 					screen.getByTestId('input-StatsFilter.yearFrom')
 				).toBeInTheDocument();
 			});
 
-			// Toggle all time on
-			await user.click(screen.getByTestId('all-time-checkbox'));
+			// Initial fetch on mount
+			expect(mockGetMyStats).toHaveBeenCalledTimes(1);
+
+			// Click This Year preset - should auto-fetch
+			await user.click(screen.getByTestId('preset-thisYear'));
 			await waitFor(() => {
-				expect(
-					screen.queryByTestId('input-StatsFilter.yearFrom')
-				).not.toBeInTheDocument();
+				expect(mockGetMyStats).toHaveBeenCalledTimes(2);
 			});
 
-			// Toggle all time off again
-			await user.click(screen.getByTestId('all-time-checkbox'));
+			// Click All Time preset - should auto-fetch
+			await user.click(screen.getByTestId('preset-allTime'));
 			await waitFor(() => {
-				expect(
-					screen.getByTestId('input-StatsFilter.yearFrom')
-				).toBeInTheDocument();
+				expect(mockGetMyStats).toHaveBeenCalledTimes(3);
 			});
 		});
 	});

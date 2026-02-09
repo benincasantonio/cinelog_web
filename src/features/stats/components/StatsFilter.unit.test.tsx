@@ -1,3 +1,5 @@
+/// <reference types="@testing-library/jest-dom" />
+import '@testing-library/jest-dom/vitest';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -18,9 +20,11 @@ const { mockStatsStore } = vi.hoisted(() => {
 		appliedFilters: null as { yearFrom?: number; yearTo?: number } | null,
 		isAllTime: () => true,
 		canApplyFilters: () => false,
+		activePreset: () => 'allTime' as StatsFilterPreset | null,
 		setAllTime: vi.fn(),
 		setYearFrom: vi.fn(),
 		setYearTo: vi.fn(),
+		applyPreset: vi.fn(),
 		fetchStats: vi.fn(),
 		resetFilters: vi.fn(),
 	}));
@@ -45,6 +49,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		disabled,
 		type,
 		onClick,
+		...rest
 	}: {
 		children: ReactNode;
 		disabled?: boolean;
@@ -52,12 +57,18 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		variant?: string;
 		size?: string;
 		onClick?: () => void;
+		'data-testid'?: string;
+		'data-active'?: boolean;
 	}) => (
 		<button
 			disabled={disabled}
 			type={type as 'button' | 'submit' | 'reset' | undefined}
 			onClick={onClick}
-			data-testid={type === 'submit' ? 'apply-button' : 'reset-button'}
+			data-testid={
+				rest['data-testid'] ??
+				(type === 'submit' ? 'apply-button' : 'reset-button')
+			}
+			data-active={rest['data-active']?.toString()}
 		>
 			{children}
 		</button>
@@ -81,6 +92,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	),
 }));
 
+import type { StatsFilterPreset } from '../models';
 import { StatsFilter } from './StatsFilter';
 
 describe('StatsFilter', () => {
@@ -91,9 +103,11 @@ describe('StatsFilter', () => {
 			appliedFilters: null,
 			isAllTime: () => true,
 			canApplyFilters: () => false,
+			activePreset: () => 'allTime' as StatsFilterPreset | null,
 			setAllTime: vi.fn(),
 			setYearFrom: vi.fn(),
 			setYearTo: vi.fn(),
+			applyPreset: vi.fn(),
 			fetchStats: vi.fn(),
 			resetFilters: vi.fn(),
 		});
@@ -109,80 +123,18 @@ describe('StatsFilter', () => {
 			const { container } = render(<StatsFilter />);
 
 			expect(container.querySelector('form')).toBeInTheDocument();
-			expect(screen.getByTestId('all-time-checkbox')).toBeInTheDocument();
-			expect(screen.getByTestId('all-time-label')).toBeInTheDocument();
+			expect(screen.getByTestId('preset-allTime')).toBeInTheDocument();
+			expect(screen.getByTestId('preset-thisYear')).toBeInTheDocument();
+			expect(screen.getByTestId('preset-lastYear')).toBeInTheDocument();
+			expect(screen.getByTestId('preset-last5Years')).toBeInTheDocument();
+			expect(screen.queryByTestId('preset-custom')).not.toBeInTheDocument();
 			expect(screen.getByTestId('apply-button')).toBeInTheDocument();
 			expect(screen.getByTestId('reset-button')).toBeInTheDocument();
 		});
 	});
 
-	describe('all time checkbox', () => {
-		it('should be checked when isAllTime returns true', () => {
-			render(<StatsFilter />);
-			expect(screen.getByTestId('all-time-checkbox')).toBeChecked();
-		});
-
-		it('should be unchecked when isAllTime returns false', () => {
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: 2024, yearTo: 2025 },
-			});
-
-			render(<StatsFilter />);
-			expect(screen.getByTestId('all-time-checkbox')).not.toBeChecked();
-		});
-
-		it('should call setAllTime when checked', async () => {
-			const mockSetAllTime = vi.fn();
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: 2024, yearTo: 2025 },
-				setAllTime: mockSetAllTime,
-			});
-
-			const user = userEvent.setup();
-			render(<StatsFilter />);
-
-			await user.click(screen.getByTestId('all-time-checkbox'));
-			expect(mockSetAllTime).toHaveBeenCalledWith(true);
-		});
-
-		it('should call setAllTime with false when unchecked', async () => {
-			const mockSetAllTime = vi.fn();
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				setAllTime: mockSetAllTime,
-			});
-
-			const user = userEvent.setup();
-			render(<StatsFilter />);
-
-			await user.click(screen.getByTestId('all-time-checkbox'));
-			expect(mockSetAllTime).toHaveBeenCalledWith(false);
-		});
-	});
-
 	describe('year inputs visibility', () => {
-		it('should not show year inputs when isAllTime is true', () => {
-			render(<StatsFilter />);
-
-			expect(
-				screen.queryByTestId('input-StatsFilter.yearFrom')
-			).not.toBeInTheDocument();
-			expect(
-				screen.queryByTestId('input-StatsFilter.yearTo')
-			).not.toBeInTheDocument();
-		});
-
-		it('should show year inputs and separator when isAllTime is false', () => {
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: 2024, yearTo: 2025 },
-			});
-
+		it('should always show year inputs and separator', () => {
 			render(<StatsFilter />);
 
 			expect(
@@ -195,101 +147,13 @@ describe('StatsFilter', () => {
 		});
 	});
 
-	describe('year inputs interaction', () => {
-		it('should call setYearFrom when yearFrom input changes', async () => {
-			const mockSetYearFrom = vi.fn();
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: undefined, yearTo: undefined },
-				setYearFrom: mockSetYearFrom,
-			});
-
-			const user = userEvent.setup();
-			render(<StatsFilter />);
-
-			const yearFromInput = screen.getByTestId('input-StatsFilter.yearFrom');
-			await user.type(yearFromInput, '2024');
-
-			expect(mockSetYearFrom).toHaveBeenCalled();
-		});
-
-		it('should call setYearTo when yearTo input changes', async () => {
-			const mockSetYearTo = vi.fn();
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: undefined, yearTo: undefined },
-				setYearTo: mockSetYearTo,
-			});
-
-			const user = userEvent.setup();
-			render(<StatsFilter />);
-
-			const yearToInput = screen.getByTestId('input-StatsFilter.yearTo');
-			await user.type(yearToInput, '2025');
-
-			expect(mockSetYearTo).toHaveBeenCalled();
-		});
-
-		it('should call setYearFrom with null when input is cleared', async () => {
-			const mockSetYearFrom = vi.fn();
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: 2024, yearTo: 2025 },
-				setYearFrom: mockSetYearFrom,
-			});
-
-			const user = userEvent.setup();
-			render(<StatsFilter />);
-
-			const yearFromInput = screen.getByTestId('input-StatsFilter.yearFrom');
-			await user.clear(yearFromInput);
-
-			expect(mockSetYearFrom).toHaveBeenCalledWith(null);
-		});
-
-		it('should call setYearTo with null when input is cleared', async () => {
-			const mockSetYearTo = vi.fn();
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: 2024, yearTo: 2025 },
-				setYearTo: mockSetYearTo,
-			});
-
-			const user = userEvent.setup();
-			render(<StatsFilter />);
-
-			const yearToInput = screen.getByTestId('input-StatsFilter.yearTo');
-			await user.clear(yearToInput);
-
-			expect(mockSetYearTo).toHaveBeenCalledWith(null);
-		});
-
-		it('should render both year inputs as number type', () => {
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: 2024, yearTo: 2025 },
-			});
-
-			render(<StatsFilter />);
-
-			expect(screen.getByTestId('input-StatsFilter.yearFrom')).toHaveAttribute(
-				'type',
-				'number'
-			);
-			expect(screen.getByTestId('input-StatsFilter.yearTo')).toHaveAttribute(
-				'type',
-				'number'
-			);
-		});
-	});
+	/*
+	 * Year inputs allow local state changes but do not trigger store updates immediately.
+	 * Store updates happen only on form submission.
+	 */
 
 	describe('apply button', () => {
-		it('should have type submit and be disabled when canApplyFilters is false', () => {
+		it('should have type submit and be disabled initially (not dirty)', () => {
 			render(<StatsFilter />);
 
 			const applyButton = screen.getByTestId('apply-button');
@@ -297,37 +161,44 @@ describe('StatsFilter', () => {
 			expect(applyButton).toHaveAttribute('type', 'submit');
 		});
 
-		it('should be enabled when canApplyFilters is true', () => {
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				canApplyFilters: () => true,
-			});
-
+		it('should be enabled when form is dirty and valid', async () => {
+			const user = userEvent.setup();
 			render(<StatsFilter />);
+
+			// Make it dirty and valid
+			await user.type(screen.getByTestId('input-StatsFilter.yearFrom'), '2020');
+
 			expect(screen.getByTestId('apply-button')).not.toBeDisabled();
 		});
 
 		it('should call fetchStats on form submit', async () => {
+			const mockSetYearFrom = vi.fn();
+			const mockSetYearTo = vi.fn();
 			const mockFetchStats = vi.fn();
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
-				canApplyFilters: () => true,
+				setYearFrom: mockSetYearFrom,
+				setYearTo: mockSetYearTo,
 				fetchStats: mockFetchStats,
 			});
 
 			const user = userEvent.setup();
 			render(<StatsFilter />);
 
+			// Type valid data to enable button
+			await user.type(screen.getByTestId('input-StatsFilter.yearFrom'), '2023');
+
 			await user.click(screen.getByTestId('apply-button'));
 
 			await waitFor(() => {
+				expect(mockSetYearFrom).toHaveBeenCalledWith(2023);
 				expect(mockFetchStats).toHaveBeenCalled();
 			});
 		});
 	});
 
 	describe('reset button', () => {
-		it('should have type button and be disabled when canApplyFilters is false', () => {
+		it('should have type button and be disabled when form is not dirty', () => {
 			render(<StatsFilter />);
 
 			const resetButton = screen.getByTestId('reset-button');
@@ -335,13 +206,12 @@ describe('StatsFilter', () => {
 			expect(resetButton).toHaveAttribute('type', 'button');
 		});
 
-		it('should be enabled when canApplyFilters is true', () => {
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				canApplyFilters: () => true,
-			});
-
+		it('should be enabled when form is dirty', async () => {
+			const user = userEvent.setup();
 			render(<StatsFilter />);
+
+			await user.type(screen.getByTestId('input-StatsFilter.yearFrom'), '2020');
+
 			expect(screen.getByTestId('reset-button')).not.toBeDisabled();
 		});
 
@@ -350,13 +220,14 @@ describe('StatsFilter', () => {
 			const mockResetFilters = vi.fn();
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
-				canApplyFilters: () => true,
 				fetchStats: mockFetchStats,
 				resetFilters: mockResetFilters,
 			});
 
 			const user = userEvent.setup();
 			render(<StatsFilter />);
+
+			await user.type(screen.getByTestId('input-StatsFilter.yearFrom'), '2020');
 
 			await user.click(screen.getByTestId('reset-button'));
 
@@ -369,6 +240,7 @@ describe('StatsFilter', () => {
 		it('should render both year inputs with min 1900', () => {
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
+				activePreset: () => 'custom',
 				isAllTime: () => false,
 				filters: { yearFrom: 2024, yearTo: 2025 },
 			});
@@ -388,6 +260,7 @@ describe('StatsFilter', () => {
 		it('should render both year inputs with max set to current year', () => {
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
+				activePreset: () => 'custom',
 				isAllTime: () => false,
 				filters: { yearFrom: 2024, yearTo: 2025 },
 			});
@@ -410,6 +283,7 @@ describe('StatsFilter', () => {
 		it('should not show error messages when there are no errors', () => {
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
+				activePreset: () => 'custom',
 				isAllTime: () => false,
 				filters: { yearFrom: 2024, yearTo: 2025 },
 			});
@@ -431,8 +305,8 @@ describe('StatsFilter', () => {
 
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
+				activePreset: () => 'custom',
 				isAllTime: () => false,
-				canApplyFilters: () => true,
 				filters: { yearFrom: 2024, yearTo: 2025 },
 				fetchStats: mockFetchStats,
 			});
@@ -440,8 +314,14 @@ describe('StatsFilter', () => {
 			const user = userEvent.setup();
 			render(<StatsFilter />);
 
-			await user.click(screen.getByTestId('apply-button'));
+			// Trigger validation by typing
+			await user.type(screen.getByTestId('input-StatsFilter.yearFrom'), '1800');
 
+			// Button is disabled, so we don't click. We just wait for error.
+			// But wait, if we type, validation runs.
+			// The existing test clicked button.
+			// If we blindly click disabled button it does nothing.
+			// We should just wait for error.
 			await waitFor(() => {
 				expect(screen.getByTestId('error-yearFrom')).toBeInTheDocument();
 			});
@@ -459,15 +339,16 @@ describe('StatsFilter', () => {
 
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
+				activePreset: () => 'custom',
 				isAllTime: () => false,
-				canApplyFilters: () => true,
 				filters: { yearFrom: 2024, yearTo: 2025 },
 			});
 
 			const user = userEvent.setup();
 			render(<StatsFilter />);
 
-			await user.click(screen.getByTestId('apply-button'));
+			// Trigger validation
+			await user.type(screen.getByTestId('input-StatsFilter.yearTo'), '1800');
 
 			await waitFor(() => {
 				expect(screen.getByTestId('error-yearTo')).toHaveTextContent(
@@ -489,15 +370,16 @@ describe('StatsFilter', () => {
 
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
+				activePreset: () => 'custom',
 				isAllTime: () => false,
-				canApplyFilters: () => true,
 				filters: { yearFrom: 2025, yearTo: 2020 },
 			});
 
 			const user = userEvent.setup();
 			render(<StatsFilter />);
 
-			await user.click(screen.getByTestId('apply-button'));
+			// Trigger validation
+			await user.type(screen.getByTestId('input-StatsFilter.yearTo'), '2020');
 
 			await waitFor(() => {
 				expect(screen.getByTestId('error-yearTo')).toHaveTextContent(
@@ -505,64 +387,233 @@ describe('StatsFilter', () => {
 				);
 			});
 		});
+
+		it('should show yearFrom error for maxYear violation', async () => {
+			(zodResolver as unknown as Mock).mockReturnValue(async () => ({
+				values: {},
+				errors: {
+					yearFrom: { type: 'too_big', message: 'too_big' },
+				},
+			}));
+
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				activePreset: () => 'custom',
+				isAllTime: () => false,
+				filters: { yearFrom: 2024, yearTo: 2025 },
+			});
+
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.type(screen.getByTestId('input-StatsFilter.yearFrom'), '2999');
+
+			await waitFor(() => {
+				expect(screen.getByTestId('error-yearFrom')).toHaveTextContent(
+					'StatsFilter.validation.maxYear'
+				);
+			});
+		});
+
+		it('should show yearTo error for maxYear violation', async () => {
+			(zodResolver as unknown as Mock).mockReturnValue(async () => ({
+				values: {},
+				errors: {
+					yearTo: { type: 'too_big', message: 'too_big' },
+				},
+			}));
+
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				activePreset: () => 'custom',
+				isAllTime: () => false,
+				filters: { yearFrom: 2024, yearTo: 2025 },
+			});
+
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.type(screen.getByTestId('input-StatsFilter.yearTo'), '2999');
+
+			await waitFor(() => {
+				expect(screen.getByTestId('error-yearTo')).toHaveTextContent(
+					'StatsFilter.validation.maxYear'
+				);
+			});
+		});
+
+		it('should show yearFrom error when only yearTo is provided', async () => {
+			(zodResolver as unknown as Mock).mockReturnValue(async () => ({
+				values: {},
+				errors: {
+					yearFrom: { type: 'custom', message: 'bothYearsRequired' },
+				},
+			}));
+
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.type(screen.getByTestId('input-StatsFilter.yearTo'), '2023');
+			await user.click(screen.getByTestId('apply-button'));
+
+			await waitFor(() => {
+				expect(screen.getByTestId('error-yearFrom')).toHaveTextContent(
+					'StatsFilter.validation.bothYearsRequired'
+				);
+			});
+		});
+
+		it('should show yearTo error when only yearFrom is provided', async () => {
+			(zodResolver as unknown as Mock).mockReturnValue(async () => ({
+				values: {},
+				errors: {
+					yearTo: { type: 'custom', message: 'bothYearsRequired' },
+				},
+			}));
+
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.type(screen.getByTestId('input-StatsFilter.yearFrom'), '2023');
+			await user.click(screen.getByTestId('apply-button'));
+
+			await waitFor(() => {
+				expect(screen.getByTestId('error-yearTo')).toHaveTextContent(
+					'StatsFilter.validation.bothYearsRequired'
+				);
+			});
+		});
 	});
 
-	describe('state transitions', () => {
-		it('should hide year inputs when switching from year range to all time', () => {
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: 2024, yearTo: 2025 },
-			});
+	describe('preset buttons', () => {
+		it('should render all preset buttons (no Custom button)', () => {
+			render(<StatsFilter />);
 
-			const { rerender } = render(<StatsFilter />);
-			expect(
-				screen.getByTestId('input-StatsFilter.yearFrom')
-			).toBeInTheDocument();
-
-			mockStatsStore.setState({
-				...mockStatsStore.getState(),
-				isAllTime: () => true,
-				filters: { yearFrom: undefined, yearTo: undefined },
-			});
-
-			rerender(<StatsFilter />);
-			expect(
-				screen.queryByTestId('input-StatsFilter.yearFrom')
-			).not.toBeInTheDocument();
+			expect(screen.getByTestId('preset-allTime')).toBeInTheDocument();
+			expect(screen.getByTestId('preset-thisYear')).toBeInTheDocument();
+			expect(screen.getByTestId('preset-lastYear')).toBeInTheDocument();
+			expect(screen.getByTestId('preset-last5Years')).toBeInTheDocument();
+			expect(screen.queryByTestId('preset-custom')).not.toBeInTheDocument();
 		});
 
-		it('should show year inputs when switching from all time to year range', () => {
-			const { rerender } = render(<StatsFilter />);
-			expect(
-				screen.queryByTestId('input-StatsFilter.yearFrom')
-			).not.toBeInTheDocument();
-
+		it('should call applyPreset when This Year button is clicked', async () => {
+			const mockApplyPreset = vi.fn();
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
-				isAllTime: () => false,
-				filters: { yearFrom: 2024, yearTo: 2025 },
+				applyPreset: mockApplyPreset,
 			});
 
-			rerender(<StatsFilter />);
-			expect(
-				screen.getByTestId('input-StatsFilter.yearFrom')
-			).toBeInTheDocument();
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.click(screen.getByTestId('preset-thisYear'));
+			expect(mockApplyPreset).toHaveBeenCalledWith('thisYear');
 		});
 
-		it('should update button state when canApplyFilters changes', () => {
-			const { rerender } = render(<StatsFilter />);
-			expect(screen.getByTestId('apply-button')).toBeDisabled();
-			expect(screen.getByTestId('reset-button')).toBeDisabled();
-
+		it('should call applyPreset when Last Year button is clicked', async () => {
+			const mockApplyPreset = vi.fn();
 			mockStatsStore.setState({
 				...mockStatsStore.getState(),
-				canApplyFilters: () => true,
+				applyPreset: mockApplyPreset,
 			});
 
-			rerender(<StatsFilter />);
-			expect(screen.getByTestId('apply-button')).not.toBeDisabled();
-			expect(screen.getByTestId('reset-button')).not.toBeDisabled();
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.click(screen.getByTestId('preset-lastYear'));
+			expect(mockApplyPreset).toHaveBeenCalledWith('lastYear');
+		});
+
+		it('should call applyPreset when All Time button is clicked', async () => {
+			const mockApplyPreset = vi.fn();
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				applyPreset: mockApplyPreset,
+			});
+
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.click(screen.getByTestId('preset-allTime'));
+			expect(mockApplyPreset).toHaveBeenCalledWith('allTime');
+		});
+
+		it('should call applyPreset when Last 5 Years button is clicked', async () => {
+			const mockApplyPreset = vi.fn();
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				applyPreset: mockApplyPreset,
+			});
+
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.click(screen.getByTestId('preset-last5Years'));
+			expect(mockApplyPreset).toHaveBeenCalledWith('last5Years');
+		});
+
+		it('should highlight This Year button when activePreset is thisYear', () => {
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				activePreset: () => 'thisYear',
+			});
+
+			render(<StatsFilter />);
+			expect(screen.getByTestId('preset-thisYear')).toHaveAttribute(
+				'data-active',
+				'true'
+			);
+		});
+
+		it('should highlight Last Year button when activePreset is lastYear', () => {
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				activePreset: () => 'lastYear',
+			});
+
+			render(<StatsFilter />);
+			expect(screen.getByTestId('preset-lastYear')).toHaveAttribute(
+				'data-active',
+				'true'
+			);
+		});
+
+		it('should highlight Last 5 Years button when activePreset is last5Years', () => {
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				activePreset: () => 'last5Years',
+			});
+
+			render(<StatsFilter />);
+			expect(screen.getByTestId('preset-last5Years')).toHaveAttribute(
+				'data-active',
+				'true'
+			);
+		});
+
+		it('should not highlight any preset button when activePreset is allTime', () => {
+			render(<StatsFilter />);
+
+			expect(screen.getByTestId('preset-thisYear')).toHaveAttribute(
+				'data-active',
+				'false'
+			);
+			expect(screen.getByTestId('preset-lastYear')).toHaveAttribute(
+				'data-active',
+				'false'
+			);
+			expect(screen.getByTestId('preset-last5Years')).toHaveAttribute(
+				'data-active',
+				'false'
+			);
+		});
+
+		it('should highlight All Time button when activePreset is allTime', () => {
+			render(<StatsFilter />);
+			expect(screen.getByTestId('preset-allTime')).toHaveAttribute(
+				'data-active',
+				'true'
+			);
 		});
 	});
 });

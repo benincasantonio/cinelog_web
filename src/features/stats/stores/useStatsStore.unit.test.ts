@@ -420,6 +420,138 @@ describe('useStatsStore', () => {
 		});
 	});
 
+	describe('applyPreset', () => {
+		it('should set yearFrom and yearTo to current year for thisYear preset', () => {
+			const currentYear = new Date().getFullYear();
+			getState().applyPreset('thisYear');
+			expect(getState().filters?.yearFrom).toBe(currentYear);
+			expect(getState().filters?.yearTo).toBe(currentYear);
+		});
+
+		it('should set yearFrom and yearTo to previous year for lastYear preset', () => {
+			const lastYear = new Date().getFullYear() - 1;
+			getState().applyPreset('lastYear');
+			expect(getState().filters?.yearFrom).toBe(lastYear);
+			expect(getState().filters?.yearTo).toBe(lastYear);
+		});
+
+		it('should set yearFrom to 5 years ago and yearTo to current year for last5Years preset', () => {
+			const currentYear = new Date().getFullYear();
+			getState().applyPreset('last5Years');
+			expect(getState().filters?.yearFrom).toBe(currentYear - 5);
+			expect(getState().filters?.yearTo).toBe(currentYear);
+		});
+
+		it('should make isAllTime return false after applying any preset', () => {
+			expect(getState().isAllTime()).toBe(true);
+			getState().applyPreset('thisYear');
+			expect(getState().isAllTime()).toBe(false);
+		});
+
+		it('should preserve other filter properties when applying preset', () => {
+			useStatsStore.setState({ filters: { yearFrom: 2020, yearTo: 2021 } });
+			getState().applyPreset('lastYear');
+			const lastYear = new Date().getFullYear() - 1;
+			expect(getState().filters?.yearFrom).toBe(lastYear);
+			expect(getState().filters?.yearTo).toBe(lastYear);
+		});
+
+		it('should clear yearFrom and yearTo for allTime preset', () => {
+			useStatsStore.setState({ filters: { yearFrom: 2020, yearTo: 2025 } });
+			getState().applyPreset('allTime');
+			expect(getState().filters?.yearFrom).toBeUndefined();
+			expect(getState().filters?.yearTo).toBeUndefined();
+			expect(getState().isAllTime()).toBe(true);
+		});
+
+		it('should set default years for custom preset', () => {
+			const currentYear = new Date().getFullYear();
+			getState().applyPreset('custom');
+			expect(getState().filters?.yearFrom).toBe(currentYear - 1);
+			expect(getState().filters?.yearTo).toBe(currentYear);
+		});
+
+		it('should call fetchStats after applying thisYear preset', async () => {
+			const fetchStatsSpy = vi.spyOn(getState(), 'fetchStats');
+			getState().applyPreset('thisYear');
+			expect(fetchStatsSpy).toHaveBeenCalledTimes(1);
+			fetchStatsSpy.mockRestore();
+		});
+
+		it('should call fetchStats after applying lastYear preset', async () => {
+			const fetchStatsSpy = vi.spyOn(getState(), 'fetchStats');
+			getState().applyPreset('lastYear');
+			expect(fetchStatsSpy).toHaveBeenCalledTimes(1);
+			fetchStatsSpy.mockRestore();
+		});
+
+		it('should call fetchStats after applying last5Years preset', async () => {
+			const fetchStatsSpy = vi.spyOn(getState(), 'fetchStats');
+			getState().applyPreset('last5Years');
+			expect(fetchStatsSpy).toHaveBeenCalledTimes(1);
+			fetchStatsSpy.mockRestore();
+		});
+
+		it('should call fetchStats after applying allTime preset', async () => {
+			const fetchStatsSpy = vi.spyOn(getState(), 'fetchStats');
+			getState().applyPreset('allTime');
+			expect(fetchStatsSpy).toHaveBeenCalledTimes(1);
+			fetchStatsSpy.mockRestore();
+		});
+	});
+
+	describe('activePreset', () => {
+		it('should return allTime when filters is null', () => {
+			expect(getState().activePreset()).toBe('allTime');
+		});
+
+		it('should return allTime when yearFrom and yearTo are undefined', () => {
+			useStatsStore.setState({ filters: {} });
+			expect(getState().activePreset()).toBe('allTime');
+		});
+
+		it('should return thisYear when yearFrom and yearTo match current year', () => {
+			const currentYear = new Date().getFullYear();
+			useStatsStore.setState({
+				filters: { yearFrom: currentYear, yearTo: currentYear },
+			});
+			expect(getState().activePreset()).toBe('thisYear');
+		});
+
+		it('should return lastYear when yearFrom and yearTo match previous year', () => {
+			const lastYear = new Date().getFullYear() - 1;
+			useStatsStore.setState({
+				filters: { yearFrom: lastYear, yearTo: lastYear },
+			});
+			expect(getState().activePreset()).toBe('lastYear');
+		});
+
+		it('should return last5Years when range matches last 5 years', () => {
+			const currentYear = new Date().getFullYear();
+			useStatsStore.setState({
+				filters: { yearFrom: currentYear - 5, yearTo: currentYear },
+			});
+			expect(getState().activePreset()).toBe('last5Years');
+		});
+
+		it('should return custom for custom year ranges', () => {
+			useStatsStore.setState({
+				filters: { yearFrom: 2018, yearTo: 2020 },
+			});
+			expect(getState().activePreset()).toBe('custom');
+		});
+
+		it('should return custom when only yearFrom is set', () => {
+			useStatsStore.setState({ filters: { yearFrom: 2020 } });
+			expect(getState().activePreset()).toBe('custom');
+		});
+
+		it('should return custom when only yearTo is set', () => {
+			useStatsStore.setState({ filters: { yearTo: 2025 } });
+			expect(getState().activePreset()).toBe('custom');
+		});
+	});
+
 	describe('combined workflows', () => {
 		it('should allow setting filters, fetching, then resetting', async () => {
 			mockGetMyStats.mockResolvedValue(createMockStats());
