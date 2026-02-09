@@ -1,11 +1,13 @@
+import { useTranslation } from 'react-i18next';
 import { Stats } from '@/features/stats/components';
 
 const ProfileStatsPage = () => {
+	const { t } = useTranslation();
+
 	return (
 		<>
-			<title>{'ProfileStatsPage.pageTitle'}</title>
+			<title>{t('ProfileStatsPage.pageTitle')}</title>
 			<div className="space-y-4">
-				<div className="text-center py-4 text-gray-500 dark:text-gray-400"></div>
 				<Stats />
 			</div>
 		</>

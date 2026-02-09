@@ -429,13 +429,7 @@ describe('Stats Integration Tests', () => {
 
 			await user.click(screen.getByTestId('apply-button'));
 
-			// Wait a tick to ensure handleSubmit has resolved
-			/*
-			await waitFor(() => {
-				expect(screen.getByTestId('error-yearFrom')).toBeInTheDocument();
-			});
-			*/
-			// Allow time for potential submission
+			// Allow time for potential submission - validation should prevent fetch
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
 			expect(mockGetMyStats.mock.calls.length).toBe(callCountBeforeApply);

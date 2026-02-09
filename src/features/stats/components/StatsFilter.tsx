@@ -61,9 +61,18 @@ export const StatsFilter = () => {
 			className="flex flex-col md:flex-row justify-end items-center gap-5"
 		>
 			<div className="flex items-center gap-1.5">
-				<Checkbox
-					checked={isAllTime}
-					onChange={(e) => setAllTime(e.target.checked)}
+				<Controller
+					name="isAllTime"
+					control={control}
+					render={({ field }) => (
+						<Checkbox
+							checked={field.value}
+							onChange={(e) => {
+								field.onChange(e.target.checked);
+								setAllTime(e.target.checked);
+							}}
+						/>
+					)}
 				/>
 				<span data-testid="all-time-label">{t('StatsFilter.allTime')}</span>
 			</div>
