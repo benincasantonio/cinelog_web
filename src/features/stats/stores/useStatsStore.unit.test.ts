@@ -493,9 +493,28 @@ describe('useStatsStore', () => {
 		});
 
 		it('should call fetchStats after applying allTime preset', async () => {
+			const currentYear = new Date().getFullYear();
+			useStatsStore.setState({
+				filters: { yearFrom: currentYear, yearTo: currentYear },
+			});
+
 			const fetchStatsSpy = vi.spyOn(getState(), 'fetchStats');
 			getState().applyPreset('allTime');
 			expect(fetchStatsSpy).toHaveBeenCalledTimes(1);
+			fetchStatsSpy.mockRestore();
+		});
+
+		it('should not apply preset or fetch stats when preset is already active', () => {
+			const currentYear = new Date().getFullYear();
+			useStatsStore.setState({
+				filters: { yearFrom: currentYear, yearTo: currentYear },
+			});
+			expect(getState().activePreset()).toBe('thisYear');
+
+			const fetchStatsSpy = vi.spyOn(getState(), 'fetchStats');
+			getState().applyPreset('thisYear');
+
+			expect(fetchStatsSpy).not.toHaveBeenCalled();
 			fetchStatsSpy.mockRestore();
 		});
 	});
