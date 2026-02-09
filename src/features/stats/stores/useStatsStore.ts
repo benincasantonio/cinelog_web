@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { shallowEqual } from '@/lib/utilities/shallow-equal';
-import type { StatsResponse } from '../models';
+import type { StatsFilterPreset, StatsResponse } from '../models';
+import { STATS_FILTER_PRESETS } from '../models/stats-filter-preset';
 import {
 	type GetStatsParams,
 	getMyStats,
@@ -14,9 +15,11 @@ interface StatsStore {
 	appliedFilters: GetStatsParams | null;
 	canApplyFilters(): boolean;
 	isAllTime(): boolean;
+	activePreset(): StatsFilterPreset;
 	setAllTime(value: boolean): void;
 	setYearFrom: (yearFrom: number | null) => void;
 	setYearTo: (yearTo: number | null) => void;
+	applyPreset: (preset: StatsFilterPreset) => void;
 	resetFilters: () => void;
 	fetchStats: () => Promise<void>;
 }
@@ -52,6 +55,31 @@ export const useStatsStore = create<StatsStore>((set, get) => ({
 		const { filters } = get();
 
 		return !filters?.yearFrom && !filters?.yearTo;
+	},
+
+	activePreset(): StatsFilterPreset {
+		const { filters } = get();
+		const preset = STATS_FILTER_PRESETS.find(
+			(p) => p.from === filters?.yearFrom && p.to === filters?.yearTo,
+		);
+		return preset?.key ?? 'custom';
+	},
+
+	applyPreset(preset: StatsFilterPreset) {
+		const config = STATS_FILTER_PRESETS.find((p) => p.key === preset);
+
+		const currentYear = new Date().getFullYear();
+		const yearFrom = config ? config.from : currentYear - 1;
+		const yearTo = config ? config.to : currentYear;
+
+		set((state) => ({
+			filters: {
+				...state.filters,
+				yearFrom,
+				yearTo,
+			},
+		}));
+		get().fetchStats();
 	},
 
 	setAllTime(value: boolean) {
