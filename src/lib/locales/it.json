@@ -192,6 +192,17 @@
 		"loading": "Caricamento statistiche...",
 		"noStats": "Nessuna statistica disponibile"
 	},
+	"StatsFilter": {
+		"allTime": "Sempre",
+		"yearFrom": "Anno Da",
+		"yearTo": "Anno A",
+		"applyFilters": "Applica",
+		"resetFilters": "Reimposta",
+		"validation": {
+			"minYear": "L'anno deve essere {{min}} o successivo",
+			"yearToBeforeYearFrom": "L'anno finale deve essere uguale o successivo all'anno iniziale"
+		}
+	},
 	"ProfileMoviesWatchedPage": {
 		"pageTitle": "Cinelog - Film Visti"
 	}

@@ -192,6 +192,17 @@
 		"loading": "Chargement des statistiques...",
 		"noStats": "Aucune statistique disponible"
 	},
+	"StatsFilter": {
+		"allTime": "Toutes les périodes",
+		"yearFrom": "Année début",
+		"yearTo": "Année fin",
+		"applyFilters": "Appliquer",
+		"resetFilters": "Réinitialiser",
+		"validation": {
+			"minYear": "L'année doit être {{min}} ou ultérieure",
+			"yearToBeforeYearFrom": "L'année de fin doit être égale ou ultérieure à l'année de début"
+		}
+	},
 	"ProfileMoviesWatchedPage": {
 		"pageTitle": "Cinelog - Films Vus"
 	}

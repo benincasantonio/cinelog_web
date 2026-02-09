@@ -196,6 +196,17 @@
 		"loading": "Loading stats...",
 		"noStats": "No stats available"
 	},
+	"StatsFilter": {
+		"allTime": "All Time",
+		"yearFrom": "Year From",
+		"yearTo": "Year To",
+		"applyFilters": "Apply",
+		"resetFilters": "Reset",
+		"validation": {
+			"minYear": "Year must be {{min}} or later",
+			"yearToBeforeYearFrom": "End year must be equal to or later than start year"
+		}
+	},
 	"ProfileMoviesWatchedPage": {
 		"pageTitle": "Cinelog - Movies Watched"
 	}
