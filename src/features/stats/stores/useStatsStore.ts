@@ -66,6 +66,8 @@ export const useStatsStore = create<StatsStore>((set, get) => ({
 	},
 
 	applyPreset(preset: StatsFilterPreset) {
+		if (get().activePreset() === preset) return;
+
 		const config = STATS_FILTER_PRESETS.find((p) => p.key === preset);
 
 		const currentYear = new Date().getFullYear();
