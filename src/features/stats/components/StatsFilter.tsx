@@ -107,41 +107,6 @@ export const StatsFilter = () => {
 							)}
 						/>
 					</div>
-					<div className="mt-1 flex flex-col gap-1 text-left">
-						{errors.yearFrom && (
-							<span
-								className="text-red-500 text-sm"
-								data-testid="error-yearFrom"
-							>
-								{t(
-									`StatsFilter.validation.${
-										errors.yearFrom.message === 'bothYearsRequired'
-											? 'bothYearsRequired'
-											: errors.yearFrom.type === 'too_big'
-												? 'maxYear'
-												: 'minYear'
-									}`,
-									{ min: MIN_YEAR, max: MAX_YEAR }
-								)}
-							</span>
-						)}
-						{errors.yearTo && (
-							<span className="text-red-500 text-sm" data-testid="error-yearTo">
-								{t(
-									`StatsFilter.validation.${
-										errors.yearTo.message === 'yearToBeforeYearFrom'
-											? 'yearToBeforeYearFrom'
-											: errors.yearTo.message === 'bothYearsRequired'
-												? 'bothYearsRequired'
-												: errors.yearTo.type === 'too_big'
-													? 'maxYear'
-													: 'minYear'
-									}`,
-									{ min: MIN_YEAR, max: MAX_YEAR }
-								)}
-							</span>
-						)}
-					</div>
 				</div>
 
 				<div className="flex items-center gap-2">
@@ -160,6 +125,44 @@ export const StatsFilter = () => {
 					</Button>
 				</div>
 			</div>
+
+			{Object.keys(errors).length > 0 && (
+				<div className="flex flex-col gap-1 text-right">
+					{errors.yearFrom && (
+						<span
+							className="text-red-500 text-sm"
+							data-testid="error-yearFrom"
+						>
+							{t(
+								`StatsFilter.validation.${
+									errors.yearFrom.message === 'bothYearsRequired'
+										? 'bothYearsRequired'
+										: errors.yearFrom.type === 'too_big'
+											? 'maxYear'
+											: 'minYear'
+								}`,
+								{ min: MIN_YEAR, max: MAX_YEAR }
+							)}
+						</span>
+					)}
+					{errors.yearTo && (
+						<span className="text-red-500 text-sm" data-testid="error-yearTo">
+							{t(
+								`StatsFilter.validation.${
+									errors.yearTo.message === 'yearToBeforeYearFrom'
+										? 'yearToBeforeYearFrom'
+										: errors.yearTo.message === 'bothYearsRequired'
+											? 'bothYearsRequired'
+											: errors.yearTo.type === 'too_big'
+												? 'maxYear'
+												: 'minYear'
+								}`,
+								{ min: MIN_YEAR, max: MAX_YEAR }
+							)}
+						</span>
+					)}
+				</div>
+			)}
 		</form>
 	);
 };
