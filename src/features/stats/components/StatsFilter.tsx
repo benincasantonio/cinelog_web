@@ -122,14 +122,22 @@ export const StatsFilter = () => {
 					</div>
 					{errors.yearFrom && (
 						<span className="text-red-500 text-sm" data-testid="error-yearFrom">
-							{t('StatsFilter.validation.minYear', { min: MIN_YEAR })}
+							{t(
+								`StatsFilter.validation.${errors.yearFrom.type === 'too_big' ? 'maxYear' : 'minYear'}`,
+								{ min: MIN_YEAR, max: MAX_YEAR }
+							)}
 						</span>
 					)}
 					{errors.yearTo && (
 						<span className="text-red-500 text-sm" data-testid="error-yearTo">
 							{t(
-								`StatsFilter.validation.${errors.yearTo.message === 'yearToBeforeYearFrom' ? 'yearToBeforeYearFrom' : 'minYear'}`,
-								{ min: MIN_YEAR }
+								`StatsFilter.validation.${errors.yearTo.message === 'yearToBeforeYearFrom'
+									? 'yearToBeforeYearFrom'
+									: errors.yearTo.type === 'too_big'
+										? 'maxYear'
+										: 'minYear'
+								}`,
+								{ min: MIN_YEAR, max: MAX_YEAR }
 							)}
 						</span>
 					)}

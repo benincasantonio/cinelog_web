@@ -6,5 +6,7 @@ export const shallowEqual = <T extends object>(objA: T, objB: T): boolean => {
 		return false;
 	}
 
-	return objectAKeys.every((key) => objA[key] === objB[key]);
+	return objectAKeys.every(
+		(key) => Object.hasOwn(objB, key) && objA[key] === objB[key]
+	);
 };

@@ -64,6 +64,12 @@ describe('shallowEqual', () => {
 			const objB = { b: 1 } as Record<string, number>;
 			expect(shallowEqual(objA, objB)).toBe(false);
 		});
+
+		it('for objects with same length, different keys, and undefined values', () => {
+			const objA = { a: undefined } as Record<string, undefined>;
+			const objB = { b: undefined } as Record<string, undefined>;
+			expect(shallowEqual(objA, objB)).toBe(false);
+		});
 	});
 
 	describe('edge cases', () => {
