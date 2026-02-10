@@ -1,9 +1,6 @@
 name: Integration Tests
 
 on:
-
-  push:
-    branches: [ main, master, develop ]
   workflow_call:
 
 jobs:
