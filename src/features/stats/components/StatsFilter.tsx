@@ -57,12 +57,12 @@ export const StatsFilter = () => {
 		>
 			<StatsFilterPresets />
 
-			<div className="flex flex-col md:flex-row items-end gap-2 md:gap-5">
-				<div className="flex flex-col gap-0.5">
+			<div className="flex flex-col md:flex-row items-end gap-2 md:gap-5 w-full md:w-auto">
+				<div className="flex flex-col gap-0.5 w-full md:w-auto">
 					<span className="text-xs font-medium text-gray-500">
 						{t('StatsFilter.yearRange')}
 					</span>
-					<div className="flex items-center gap-2">
+					<div className="flex flex-col md:flex-row w-full md:w-auto items-center gap-2">
 						<Controller
 							name="yearFrom"
 							control={control}
@@ -73,7 +73,7 @@ export const StatsFilter = () => {
 									max={MAX_YEAR}
 									placeholder={t('StatsFilter.yearFrom')}
 									aria-label={t('StatsFilter.yearFrom')}
-									className="w-32 text-base"
+									className="w-full md:w-32 text-base"
 									value={field.value ?? ''}
 									onChange={(e) => {
 										const value = e.target.value
@@ -95,7 +95,7 @@ export const StatsFilter = () => {
 									max={MAX_YEAR}
 									placeholder={t('StatsFilter.yearTo')}
 									aria-label={t('StatsFilter.yearTo')}
-									className="w-32 text-base"
+									className="w-full md:w-32 text-base"
 									value={field.value ?? ''}
 									onChange={(e) => {
 										const value = e.target.value
@@ -109,12 +109,13 @@ export const StatsFilter = () => {
 					</div>
 				</div>
 
-				<div className="flex items-center gap-2">
-					<Button type="submit" disabled={!isDirty} size="sm">
+				<div className="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto">
+					<Button className='w-full md:w-auto' type="submit" disabled={!isDirty} size="sm">
 						{t('StatsFilter.applyFilters')}
 					</Button>
 
 					<Button
+						className='w-full md:w-auto'
 						type="button"
 						disabled={!isDirty}
 						size="sm"

@@ -9,12 +9,13 @@ export const StatsFilterPresets = () => {
 	const applyPreset = useStatsStore((state) => state.applyPreset);
 
 	return (
-		<div className="w-full flex items-center gap-1 overflow-x-auto pb-1">
+		<div className="w-full flex flex-wrap items-center gap-1 overflow-x-auto pb-1">
 			{STATS_FILTER_PRESETS.map((preset) => (
 				<Button
 					key={preset.key}
 					type="button"
 					size="sm"
+					className="basis-[calc(50%-0.125rem)] sm:basis-auto"
 					variant={activePreset === preset.key ? 'default' : 'outline'}
 					onClick={() => applyPreset(preset.key)}
 					data-testid={`preset-${preset.key}`}
