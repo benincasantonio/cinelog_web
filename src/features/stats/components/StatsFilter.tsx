@@ -110,12 +110,17 @@ export const StatsFilter = () => {
 				</div>
 
 				<div className="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto">
-					<Button className='w-full md:w-auto' type="submit" disabled={!isDirty} size="sm">
+					<Button
+						className="w-full md:w-auto"
+						type="submit"
+						disabled={!isDirty}
+						size="sm"
+					>
 						{t('StatsFilter.applyFilters')}
 					</Button>
 
 					<Button
-						className='w-full md:w-auto'
+						className="w-full md:w-auto"
 						type="button"
 						disabled={!isDirty}
 						size="sm"
