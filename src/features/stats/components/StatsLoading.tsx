@@ -5,20 +5,22 @@ export const StatsLoading = () => {
 		<div className="space-y-6" data-testid="stats-loading">
 			{/* Filter skeleton */}
 			<div className="flex flex-col gap-7" data-testid="skeleton-filter">
-				<div className="flex items-center gap-1">
+				<div className="flex flex-wrap items-center gap-1">
 					{[1, 2, 3, 4].map((i) => (
-						<Skeleton key={i} className="h-9 w-20 rounded-md" />
+						<Skeleton key={i} className="h-9 w-20 rounded-md basis-[calc(50%-0.125rem)] sm:basis-auto" />
 					))}
 				</div>
-				<div className="flex flex-col md:flex-row items-end justify-end gap-2 md:gap-5 w-full">
-					<div className="flex items-center gap-2">
-						<Skeleton className="h-9 w-32 rounded-md" />
-						<Skeleton className="h-4 w-3" />
-						<Skeleton className="h-9 w-32 rounded-md" />
+				<div className="flex flex-col md:flex-row items-end gap-2 md:gap-5 w-full md:w-auto">
+					<div className="flex flex-col gap-0.5 w-full md:w-auto">
+						<div className="flex flex-col md:flex-row w-full md:w-auto items-center gap-2">
+							<Skeleton className="h-9 w-full md:w-32 rounded-md" />
+							<Skeleton className="h-4 w-3" />
+							<Skeleton className="h-9 w-full md:w-32 rounded-md" />
+						</div>
 					</div>
-					<div className="flex items-center gap-2">
-						<Skeleton className="h-8 w-20 rounded-md" />
-						<Skeleton className="h-8 w-20 rounded-md" />
+					<div className="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto">
+						<Skeleton className="h-8 w-full md:w-20 rounded-md" />
+						<Skeleton className="h-8 w-full md:w-20 rounded-md" />
 					</div>
 				</div>
 			</div>
