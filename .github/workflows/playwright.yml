@@ -1,12 +1,11 @@
 name: Playwright Tests
+
+
 on:
-  workflow_run:
-    workflows: [ "Unit Tests", "Integration Tests" ]
-    branches: [ main, master, develop ]
-    types: [ completed ]
+  workflow_call:
 jobs:
   test:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
