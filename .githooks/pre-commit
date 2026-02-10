@@ -1,0 +1,2 @@
+#!/bin/sh
+bun biome check --staged --files-ignore-unknown true --no-errors-on-unmatched

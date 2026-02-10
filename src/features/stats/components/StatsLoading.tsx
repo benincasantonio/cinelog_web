@@ -7,7 +7,10 @@ export const StatsLoading = () => {
 			<div className="flex flex-col gap-7" data-testid="skeleton-filter">
 				<div className="flex flex-wrap items-center gap-1">
 					{[1, 2, 3, 4].map((i) => (
-						<Skeleton key={i} className="h-9 w-20 rounded-md basis-[calc(50%-0.125rem)] sm:basis-auto" />
+						<Skeleton
+							key={i}
+							className="h-9 w-20 rounded-md basis-[calc(50%-0.125rem)] sm:basis-auto"
+						/>
 					))}
 				</div>
 				<div className="flex flex-col md:flex-row items-end gap-2 md:gap-5 w-full md:w-auto">

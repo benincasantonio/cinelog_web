@@ -66,9 +66,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	}: React.InputHTMLAttributes<HTMLInputElement>) => (
 		<input
 			{...props}
-			onChange={(e) => {
-				onChange?.(e);
-			}}
+			onChange={onChange}
 			data-testid={`input-${props.placeholder}`}
 		/>
 	),

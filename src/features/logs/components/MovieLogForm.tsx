@@ -97,6 +97,11 @@ export const MovieLogForm = ({
 	}, [movieToEdit, prefilledMovie]);
 
 	const onFilterChange = async (value: string) => {
+		if (!value) {
+			setSearchItems([]);
+			return;
+		}
+
 		const results = await search(value);
 
 		const items = results.results.map((movie) => ({
