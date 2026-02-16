@@ -1,48 +1,51 @@
-import { signOut } from 'firebase/auth';
 import { type KyRequest } from 'ky';
+import { refreshToken } from '@/features/auth/repositories/auth-repository';
+import { useAuthStore } from '@/features/auth/stores';
 import type { ApiClientOptions } from '@/lib/models/api-client-options';
-import { auth } from '../firebase';
+import { getCsrfTokenFromCookie } from '@/lib/utils/auth.utils';
 
 /**
- * Interceptor that adds authentication headers to requests.
+ * Interceptor that adds CSRF token to mutation requests.
  *
- * If the request is marked as `skipAuth`, no headers are added.
- * Otherwise, the current user's ID token is fetched and added to the request.
+ * For mutation requests (POST, PUT, DELETE, PATCH), reads the CSRF token
+ * from the cookie and adds it as a header (Double Submit Cookie pattern).
  */
 export const beforeRequestInterceptor = async (
 	request: KyRequest,
-	options: ApiClientOptions
+	_options: ApiClientOptions
 ) => {
-	if (options.skipAuth) return;
-
-	const user = auth.currentUser;
-	if (!user) return;
-
-	let token;
-
-	try {
-		token = await user.getIdToken();
-	} catch (error) {
-		console.error('Failed to get ID token:', error);
-		return;
+	const method = request.method.toUpperCase();
+	if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+		const csrfToken = getCsrfTokenFromCookie();
+		if (csrfToken) {
+			request.headers.set('X-CSRF-Token', csrfToken);
+		}
 	}
-
-	request.headers.set('Authorization', `Bearer ${token}`);
 };
 
 /**
  * Interceptor that handles authentication errors.
  *
- * If the response status is 401 and the request is not marked as `skipAuth`,
- * the user is signed out and redirected to the login page.
+ * If the response status is 401, attempts to refresh the token.
+ * If refresh fails, redirects to login page.
  */
 export const afterResponseInterceptor = async (
-	_request: Request,
+	request: Request,
 	options: ApiClientOptions,
 	response: Response
 ) => {
-	if (response.status === 401 && !options.skipAuth) {
-		await signOut(auth);
+	const isAuthenticated = useAuthStore.getState().isAuthenticated;
+
+	if (isAuthenticated && response.status === 401 && !options.skipAuth) {
+		// Try to refresh token
+		const refreshSuccess = await refreshToken();
+
+		if (refreshSuccess) {
+			// Token refreshed successfully, retry the original request
+			return fetch(request);
+		}
+
+		// Refresh failed, redirect to login
 		window.location.href = '/login';
 		throw new Error('Unauthorized');
 	}
