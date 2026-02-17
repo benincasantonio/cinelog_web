@@ -53,6 +53,7 @@ export const useAuthStore = create<{
 			await register(request);
 		} catch (error) {
 			console.error(error);
+			throw error;
 		}
 	},
 	fetchUserInfo: async () => {
