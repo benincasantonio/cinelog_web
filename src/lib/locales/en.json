@@ -96,7 +96,39 @@
 		"password": "Password",
 		"submit": "Login",
 		"submitting": "Logging in...",
-		"error": "An error occurred during login"
+		"error": "An error occurred during login",
+		"forgotPassword": "Forgot password?"
+	},
+	"ForgotPasswordPage": {
+		"pageTitle": "Cinelog - Forgot Password",
+		"title": "Forgot Password",
+		"description": "Enter your email to receive a reset code"
+	},
+	"ResetPasswordPage": {
+		"pageTitle": "Cinelog - Reset Password",
+		"title": "Reset Password",
+		"description": "Enter the code and your new password"
+	},
+	"ForgotPasswordForm": {
+		"email": "Email",
+		"submitEmail": "Send Reset Code",
+		"submittingEmail": "Sending...",
+		"errorEmail": "Failed to send reset code. Please try again.",
+		"backToLogin": "← Back to Login"
+	},
+	"ResetPasswordForm": {
+		"emailSentTo": "A reset code was sent to {{email}}.",
+		"code": "Reset Code",
+		"codePlaceholder": "Enter the code from your email",
+		"newPassword": "New Password",
+		"confirmPassword": "Confirm Password",
+		"submitReset": "Reset Password",
+		"submittingReset": "Resetting...",
+		"errorReset": "Failed to reset password. Please check your code and try again.",
+		"backToEmail": "← Back",
+		"validation": {
+			"passwordsMismatch": "Passwords do not match"
+		}
 	},
 	"RegistrationForm": {
 		"firstName": "First Name",

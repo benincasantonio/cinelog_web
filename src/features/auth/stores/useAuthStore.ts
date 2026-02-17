@@ -11,9 +11,11 @@ import { getUserInfo } from '../repositories/user-repository';
 export const useAuthStore = create<{
 	isAuthenticated: boolean;
 	isInitialized: boolean;
+	csrfToken: string | null;
 	userInfo: UserResponse | null;
 	isUserInfoLoading: boolean;
 	setIsAuthenticated: (isAuthenticated: boolean) => void;
+	setCsrfToken: (csrfToken: string | null) => void;
 	login: (email: string, password: string) => Promise<void>;
 	logout: () => Promise<void>;
 	initializeAuth: () => Promise<void>;
@@ -22,13 +24,15 @@ export const useAuthStore = create<{
 }>((set, get) => ({
 	isAuthenticated: false,
 	isInitialized: false,
+	csrfToken: null,
 	userInfo: null,
 	isUserInfoLoading: false,
 	setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
+	setCsrfToken: (csrfToken: string | null) => set({ csrfToken }),
 	login: async (email: string, password: string) => {
 		try {
-			await login(email, password);
-			set({ isAuthenticated: true });
+			const response = await login(email, password);
+			set({ isAuthenticated: true, csrfToken: response.csrfToken });
 			await get().fetchUserInfo();
 		} catch (error) {
 			console.error(error);
@@ -39,7 +43,7 @@ export const useAuthStore = create<{
 	logout: async () => {
 		try {
 			await logout();
-			set({ isAuthenticated: false, userInfo: null });
+			set({ isAuthenticated: false, userInfo: null, csrfToken: null });
 		} catch (error) {
 			console.error(error);
 		}

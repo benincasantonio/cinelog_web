@@ -7,10 +7,6 @@ import {
 } from './interceptors';
 
 // Mock dependencies
-vi.mock('@/lib/utils/auth.utils', () => ({
-	getCsrfTokenFromCookie: vi.fn(),
-}));
-
 vi.mock('@/features/auth/repositories/auth-repository', () => ({
 	refreshToken: vi.fn(),
 }));
@@ -23,7 +19,6 @@ vi.mock('@/features/auth/stores', () => ({
 
 import { refreshToken } from '@/features/auth/repositories/auth-repository';
 import { useAuthStore } from '@/features/auth/stores';
-import { getCsrfTokenFromCookie } from '@/lib/utils/auth.utils';
 
 interface MockLocation {
 	href: string;
@@ -32,9 +27,11 @@ interface MockLocation {
 interface MockAuthState {
 	isAuthenticated: boolean;
 	isInitialized: boolean;
+	csrfToken: string | null;
 	userInfo: null;
 	isUserInfoLoading: boolean;
 	setIsAuthenticated: (isAuthenticated: boolean) => void;
+	setCsrfToken: (csrfToken: string | null) => void;
 	login: (email: string, password: string) => Promise<void>;
 	logout: () => Promise<void>;
 	initializeAuth: () => Promise<void>;
@@ -68,8 +65,27 @@ describe('interceptors', () => {
 
 		const mockOptions: ApiClientOptions = {};
 
+		const mockAuthStateWithCsrf = (
+			csrfToken: string | null
+		): MockAuthState => ({
+			isAuthenticated: true,
+			isInitialized: true,
+			csrfToken,
+			userInfo: null,
+			isUserInfoLoading: false,
+			setIsAuthenticated: vi.fn(),
+			setCsrfToken: vi.fn(),
+			login: vi.fn(),
+			logout: vi.fn(),
+			initializeAuth: vi.fn(),
+			register: vi.fn(),
+			fetchUserInfo: vi.fn(),
+		});
+
 		it('should add CSRF token to POST requests', async () => {
-			vi.mocked(getCsrfTokenFromCookie).mockReturnValue('test-csrf-token');
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				mockAuthStateWithCsrf('test-csrf-token')
+			);
 			const mockRequest = createMockRequest('POST');
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
@@ -81,7 +97,9 @@ describe('interceptors', () => {
 		});
 
 		it('should add CSRF token to PUT requests', async () => {
-			vi.mocked(getCsrfTokenFromCookie).mockReturnValue('test-csrf-token');
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				mockAuthStateWithCsrf('test-csrf-token')
+			);
 			const mockRequest = createMockRequest('PUT');
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
@@ -93,7 +111,9 @@ describe('interceptors', () => {
 		});
 
 		it('should add CSRF token to DELETE requests', async () => {
-			vi.mocked(getCsrfTokenFromCookie).mockReturnValue('test-csrf-token');
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				mockAuthStateWithCsrf('test-csrf-token')
+			);
 			const mockRequest = createMockRequest('DELETE');
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
@@ -105,7 +125,9 @@ describe('interceptors', () => {
 		});
 
 		it('should add CSRF token to PATCH requests', async () => {
-			vi.mocked(getCsrfTokenFromCookie).mockReturnValue('test-csrf-token');
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				mockAuthStateWithCsrf('test-csrf-token')
+			);
 			const mockRequest = createMockRequest('PATCH');
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
@@ -117,7 +139,9 @@ describe('interceptors', () => {
 		});
 
 		it('should NOT add CSRF token to GET requests', async () => {
-			vi.mocked(getCsrfTokenFromCookie).mockReturnValue('test-csrf-token');
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				mockAuthStateWithCsrf('test-csrf-token')
+			);
 			const mockRequest = createMockRequest('GET');
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
@@ -126,7 +150,9 @@ describe('interceptors', () => {
 		});
 
 		it('should handle lowercase method names', async () => {
-			vi.mocked(getCsrfTokenFromCookie).mockReturnValue('test-csrf-token');
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				mockAuthStateWithCsrf('test-csrf-token')
+			);
 			const mockRequest = createMockRequest('post');
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
@@ -138,7 +164,9 @@ describe('interceptors', () => {
 		});
 
 		it('should not set header when CSRF token is null', async () => {
-			vi.mocked(getCsrfTokenFromCookie).mockReturnValue(null);
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				mockAuthStateWithCsrf(null)
+			);
 			const mockRequest = createMockRequest('POST');
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
@@ -165,9 +193,11 @@ describe('interceptors', () => {
 		const createMockAuthState = (isAuthenticated: boolean): MockAuthState => ({
 			isAuthenticated,
 			isInitialized: false,
+			csrfToken: null,
 			userInfo: null,
 			isUserInfoLoading: false,
 			setIsAuthenticated: vi.fn(),
+			setCsrfToken: vi.fn(),
 			login: vi.fn(),
 			logout: vi.fn(),
 			initializeAuth: vi.fn(),
@@ -221,10 +251,12 @@ describe('interceptors', () => {
 		});
 
 		it('should attempt token refresh on 401 when authenticated', async () => {
-			vi.mocked(useAuthStore.getState).mockReturnValue(
-				createMockAuthState(true)
-			);
-			vi.mocked(refreshToken).mockResolvedValue(true);
+			const mockAuthState = createMockAuthState(true);
+			vi.mocked(useAuthStore.getState).mockReturnValue(mockAuthState);
+			vi.mocked(refreshToken).mockResolvedValue({
+				message: 'Token refreshed',
+				csrfToken: 'new-csrf-token',
+			});
 
 			// Mock fetch for retry
 			const mockFetch = vi.fn().mockResolvedValue({
@@ -244,6 +276,7 @@ describe('interceptors', () => {
 			);
 
 			expect(refreshToken).toHaveBeenCalled();
+			expect(mockAuthState.setCsrfToken).toHaveBeenCalledWith('new-csrf-token');
 			expect(mockFetch).toHaveBeenCalledWith(mockRequest);
 			expect(result).toBeDefined();
 		});
@@ -252,7 +285,7 @@ describe('interceptors', () => {
 			vi.mocked(useAuthStore.getState).mockReturnValue(
 				createMockAuthState(true)
 			);
-			vi.mocked(refreshToken).mockResolvedValue(false);
+			vi.mocked(refreshToken).mockResolvedValue(null);
 
 			const mockRequest = createMockRequest();
 			const mockResponse = createMockResponse(401);
