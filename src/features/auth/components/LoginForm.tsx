@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { type LoginSchema, loginSchema } from '../schemas';
 import { useAuthStore } from '../stores';
 
@@ -93,6 +93,13 @@ export const LoginForm = () => {
 						</FormItem>
 					)}
 				/>
+
+				<Link
+					to="/forgot-password"
+					className="text-sm text-right hover:underline"
+				>
+					{t('LoginForm.forgotPassword')}
+				</Link>
 
 				<Button type="submit" variant="default" disabled={loading}>
 					{loading ? t('LoginForm.submitting') : t('LoginForm.submit')}

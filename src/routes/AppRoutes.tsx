@@ -3,6 +3,12 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores';
 import { DefaultLayout } from '@/lib/components';
 
+const ForgotPasswordPage = lazy(
+	() => import('@features/auth/pages/ForgotPasswordPage')
+);
+const ResetPasswordPage = lazy(
+	() => import('@features/auth/pages/ResetPasswordPage')
+);
 const LoginPage = lazy(() => import('@features/auth/pages/LoginPage'));
 const RegistrationPage = lazy(
 	() => import('@features/auth/pages/RegistrationPage')
@@ -71,6 +77,16 @@ export const AppRoutes = () => {
 							path="/registration"
 							id="registration"
 							element={<RegistrationPage />}
+						/>
+						<Route
+							path="/forgot-password"
+							id="forgot-password"
+							element={<ForgotPasswordPage />}
+						/>
+						<Route
+							path="/reset-password"
+							id="reset-password"
+							element={<ResetPasswordPage />}
 						/>
 					</>
 				)}

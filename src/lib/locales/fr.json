@@ -96,7 +96,39 @@
 		"password": "Mot de passe",
 		"submit": "Se connecter",
 		"submitting": "Connexion en cours...",
-		"error": "Une erreur s'est produite lors de la connexion"
+		"error": "Une erreur s'est produite lors de la connexion",
+		"forgotPassword": "Mot de passe oublié ?"
+	},
+	"ForgotPasswordPage": {
+		"pageTitle": "Cinelog - Mot de passe oublié",
+		"title": "Mot de passe oublié",
+		"description": "Entrez votre email pour recevoir un code de réinitialisation"
+	},
+	"ResetPasswordPage": {
+		"pageTitle": "Cinelog - Réinitialiser le mot de passe",
+		"title": "Réinitialiser le mot de passe",
+		"description": "Entrez le code et votre nouveau mot de passe"
+	},
+	"ForgotPasswordForm": {
+		"email": "Email",
+		"submitEmail": "Envoyer le code",
+		"submittingEmail": "Envoi en cours...",
+		"errorEmail": "Échec de l'envoi du code. Veuillez réessayer.",
+		"backToLogin": "← Retour à la connexion"
+	},
+	"ResetPasswordForm": {
+		"emailSentTo": "Un code de réinitialisation a été envoyé à {{email}}.",
+		"code": "Code de réinitialisation",
+		"codePlaceholder": "Entrez le code reçu par email",
+		"newPassword": "Nouveau mot de passe",
+		"confirmPassword": "Confirmer le mot de passe",
+		"submitReset": "Réinitialiser le mot de passe",
+		"submittingReset": "Réinitialisation en cours...",
+		"errorReset": "Échec de la réinitialisation. Vérifiez votre code et réessayez.",
+		"backToEmail": "← Retour",
+		"validation": {
+			"passwordsMismatch": "Les mots de passe ne correspondent pas"
+		}
 	},
 	"RegistrationForm": {
 		"firstName": "Prénom",

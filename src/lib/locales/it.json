@@ -96,7 +96,39 @@
 		"password": "Password",
 		"submit": "Accedi",
 		"submitting": "Accesso in corso...",
-		"error": "Si è verificato un errore durante l'accesso"
+		"error": "Si è verificato un errore durante l'accesso",
+		"forgotPassword": "Password dimenticata?"
+	},
+	"ForgotPasswordPage": {
+		"pageTitle": "Cinelog - Password Dimenticata",
+		"title": "Password Dimenticata",
+		"description": "Inserisci la tua email per ricevere un codice di ripristino"
+	},
+	"ResetPasswordPage": {
+		"pageTitle": "Cinelog - Reimposta Password",
+		"title": "Reimposta Password",
+		"description": "Inserisci il codice e la nuova password"
+	},
+	"ForgotPasswordForm": {
+		"email": "Email",
+		"submitEmail": "Invia Codice di Ripristino",
+		"submittingEmail": "Invio in corso...",
+		"errorEmail": "Invio del codice di ripristino fallito. Riprova.",
+		"backToLogin": "← Torna al Login"
+	},
+	"ResetPasswordForm": {
+		"emailSentTo": "Un codice di ripristino è stato inviato a {{email}}.",
+		"code": "Codice di Ripristino",
+		"codePlaceholder": "Inserisci il codice ricevuto via email",
+		"newPassword": "Nuova Password",
+		"confirmPassword": "Conferma Password",
+		"submitReset": "Reimposta Password",
+		"submittingReset": "Reimpostazione in corso...",
+		"errorReset": "Reimpostazione password fallita. Controlla il codice e riprova.",
+		"backToEmail": "← Indietro",
+		"validation": {
+			"passwordsMismatch": "Le password non corrispondono"
+		}
 	},
 	"RegistrationForm": {
 		"firstName": "Nome",

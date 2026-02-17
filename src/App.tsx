@@ -8,14 +8,20 @@ import { AppRoutes } from './routes';
 
 function App() {
 	const initializeAuth = useAuthStore((state) => state.initializeAuth);
+	const setCsrfToken = useAuthStore((state) => state.setCsrfToken);
 
 	useEffect(() => {
 		const initialize = async () => {
-			await fetchCsrfToken();
+			try {
+				const { csrfToken } = await fetchCsrfToken();
+				setCsrfToken(csrfToken);
+			} catch (error) {
+				console.error('Failed to fetch CSRF token:', error);
+			}
 			await initializeAuth();
 		};
 		initialize();
-	}, [initializeAuth]);
+	}, [initializeAuth, setCsrfToken]);
 
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="cinelog-theme">

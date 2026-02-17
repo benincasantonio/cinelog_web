@@ -2,13 +2,12 @@ import { type KyRequest } from 'ky';
 import { refreshToken } from '@/features/auth/repositories/auth-repository';
 import { useAuthStore } from '@/features/auth/stores';
 import type { ApiClientOptions } from '@/lib/models/api-client-options';
-import { getCsrfTokenFromCookie } from '@/lib/utils/auth.utils';
 
 /**
  * Interceptor that adds CSRF token to mutation requests.
  *
  * For mutation requests (POST, PUT, DELETE, PATCH), reads the CSRF token
- * from the cookie and adds it as a header (Double Submit Cookie pattern).
+ * from the auth store and adds it as a header.
  */
 export const beforeRequestInterceptor = async (
 	request: KyRequest,
@@ -16,7 +15,7 @@ export const beforeRequestInterceptor = async (
 ) => {
 	const method = request.method.toUpperCase();
 	if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
-		const csrfToken = getCsrfTokenFromCookie();
+		const csrfToken = useAuthStore.getState().csrfToken;
 		if (csrfToken) {
 			request.headers.set('X-CSRF-Token', csrfToken);
 		}
@@ -38,10 +37,11 @@ export const afterResponseInterceptor = async (
 
 	if (isAuthenticated && response.status === 401 && !options.skipAuth) {
 		// Try to refresh token
-		const refreshSuccess = await refreshToken();
+		const refreshResponse = await refreshToken();
 
-		if (refreshSuccess) {
-			// Token refreshed successfully, retry the original request
+		if (refreshResponse) {
+			// Token refreshed successfully, update CSRF and retry the original request
+			useAuthStore.getState().setCsrfToken(refreshResponse.csrfToken);
 			return fetch(request);
 		}
 
