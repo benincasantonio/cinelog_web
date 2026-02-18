@@ -3,9 +3,9 @@ import { z } from 'zod';
 export const resetPasswordSchema = (passwordsMismatchMessage: string) =>
 	z
 		.object({
-			code: z.string().nonempty(),
-			newPassword: z.string().min(8).nonempty(),
-			confirmPassword: z.string().nonempty(),
+			code: z.string().min(1),
+			newPassword: z.string().min(8),
+			confirmPassword: z.string().min(1),
 		})
 		.strict()
 		.refine((data) => data.newPassword === data.confirmPassword, {
