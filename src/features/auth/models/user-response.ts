@@ -1,11 +1,3 @@
-export type FirebaseUserData = {
-	email: string | null;
-	displayName: string | null;
-	photoUrl: string | null;
-	emailVerified: boolean;
-	disabled: boolean;
-};
-
 export type UserResponse = {
 	id: string;
 	firstName: string;
@@ -14,6 +6,4 @@ export type UserResponse = {
 	handle: string;
 	dateOfBirth: string;
 	bio?: string;
-	firebaseUid: string | null;
-	firebaseData: FirebaseUserData | null;
 };
