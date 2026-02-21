@@ -42,6 +42,9 @@ export const afterResponseInterceptor = async (
 		if (refreshResponse) {
 			// Token refreshed successfully, update CSRF and retry the original request
 			useAuthStore.getState().setCsrfToken(refreshResponse.csrfToken);
+
+			request.headers.set('X-CSRF-Token', refreshResponse.csrfToken);
+
 			return fetch(request);
 		}
 

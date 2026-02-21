@@ -5,13 +5,6 @@ import type { LogListItem } from '@/features/logs/models';
 import { TestWrapper } from './MovieLogItem.test-setup';
 import { createMockLog } from './MovieLogItem.test-utils';
 
-// Mock Firebase to prevent initialization error
-vi.mock('@/lib/firebase', () => ({
-	auth: {
-		currentUser: null,
-	},
-}));
-
 // Mock useMovieLogDialogStore
 vi.mock('@/features/logs/stores', () => ({
 	useMovieLogDialogStore: () => ({

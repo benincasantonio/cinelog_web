@@ -180,7 +180,10 @@ describe('interceptors', () => {
 			return {
 				url: 'https://api.example.com/test',
 				method: 'GET',
-			} as Request;
+				headers: {
+					set: vi.fn(),
+				},
+			} as unknown as Request;
 		};
 
 		const createMockResponse = (status: number): Response => {
@@ -277,6 +280,10 @@ describe('interceptors', () => {
 
 			expect(refreshToken).toHaveBeenCalled();
 			expect(mockAuthState.setCsrfToken).toHaveBeenCalledWith('new-csrf-token');
+			expect(mockRequest.headers.set).toHaveBeenCalledWith(
+				'X-CSRF-Token',
+				'new-csrf-token'
+			);
 			expect(mockFetch).toHaveBeenCalledWith(mockRequest);
 			expect(result).toBeDefined();
 		});
