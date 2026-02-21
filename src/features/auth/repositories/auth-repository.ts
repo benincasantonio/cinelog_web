@@ -13,6 +13,11 @@ export const fetchCsrfToken = async (): Promise<CsrfTokenResponse> => {
 	const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/auth/csrf`, {
 		credentials: 'include',
 	});
+	if (!response.ok) {
+		throw new Error(
+			`Failed to fetch CSRF token: ${response.status} ${response.statusText}`
+		);
+	}
 	return await response.json();
 };
 

@@ -4,13 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LogListItem } from '@/features/logs/models';
 import { MovieLogItem } from './MovieLogItem';
 
-// Mock Firebase to prevent initialization error
-vi.mock('@/lib/firebase', () => ({
-	auth: {
-		currentUser: null,
-	},
-}));
-
 // Mock useMovieLogDialogStore
 const mockOpen = vi.fn();
 vi.mock('@/features/logs/stores', () => ({

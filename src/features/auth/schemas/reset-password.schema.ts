@@ -5,7 +5,7 @@ export const resetPasswordSchema = (passwordsMismatchMessage: string) =>
 		.object({
 			code: z.string().min(1),
 			newPassword: z.string().min(8),
-			confirmPassword: z.string().min(1),
+			confirmPassword: z.string().min(8),
 		})
 		.strict()
 		.refine((data) => data.newPassword === data.confirmPassword, {
