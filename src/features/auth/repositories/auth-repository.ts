@@ -10,7 +10,7 @@ import type { RegisterRequest } from '../models/register-request';
 import type { ResetPasswordRequest } from '../models/reset-password';
 
 export const fetchCsrfToken = async (): Promise<CsrfTokenResponse> => {
-	const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/auth/csrf`, {
+	const response = await fetch(`${import.meta.env.VITE_API_URL}v1/auth/csrf`, {
 		credentials: 'include',
 	});
 	if (!response.ok) {
