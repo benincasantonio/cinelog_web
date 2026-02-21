@@ -37,23 +37,15 @@ export const logout = async (): Promise<void> => {
 	await apiClient.post('v1/auth/logout').json();
 };
 
-export const refreshToken = async (): Promise<RefreshResponse | null> => {
-	try {
-		const response = await fetch(
-			`${import.meta.env.VITE_API_URL}/v1/auth/refresh`,
-			{
-				method: 'POST',
-				credentials: 'include',
-			}
-		);
-		if (response.ok) {
-			return await response.json();
+export const refreshToken = async (): Promise<RefreshResponse> => {
+	const response = await fetch(
+		`${import.meta.env.VITE_API_URL}/v1/auth/refresh`,
+		{
+			method: 'POST',
+			credentials: 'include',
 		}
-		return null;
-	} catch (error) {
-		console.error('Token refresh failed:', error);
-		return null;
-	}
+	);
+	return await response.json();
 };
 
 export const register = async (request: RegisterRequest): Promise<void> => {

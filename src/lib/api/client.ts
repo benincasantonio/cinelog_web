@@ -1,15 +1,15 @@
 import ky from 'ky';
-import {
-	afterResponseInterceptor,
-	beforeRequestInterceptor,
-} from './interceptors';
+import { beforeRequestInterceptor, beforeRetry } from './interceptors';
 
 export const apiClient = ky.create({
 	prefixUrl: import.meta.env.VITE_API_URL,
-	retry: 2,
+	retry: {
+		limit: 1,
+		statusCodes: [401],
+	},
 	credentials: 'include',
 	hooks: {
 		beforeRequest: [beforeRequestInterceptor],
-		afterResponse: [afterResponseInterceptor],
+		beforeRetry: [beforeRetry],
 	},
 });
