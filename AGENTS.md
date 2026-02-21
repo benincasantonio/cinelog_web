@@ -3,7 +3,7 @@
 ## Project Structure & Module Organization
 - `src/` contains the React + TypeScript app. Routing lives in `src/routes/` (see `AppRoutes.tsx`).
 - Feature modules live in `src/features/<feature>/` using kebab-case, typically split into `components/`, `pages/`, `stores/` (or `store/`), `repositories/`, `models/`, and `schemas/`.
-- Shared infrastructure and UI go in `src/lib/` (API client, Firebase, layout/components, hooks, context).
+- Shared infrastructure and UI go in `src/lib/` (API client, layout/components, hooks, context).
 - Static assets live in `public/`. Plop generators are in `scripts/plop/`.
 
 ## Build, Test, and Development Commands
@@ -38,5 +38,5 @@
 - PRs should include a clear summary, linked issue (if any), screenshots for UI changes, and notes for any `.env` or config updates.
 
 ## Configuration & Secrets
-- Copy `/.env.example` to `/.env` and set required `VITE_*` values (API URL + Firebase).
+- Copy `/.env.example` to `/.env` and set required `VITE_*` values.
 - Do not commit secrets; `.env*` files are ignored by Git.

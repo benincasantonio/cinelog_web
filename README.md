@@ -6,7 +6,7 @@ Cinelog Web is the React + TypeScript client for Cinelog, built with Vite (rolld
 
 1. Install dependencies: `bun install`
 2. Create environment config: `cp .env.example .env`
-3. Fill in `VITE_*` values (API + Firebase).
+3. Fill in `VITE_*` values.
 4. Start the dev server: `bun run dev`
 
 ## Scripts
@@ -32,13 +32,6 @@ Cinelog Web is the React + TypeScript client for Cinelog, built with Vite (rolld
 Use `.env` with the following keys:
 
 - `VITE_API_URL`
-- `VITE_FIREBASE_API_KEY`
-- `VITE_FIREBASE_AUTH_DOMAIN`
-- `VITE_FIREBASE_PROJECT_ID`
-- `VITE_FIREBASE_STORAGE_BUCKET`
-- `VITE_FIREBASE_MESSAGING_SENDER_ID`
-- `VITE_FIREBASE_APP_ID`
-- `VITE_FIREBASE_MEASUREMENT_ID`
 
 ## Testing
 

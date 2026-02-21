@@ -5,12 +5,6 @@ import { defineConfig } from 'vite';
 
 const vendorChunks: Record<string, string[]> = {
 	'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-	'vendor-firebase': [
-		'firebase/app',
-		'firebase/auth',
-		'firebase/analytics',
-		'@firebase',
-	],
 	'vendor-recharts': ['recharts', 'd3'],
 	'vendor-i18n': [
 		'i18next',
