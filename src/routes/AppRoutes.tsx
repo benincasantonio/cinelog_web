@@ -33,7 +33,9 @@ const ProfileStatsPage = lazy(
 );
 
 export const AppRoutes = () => {
-	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const authenticatedStatus = useAuthStore(
+		(state) => state.authenticatedStatus
+	);
 	const isInitialized = useAuthStore((state) => state.isInitialized);
 
 	if (!isInitialized) {
@@ -45,11 +47,11 @@ export const AppRoutes = () => {
 			<Route element={<DefaultLayout />}>
 				<Route
 					path="*"
-					element={<Navigate to={isAuthenticated ? '/' : '/login'} />}
+					element={<Navigate to={authenticatedStatus ? '/' : '/login'} />}
 				/>
 				<Route path="/" id="home" element={<HomePage />} />
 
-				{isAuthenticated ? (
+				{authenticatedStatus ? (
 					<>
 						<Route
 							path="/search"

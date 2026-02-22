@@ -39,12 +39,13 @@ export const logout = async (): Promise<void> => {
 
 export const refreshToken = async (): Promise<RefreshResponse> => {
 	const response = await fetch(
-		`${import.meta.env.VITE_API_URL}/v1/auth/refresh`,
+		`${import.meta.env.VITE_API_URL}v1/auth/refresh`,
 		{
 			method: 'POST',
 			credentials: 'include',
 		}
 	);
+
 	return await response.json();
 };
 

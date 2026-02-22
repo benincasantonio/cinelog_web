@@ -23,7 +23,9 @@ import { ProfileDropdownMenu } from './ProfileDropdownMenu';
 export const Navbar = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const authenticatedStatus = useAuthStore(
+		(state) => state.authenticatedStatus
+	);
 	const { theme, setTheme } = useTheme();
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -40,7 +42,7 @@ export const Navbar = () => {
 		{
 			label: t('Navbar.search'),
 			path: '/search',
-			visible: isAuthenticated,
+			visible: authenticatedStatus === true,
 		},
 	];
 
@@ -53,17 +55,17 @@ export const Navbar = () => {
 		{
 			name: t('Navbar.search'),
 			path: '/search',
-			visible: isAuthenticated,
+			visible: authenticatedStatus === true,
 		},
 		{
 			name: t('Navbar.login'),
 			path: '/login',
-			visible: !isAuthenticated,
+			visible: authenticatedStatus === false,
 		},
 		{
 			name: t('Navbar.register'),
 			path: '/registration',
-			visible: !isAuthenticated,
+			visible: authenticatedStatus === false,
 		},
 	];
 
@@ -107,9 +109,9 @@ export const Navbar = () => {
 						)}
 					</Button>
 
-					{isAuthenticated && <CreateMovieLogButton />}
+					{authenticatedStatus === true && <CreateMovieLogButton />}
 
-					{!isAuthenticated ? (
+					{authenticatedStatus === false ? (
 						<div className="hidden md:flex items-center gap-2">
 							<Button variant="ghost" onClick={() => navigate('/login')}>
 								{t('Navbar.login')}
@@ -125,7 +127,7 @@ export const Navbar = () => {
 					)}
 				</div>
 
-				{isAuthenticated && <CreateMovieLogDialog />}
+				{authenticatedStatus === true && <CreateMovieLogDialog />}
 			</nav>
 			<MobileNavbar
 				isOpen={isOpen}

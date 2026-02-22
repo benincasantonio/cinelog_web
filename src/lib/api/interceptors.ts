@@ -1,4 +1,9 @@
-import { type BeforeRetryState, isHTTPError, type KyRequest } from 'ky';
+import {
+	type BeforeRetryState,
+	isHTTPError,
+	type KyRequest,
+	type NormalizedOptions,
+} from 'ky';
 import type { RefreshResponse } from '@/features/auth/models/auth-responses';
 import { refreshToken } from '@/features/auth/repositories/auth-repository';
 import { useAuthStore } from '@/features/auth/stores';
@@ -26,6 +31,31 @@ export const beforeRequestInterceptor = async (
 	}
 };
 
+export const afterResponseInterceptor = async (
+	_request: KyRequest,
+	_options: NormalizedOptions,
+	response: Response
+) => {
+	const authStatus = useAuthStore.getState().authenticatedStatus;
+
+	const excludePaths = [
+		'/v1/auth/login',
+		'/v1/auth/register',
+		'/v1/auth/forgot-password',
+		'/v1/auth/reset-password',
+		'/v1/auth/csrf',
+		'/v1/auth/refresh',
+	];
+
+	if (
+		authStatus === null &&
+		response.status === 200 &&
+		!excludePaths.some((path) => response.url.includes(path))
+	) {
+		useAuthStore.setState({ authenticatedStatus: true });
+	}
+};
+
 /**
  * Interceptor that handles authentication errors.
  *
@@ -33,6 +63,11 @@ export const beforeRequestInterceptor = async (
  * If refresh fails, redirects to login page.
  */
 export const beforeRetry = async (options: BeforeRetryState) => {
+	const authStatus = useAuthStore.getState().authenticatedStatus;
+	if (authStatus === false) {
+		return;
+	}
+
 	if (isHTTPError(options.error) && options.error.response.status === 401) {
 		if (!refreshPromise) {
 			refreshPromise = refreshToken()
@@ -43,6 +78,11 @@ export const beforeRetry = async (options: BeforeRetryState) => {
 					return refreshData;
 				})
 				.catch(() => {
+					useAuthStore.setState({
+						authenticatedStatus: false,
+						userInfo: null,
+						csrfToken: null,
+					});
 					refreshPromise = null;
 					window.location.href = '/login';
 					throw new Error('Unauthorized');

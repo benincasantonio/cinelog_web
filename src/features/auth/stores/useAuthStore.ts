@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import {
+	fetchCsrfToken,
 	login,
 	logout,
 	register,
@@ -9,41 +10,41 @@ import type { UserResponse } from '../models/user-response';
 import { getUserInfo } from '../repositories/user-repository';
 
 export const useAuthStore = create<{
-	isAuthenticated: boolean;
 	isInitialized: boolean;
 	csrfToken: string | null;
 	userInfo: UserResponse | null;
 	isUserInfoLoading: boolean;
-	setIsAuthenticated: (isAuthenticated: boolean) => void;
+	authenticatedStatus: boolean | null;
+	setAuthenticatedStatus: (status: boolean | null) => void;
 	setCsrfToken: (csrfToken: string | null) => void;
 	login: (email: string, password: string) => Promise<void>;
 	logout: () => Promise<void>;
-	initializeAuth: () => Promise<void>;
 	register: (request: RegisterRequest) => Promise<void>;
 	fetchUserInfo: () => Promise<void>;
 }>((set, get) => ({
-	isAuthenticated: false,
 	isInitialized: false,
 	csrfToken: null,
 	userInfo: null,
+	authenticatedStatus: null,
 	isUserInfoLoading: false,
-	setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
+	setAuthenticatedStatus: (status: boolean | null) =>
+		set({ authenticatedStatus: status }),
 	setCsrfToken: (csrfToken: string | null) => set({ csrfToken }),
 	login: async (email: string, password: string) => {
 		try {
 			const response = await login(email, password);
-			set({ isAuthenticated: true, csrfToken: response.csrfToken });
+			set({ authenticatedStatus: true, csrfToken: response.csrfToken });
 			await get().fetchUserInfo();
 		} catch (error) {
 			console.error(error);
-			set({ isAuthenticated: false });
+			set({ authenticatedStatus: false });
 			throw error;
 		}
 	},
 	logout: async () => {
 		try {
 			await logout();
-			set({ isAuthenticated: false, userInfo: null, csrfToken: null });
+			set({ authenticatedStatus: false, userInfo: null, csrfToken: null });
 		} catch (error) {
 			console.error(error);
 		}
@@ -60,21 +61,26 @@ export const useAuthStore = create<{
 		set({ isUserInfoLoading: true });
 		try {
 			const userInfo = await getUserInfo();
-			set({ userInfo, isAuthenticated: true });
+
+			const csrfResponse = await fetchCsrfToken();
+			const csrfToken = csrfResponse.csrfToken;
+
+			set({
+				userInfo,
+				authenticatedStatus: true,
+				csrfToken,
+				isInitialized: true,
+			});
 		} catch (error) {
 			console.error(error);
-			set({ isAuthenticated: false, userInfo: null });
+			set({
+				authenticatedStatus: false,
+				userInfo: null,
+				csrfToken: null,
+				isInitialized: true,
+			});
 		} finally {
 			set({ isUserInfoLoading: false });
-		}
-	},
-	initializeAuth: async () => {
-		try {
-			await get().fetchUserInfo();
-		} catch (error) {
-			console.error(error);
-		} finally {
-			set({ isInitialized: true });
 		}
 	},
 }));
