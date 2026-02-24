@@ -8,9 +8,6 @@ export const createOrUpdateRating = async (
 	return apiClient
 		.post('v1/movie-ratings/', {
 			json: request,
-			headers: {
-				'Content-Type': 'application/json',
-			},
 		})
 		.json();
 };

@@ -4,12 +4,15 @@ import type { ApiClientOptions } from '@/lib/models/api-client-options';
 import {
 	afterResponseInterceptor,
 	beforeRequestInterceptor,
-	beforeRetry,
+	beforeRetryInterceptor,
 } from './interceptors';
 
 vi.mock('@/features/auth/repositories/auth-repository', () => ({
 	refreshToken: vi.fn(),
 }));
+
+import { refreshToken } from '@/features/auth/repositories/auth-repository';
+import { useAuthStore } from '@/features/auth/stores';
 
 vi.mock('@/features/auth/stores', () => ({
 	useAuthStore: {
@@ -17,9 +20,6 @@ vi.mock('@/features/auth/stores', () => ({
 		setState: vi.fn(),
 	},
 }));
-
-import { refreshToken } from '@/features/auth/repositories/auth-repository';
-import { useAuthStore } from '@/features/auth/stores';
 
 interface MockAuthState {
 	authenticatedStatus: boolean | null;
@@ -327,7 +327,7 @@ describe('interceptors', () => {
 			const mockRequest = createMockRequest();
 			const error = createHTTPError(403);
 
-			await beforeRetry({
+			await beforeRetryInterceptor({
 				request: mockRequest,
 				options: {} as never,
 				error,
@@ -345,7 +345,7 @@ describe('interceptors', () => {
 			const mockRequest = createMockRequest();
 			const error = createHTTPError(401);
 
-			const result = await beforeRetry({
+			const result = await beforeRetryInterceptor({
 				request: mockRequest,
 				options: {} as never,
 				error,
@@ -368,7 +368,7 @@ describe('interceptors', () => {
 			const mockRequest = createMockRequest('POST');
 			const error = createHTTPError(401);
 
-			await beforeRetry({
+			await beforeRetryInterceptor({
 				request: mockRequest,
 				options: {} as never,
 				error,
@@ -397,7 +397,7 @@ describe('interceptors', () => {
 			const mockRequest = createMockRequest('GET');
 			const error = createHTTPError(401);
 
-			await beforeRetry({
+			await beforeRetryInterceptor({
 				request: mockRequest,
 				options: {} as never,
 				error,
@@ -418,7 +418,7 @@ describe('interceptors', () => {
 			const error = createHTTPError(401);
 
 			await expect(
-				beforeRetry({
+				beforeRetryInterceptor({
 					request: mockRequest,
 					options: {} as never,
 					error,
@@ -443,7 +443,7 @@ describe('interceptors', () => {
 			const mockRequest = createMockRequest();
 			const error = new Error('Network error');
 
-			await beforeRetry({
+			await beforeRetryInterceptor({
 				request: mockRequest,
 				options: {} as never,
 				error,

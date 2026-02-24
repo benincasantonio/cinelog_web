@@ -12,6 +12,7 @@ const vendorChunks: Record<string, string[]> = {
 		'i18next-browser-languagedetector',
 	],
 	'vendor-ui': ['@antoniobenincasa/ui'],
+	'vendor-network': ['ky'],
 	'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
 };
 

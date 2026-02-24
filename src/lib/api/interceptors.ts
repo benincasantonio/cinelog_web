@@ -19,8 +19,12 @@ let refreshPromise: Promise<RefreshResponse> | null = null;
  */
 export const beforeRequestInterceptor = async (
 	request: KyRequest,
-	_options: ApiClientOptions
+	options: ApiClientOptions
 ) => {
+	if (options.skipAuth) {
+		return;
+	}
+
 	const method = request.method.toUpperCase();
 	if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
 		const csrfToken = useAuthStore.getState().csrfToken;
@@ -62,7 +66,7 @@ export const afterResponseInterceptor = async (
  * If the response status is 401, attempts to refresh the token.
  * If refresh fails, redirects to login page.
  */
-export const beforeRetry = async (options: BeforeRetryState) => {
+export const beforeRetryInterceptor = async (options: BeforeRetryState) => {
 	const authStatus = useAuthStore.getState().authenticatedStatus;
 	if (authStatus === false) {
 		return ky.stop;
