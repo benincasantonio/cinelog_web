@@ -46,6 +46,10 @@ export const refreshToken = async (): Promise<RefreshResponse> => {
 		}
 	);
 
+	if (!response.ok) {
+		throw new Error(`Refresh failed: ${response.status}`);
+	}
+
 	return await response.json();
 };
 

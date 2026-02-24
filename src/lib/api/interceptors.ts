@@ -1,4 +1,4 @@
-import {
+import ky, {
 	type BeforeRetryState,
 	isHTTPError,
 	type KyRequest,
@@ -65,7 +65,7 @@ export const afterResponseInterceptor = async (
 export const beforeRetry = async (options: BeforeRetryState) => {
 	const authStatus = useAuthStore.getState().authenticatedStatus;
 	if (authStatus === false) {
-		return;
+		return ky.stop;
 	}
 
 	if (isHTTPError(options.error) && options.error.response.status === 401) {
@@ -75,6 +75,10 @@ export const beforeRetry = async (options: BeforeRetryState) => {
 					useAuthStore.setState({
 						csrfToken: refreshData.csrfToken,
 					});
+					const method = options.request.method.toUpperCase();
+					if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+						options.request.headers.set('X-CSRF-Token', refreshData.csrfToken);
+					}
 					return refreshData;
 				})
 				.catch(() => {

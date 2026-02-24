@@ -1,4 +1,4 @@
-import { HTTPError, type KyRequest } from 'ky';
+import ky, { HTTPError, type KyRequest } from 'ky';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ApiClientOptions } from '@/lib/models/api-client-options';
 import {
@@ -337,7 +337,7 @@ describe('interceptors', () => {
 			expect(refreshToken).not.toHaveBeenCalled();
 		});
 
-		it('should not attempt refresh when user is not authenticated', async () => {
+		it('should return ky.stop and not attempt refresh when user is not authenticated', async () => {
 			vi.mocked(useAuthStore.getState).mockReturnValue(
 				createMockAuthState(false)
 			);
@@ -345,17 +345,18 @@ describe('interceptors', () => {
 			const mockRequest = createMockRequest();
 			const error = createHTTPError(401);
 
-			await beforeRetry({
+			const result = await beforeRetry({
 				request: mockRequest,
 				options: {} as never,
 				error,
 				retryCount: 1,
 			});
 
+			expect(result).toBe(ky.stop);
 			expect(refreshToken).not.toHaveBeenCalled();
 		});
 
-		it('should attempt token refresh on 401 when authenticated', async () => {
+		it('should attempt token refresh on 401 when authenticated and set CSRF on POST retry', async () => {
 			vi.mocked(useAuthStore.getState).mockReturnValue(
 				createMockAuthState(true)
 			);
@@ -378,6 +379,10 @@ describe('interceptors', () => {
 			expect(useAuthStore.setState).toHaveBeenCalledWith({
 				csrfToken: 'new-csrf-token',
 			});
+			expect(mockRequest.headers.set).toHaveBeenCalledWith(
+				'X-CSRF-Token',
+				'new-csrf-token'
+			);
 		});
 
 		it('should not set CSRF header on retry for GET requests', async () => {
