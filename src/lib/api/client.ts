@@ -2,7 +2,7 @@ import ky from 'ky';
 import {
 	afterResponseInterceptor,
 	beforeRequestInterceptor,
-	beforeRetry,
+	beforeRetryInterceptor,
 } from './interceptors';
 
 export const apiClient = ky.create({
@@ -10,11 +10,12 @@ export const apiClient = ky.create({
 	retry: {
 		limit: 1,
 		methods: ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'],
+		statusCodes: [401, 408, 413, 429, 500, 502, 503, 504],
 	},
 	credentials: 'include',
 	hooks: {
 		beforeRequest: [beforeRequestInterceptor],
 		afterResponse: [afterResponseInterceptor],
-		beforeRetry: [beforeRetry],
+		beforeRetry: [beforeRetryInterceptor],
 	},
 });

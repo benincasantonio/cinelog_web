@@ -1,15 +1,28 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
-	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
-	"files": { "includes": ["**", "!!**/dist"] },
-	"formatter": { "enabled": true, "indentStyle": "tab" },
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": ["**", "!!**/dist"]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
 	"linter": {
 		"enabled": true,
-		"rules": { "recommended": false },
+		"rules": {
+			"recommended": false
+		},
 		"includes": ["**", "!dist"]
 	},
 	"css": {
-		"parser": { "tailwindDirectives": true }
+		"parser": {
+			"tailwindDirectives": true
+		}
 	},
 	"javascript": {
 		"formatter": {
@@ -84,12 +97,24 @@
 						"noUnsafeNegation": "error",
 						"noUselessRegexBackrefs": "error",
 						"noWith": "error",
-						"useGetterReturn": "error"
+						"useGetterReturn": "error",
+						"noConsole": {
+							"level": "error",
+							"options": {
+								"allow": ["error", "warn", "info"]
+							}
+						},
+						"noAlert": "error"
 					}
 				}
 			}
 		},
-		{ "includes": ["**/*.{ts,tsx}"], "javascript": { "globals": [] } },
+		{
+			"includes": ["**/*.{ts,tsx}"],
+			"javascript": {
+				"globals": []
+			}
+		},
 		{
 			"includes": [
 				"**/*.{ts,tsx}",
@@ -103,7 +128,9 @@
 			],
 			"linter": {
 				"rules": {
-					"complexity": { "noArguments": "error" },
+					"complexity": {
+						"noArguments": "error"
+					},
 					"correctness": {
 						"noConstAssign": "off",
 						"noGlobalObjectCalls": "off",
@@ -114,7 +141,9 @@
 						"noUnreachable": "off",
 						"noUnreachableSuper": "off"
 					},
-					"style": { "useConst": "error" },
+					"style": {
+						"useConst": "error"
+					},
 					"suspicious": {
 						"noClassAssign": "off",
 						"noDuplicateClassMembers": "off",
@@ -140,7 +169,9 @@
 						"noUselessThisAlias": "error",
 						"noUselessTypeConstraint": "error"
 					},
-					"correctness": { "noUnusedVariables": "error" },
+					"correctness": {
+						"noUnusedVariables": "error"
+					},
 					"style": {
 						"noCommonJs": "error",
 						"noNamespace": "error",
@@ -173,7 +204,11 @@
 		{
 			"includes": ["**/*.{ts,tsx}"],
 			"linter": {
-				"rules": { "style": { "useComponentExportOnlyModules": "error" } }
+				"rules": {
+					"style": {
+						"useComponentExportOnlyModules": "error"
+					}
+				}
 			}
 		},
 		{
@@ -311,6 +346,11 @@
 	],
 	"assist": {
 		"enabled": true,
-		"actions": { "source": { "recommended": true, "organizeImports": "on" } }
+		"actions": {
+			"source": {
+				"recommended": true,
+				"organizeImports": "on"
+			}
+		}
 	}
 }

@@ -9,10 +9,7 @@ function App() {
 	const fetchUserInfo = useAuthStore((state) => state.fetchUserInfo);
 
 	useEffect(() => {
-		const initialize = async () => {
-			await fetchUserInfo();
-		};
-		initialize();
+		fetchUserInfo();
 	}, [fetchUserInfo]);
 
 	return (

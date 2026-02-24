@@ -61,7 +61,6 @@ export const useAuthStore = create<{
 		set({ isUserInfoLoading: true });
 		try {
 			const userInfo = await getUserInfo();
-
 			const csrfResponse = await fetchCsrfToken();
 			const csrfToken = csrfResponse.csrfToken;
 
