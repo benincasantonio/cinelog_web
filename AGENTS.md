@@ -32,6 +32,10 @@
   - Unit tests: `*.unit.test.ts(x)` (e.g., `UserCard.unit.test.tsx`)
   - Integration tests: `*.integration.test.ts(x)` (e.g., `auth.integration.test.ts`)
 - Tests MUST be co-located with source code (same directory as the component/module).
+- Keep test output low-noise:
+  - Prefer non-watch runs in automation (`vitest run` / `bun run test:*`) and avoid interactive watch output.
+  - Avoid React `act(...)` warnings in tests by wrapping async UI updates with Testing Library patterns (`fireEvent`/`userEvent` + `waitFor`).
+  - Silence intentionally mocked `console.error`/`console.warn` with `mockImplementation(() => undefined)` and always restore spies.
 
 ## Commit & Pull Request Guidelines
 - Follow Conventional Commits: `feat: …`, `fix: …`, `chore: …`, `refactor: …`, `style: …`.

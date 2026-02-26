@@ -164,23 +164,21 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		onValueChange: (value: string) => void;
 	}) => (
 		<div data-testid="select" data-value={value}>
-			<select
+			<input
 				data-testid="select-nativearro"
 				value={value}
 				onChange={(e) => onValueChange(e.target.value)}
-			>
-				<option value="">Select</option>
-				{children}
-			</select>
+			/>
+			<div data-testid="select-children">{children}</div>
 		</div>
 	),
 	SelectContent: ({ children }: { children: ReactNode }) => (
 		<div data-testid="select-content">{children}</div>
 	),
 	SelectItem: ({ children, value }: { children: ReactNode; value: string }) => (
-		<option data-testid={`select-item-${value}`} value={value}>
+		<div data-testid={`select-item-${value}`} data-value={value}>
 			{children}
-		</option>
+		</div>
 	),
 	SelectTrigger: ({ children }: { children: ReactNode }) => (
 		<div data-testid="select-trigger">{children}</div>

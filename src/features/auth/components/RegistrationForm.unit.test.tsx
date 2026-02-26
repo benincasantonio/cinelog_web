@@ -1,5 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import type { FieldValues, ResolverResult } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -50,36 +55,29 @@ vi.mock('@hookform/resolvers/zod', async () => {
 
 import { RegistrationForm } from './RegistrationForm';
 
-async function fillForm(user: ReturnType<typeof userEvent.setup>) {
-	await user.type(
-		screen.getByPlaceholderText('RegistrationForm.firstName'),
-		'John'
-	);
-	await user.type(
-		screen.getByPlaceholderText('RegistrationForm.lastName'),
-		'Doe'
-	);
-	await user.type(
-		screen.getByPlaceholderText('RegistrationForm.email'),
-		'john@example.com'
-	);
-	await user.type(
-		screen.getByPlaceholderText('RegistrationForm.password'),
-		'password123'
-	);
-	await user.type(
-		screen.getByPlaceholderText('RegistrationForm.handle'),
-		'johndoe'
-	);
-
+function fillForm() {
+	fireEvent.change(screen.getByPlaceholderText('RegistrationForm.firstName'), {
+		target: { value: 'John' },
+	});
+	fireEvent.change(screen.getByPlaceholderText('RegistrationForm.lastName'), {
+		target: { value: 'Doe' },
+	});
+	fireEvent.change(screen.getByPlaceholderText('RegistrationForm.email'), {
+		target: { value: 'john@example.com' },
+	});
+	fireEvent.change(screen.getByPlaceholderText('RegistrationForm.password'), {
+		target: { value: 'password123' },
+	});
+	fireEvent.change(screen.getByPlaceholderText('RegistrationForm.handle'), {
+		target: { value: 'johndoe' },
+	});
 	const dateInput = screen.getByPlaceholderText('RegistrationForm.dateOfBirth');
-	await userEvent.clear(dateInput);
-	await userEvent.type(dateInput, '2000-01-01');
+	fireEvent.change(dateInput, { target: { value: '2000-01-01' } });
 }
 
-async function fillAndSubmit(user: ReturnType<typeof userEvent.setup>) {
-	await fillForm(user);
-	await user.click(
+function fillAndSubmit() {
+	fillForm();
+	fireEvent.click(
 		screen.getByRole('button', { name: 'RegistrationForm.submit' })
 	);
 }
@@ -128,26 +126,24 @@ describe('RegistrationForm', () => {
 
 	describe('date of birth input', () => {
 		it('should set undefined when date input is cleared', async () => {
-			const user = userEvent.setup();
 			render(<RegistrationForm />);
 
 			const dateInput = screen.getByPlaceholderText(
 				'RegistrationForm.dateOfBirth'
 			);
-			await user.type(dateInput, '2000-01-01');
-			await user.clear(dateInput);
+			fireEvent.change(dateInput, { target: { value: '2000-01-01' } });
+			fireEvent.change(dateInput, { target: { value: '' } });
 
 			expect(dateInput).toHaveValue('');
 		});
 
 		it('should display the date formatted as YYYY-MM-DD when a value is set', async () => {
-			const user = userEvent.setup();
 			render(<RegistrationForm />);
 
 			const dateInput = screen.getByPlaceholderText(
 				'RegistrationForm.dateOfBirth'
 			);
-			await user.type(dateInput, '1995-06-15');
+			fireEvent.change(dateInput, { target: { value: '1995-06-15' } });
 
 			expect(dateInput).toHaveValue('1995-06-15');
 		});
@@ -155,10 +151,9 @@ describe('RegistrationForm', () => {
 
 	describe('validation', () => {
 		it('should not call register with empty fields', async () => {
-			const user = userEvent.setup();
 			render(<RegistrationForm />);
 
-			await user.click(
+			fireEvent.click(
 				screen.getByRole('button', { name: 'RegistrationForm.submit' })
 			);
 
@@ -170,11 +165,10 @@ describe('RegistrationForm', () => {
 
 	describe('successful submission', () => {
 		it('should call register with form data', async () => {
-			const user = userEvent.setup();
 			mockRegister.mockResolvedValueOnce(undefined);
 			render(<RegistrationForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(mockRegister).toHaveBeenCalledWith(
@@ -191,32 +185,33 @@ describe('RegistrationForm', () => {
 
 		it('should send empty string for dateOfBirth when not set', async () => {
 			shouldBypassValidation.value = true;
-			const user = userEvent.setup();
 			mockRegister.mockResolvedValueOnce(undefined);
 			render(<RegistrationForm />);
 
 			// Fill all fields except dateOfBirth
-			await user.type(
+			fireEvent.change(
 				screen.getByPlaceholderText('RegistrationForm.firstName'),
-				'John'
+				{ target: { value: 'John' } }
 			);
-			await user.type(
+			fireEvent.change(
 				screen.getByPlaceholderText('RegistrationForm.lastName'),
-				'Doe'
+				{
+					target: { value: 'Doe' },
+				}
 			);
-			await user.type(
-				screen.getByPlaceholderText('RegistrationForm.email'),
-				'john@example.com'
-			);
-			await user.type(
+			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.email'), {
+				target: { value: 'john@example.com' },
+			});
+			fireEvent.change(
 				screen.getByPlaceholderText('RegistrationForm.password'),
-				'password123'
+				{
+					target: { value: 'password123' },
+				}
 			);
-			await user.type(
-				screen.getByPlaceholderText('RegistrationForm.handle'),
-				'johndoe'
-			);
-			await user.click(
+			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.handle'), {
+				target: { value: 'johndoe' },
+			});
+			fireEvent.click(
 				screen.getByRole('button', { name: 'RegistrationForm.submit' })
 			);
 
@@ -230,11 +225,10 @@ describe('RegistrationForm', () => {
 		});
 
 		it('should navigate to /login on success', async () => {
-			const user = userEvent.setup();
 			mockRegister.mockResolvedValueOnce(undefined);
 			render(<RegistrationForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(mockNavigate).toHaveBeenCalledWith('/login');
@@ -242,7 +236,6 @@ describe('RegistrationForm', () => {
 		});
 
 		it('should show submitting text while loading', async () => {
-			const user = userEvent.setup();
 			let resolvePromise: () => void;
 			const promise = new Promise<void>((resolve) => {
 				resolvePromise = resolve;
@@ -250,7 +243,7 @@ describe('RegistrationForm', () => {
 			mockRegister.mockReturnValueOnce(promise);
 			render(<RegistrationForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(
@@ -268,11 +261,10 @@ describe('RegistrationForm', () => {
 
 	describe('error handling', () => {
 		it('should show error message when register throws an Error', async () => {
-			const user = userEvent.setup();
 			mockRegister.mockRejectedValueOnce(new Error('Email already taken'));
 			render(<RegistrationForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(screen.getByText('Email already taken')).toBeInTheDocument();
@@ -280,11 +272,10 @@ describe('RegistrationForm', () => {
 		});
 
 		it('should show generic error for non-Error exceptions', async () => {
-			const user = userEvent.setup();
 			mockRegister.mockRejectedValueOnce('unknown');
 			render(<RegistrationForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(screen.getByText('RegistrationForm.error')).toBeInTheDocument();
@@ -292,11 +283,10 @@ describe('RegistrationForm', () => {
 		});
 
 		it('should not navigate when register fails', async () => {
-			const user = userEvent.setup();
 			mockRegister.mockRejectedValueOnce(new Error('fail'));
 			render(<RegistrationForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(screen.getByText('fail')).toBeInTheDocument();

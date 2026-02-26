@@ -1,5 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ResetPasswordForm } from './ResetPasswordForm';
 
@@ -29,6 +34,38 @@ vi.mock('../repositories/auth-repository', () => ({
 describe('ResetPasswordForm', () => {
 	const mockOnBack = vi.fn();
 	const testEmail = 'test@example.com';
+	const validPassword = 'newpassword123';
+
+	const fillResetFields = ({
+		code = '123456',
+		password = validPassword,
+		confirmPassword = validPassword,
+	}: {
+		code?: string;
+		password?: string;
+		confirmPassword?: string;
+	} = {}) => {
+		fireEvent.change(
+			screen.getByPlaceholderText('ResetPasswordForm.codePlaceholder'),
+			{ target: { value: code } }
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('ResetPasswordForm.newPassword'),
+			{ target: { value: password } }
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('ResetPasswordForm.confirmPassword'),
+			{ target: { value: confirmPassword } }
+		);
+	};
+
+	const submitResetForm = () => {
+		fireEvent.click(
+			screen.getByRole('button', {
+				name: 'ResetPasswordForm.submitReset',
+			})
+		);
+	};
 
 	beforeEach(() => {
 		mockResetPassword.mockClear();
@@ -116,7 +153,6 @@ describe('ResetPasswordForm', () => {
 		});
 
 		it('should submit with the prefilled code value', async () => {
-			const user = userEvent.setup();
 			mockResetPassword.mockResolvedValueOnce(undefined);
 
 			render(
@@ -127,26 +163,14 @@ describe('ResetPasswordForm', () => {
 				/>
 			);
 
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.newPassword'),
-				'newpassword123'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.confirmPassword'),
-				'newpassword123'
-			);
-
-			await user.click(
-				screen.getByRole('button', {
-					name: 'ResetPasswordForm.submitReset',
-				})
-			);
+			fillResetFields({ code: 'PREFILLED' });
+			submitResetForm();
 
 			await waitFor(() => {
 				expect(mockResetPassword).toHaveBeenCalledWith({
 					email: testEmail,
 					code: 'PREFILLED',
-					new_password: 'newpassword123',
+					new_password: validPassword,
 				});
 			});
 		});
@@ -154,13 +178,12 @@ describe('ResetPasswordForm', () => {
 
 	describe('Back button', () => {
 		it('should call onBack when back button is clicked', async () => {
-			const user = userEvent.setup();
 			render(<ResetPasswordForm email={testEmail} onBack={mockOnBack} />);
 
 			const backButton = screen.getByRole('button', {
 				name: 'ResetPasswordForm.backToEmail',
 			});
-			await user.click(backButton);
+			fireEvent.click(backButton);
 
 			expect(mockOnBack).toHaveBeenCalledTimes(1);
 		});
@@ -168,13 +191,12 @@ describe('ResetPasswordForm', () => {
 
 	describe('Validation', () => {
 		it('should not call resetPassword with empty fields', async () => {
-			const user = userEvent.setup();
 			render(<ResetPasswordForm email={testEmail} onBack={mockOnBack} />);
 
 			const submitButton = screen.getByRole('button', {
 				name: 'ResetPasswordForm.submitReset',
 			});
-			await user.click(submitButton);
+			fireEvent.click(submitButton);
 
 			await waitFor(() => {
 				expect(mockResetPassword).not.toHaveBeenCalled();
@@ -184,63 +206,29 @@ describe('ResetPasswordForm', () => {
 
 	describe('Successful submission', () => {
 		it('should call resetPassword with email, code and new password', async () => {
-			const user = userEvent.setup();
 			mockResetPassword.mockResolvedValueOnce(undefined);
 
 			render(<ResetPasswordForm email={testEmail} onBack={mockOnBack} />);
 
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.codePlaceholder'),
-				'123456'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.newPassword'),
-				'newpassword123'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.confirmPassword'),
-				'newpassword123'
-			);
-
-			await user.click(
-				screen.getByRole('button', {
-					name: 'ResetPasswordForm.submitReset',
-				})
-			);
+			fillResetFields();
+			submitResetForm();
 
 			await waitFor(() => {
 				expect(mockResetPassword).toHaveBeenCalledWith({
 					email: testEmail,
 					code: '123456',
-					new_password: 'newpassword123',
+					new_password: validPassword,
 				});
 			});
 		});
 
 		it('should navigate to /login after successful reset', async () => {
-			const user = userEvent.setup();
 			mockResetPassword.mockResolvedValueOnce(undefined);
 
 			render(<ResetPasswordForm email={testEmail} onBack={mockOnBack} />);
 
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.codePlaceholder'),
-				'123456'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.newPassword'),
-				'newpassword123'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.confirmPassword'),
-				'newpassword123'
-			);
-
-			await user.click(
-				screen.getByRole('button', {
-					name: 'ResetPasswordForm.submitReset',
-				})
-			);
+			fillResetFields();
+			submitResetForm();
 
 			await waitFor(() => {
 				expect(mockNavigate).toHaveBeenCalledWith('/login');
@@ -248,7 +236,6 @@ describe('ResetPasswordForm', () => {
 		});
 
 		it('should show submitting text while loading', async () => {
-			const user = userEvent.setup();
 			let resolvePromise: () => void;
 			const promise = new Promise<void>((resolve) => {
 				resolvePromise = resolve;
@@ -257,24 +244,8 @@ describe('ResetPasswordForm', () => {
 
 			render(<ResetPasswordForm email={testEmail} onBack={mockOnBack} />);
 
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.codePlaceholder'),
-				'123456'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.newPassword'),
-				'newpassword123'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.confirmPassword'),
-				'newpassword123'
-			);
-
-			await user.click(
-				screen.getByRole('button', {
-					name: 'ResetPasswordForm.submitReset',
-				})
-			);
+			fillResetFields();
+			submitResetForm();
 
 			await waitFor(() => {
 				expect(
@@ -292,29 +263,12 @@ describe('ResetPasswordForm', () => {
 
 	describe('Error handling', () => {
 		it('should show error message when resetPassword throws an Error', async () => {
-			const user = userEvent.setup();
 			mockResetPassword.mockRejectedValueOnce(new Error('Invalid code'));
 
 			render(<ResetPasswordForm email={testEmail} onBack={mockOnBack} />);
 
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.codePlaceholder'),
-				'wrong-code'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.newPassword'),
-				'newpassword123'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.confirmPassword'),
-				'newpassword123'
-			);
-
-			await user.click(
-				screen.getByRole('button', {
-					name: 'ResetPasswordForm.submitReset',
-				})
-			);
+			fillResetFields({ code: 'wrong-code' });
+			submitResetForm();
 
 			await waitFor(() => {
 				expect(screen.getByText('Invalid code')).toBeInTheDocument();
@@ -322,29 +276,12 @@ describe('ResetPasswordForm', () => {
 		});
 
 		it('should show generic error for non-Error exceptions', async () => {
-			const user = userEvent.setup();
 			mockResetPassword.mockRejectedValueOnce('unknown');
 
 			render(<ResetPasswordForm email={testEmail} onBack={mockOnBack} />);
 
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.codePlaceholder'),
-				'123456'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.newPassword'),
-				'newpassword123'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.confirmPassword'),
-				'newpassword123'
-			);
-
-			await user.click(
-				screen.getByRole('button', {
-					name: 'ResetPasswordForm.submitReset',
-				})
-			);
+			fillResetFields();
+			submitResetForm();
 
 			await waitFor(() => {
 				expect(
@@ -354,29 +291,12 @@ describe('ResetPasswordForm', () => {
 		});
 
 		it('should not navigate when resetPassword fails', async () => {
-			const user = userEvent.setup();
 			mockResetPassword.mockRejectedValueOnce(new Error('Failed'));
 
 			render(<ResetPasswordForm email={testEmail} onBack={mockOnBack} />);
 
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.codePlaceholder'),
-				'123456'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.newPassword'),
-				'newpassword123'
-			);
-			await user.type(
-				screen.getByPlaceholderText('ResetPasswordForm.confirmPassword'),
-				'newpassword123'
-			);
-
-			await user.click(
-				screen.getByRole('button', {
-					name: 'ResetPasswordForm.submitReset',
-				})
-			);
+			fillResetFields();
+			submitResetForm();
 
 			await waitFor(() => {
 				expect(screen.getByText('Failed')).toBeInTheDocument();
