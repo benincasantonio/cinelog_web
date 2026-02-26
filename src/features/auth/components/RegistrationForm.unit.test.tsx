@@ -1,5 +1,6 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { FieldValues, ResolverResult } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-i18next', () => ({
@@ -22,8 +23,18 @@ const { shouldBypassValidation } = vi.hoisted(() => ({
 	shouldBypassValidation: { value: false },
 }));
 
+type ZodResolverFn = (
+	schema: unknown,
+	...rest: unknown[]
+) => (
+	values: FieldValues,
+	...resolverArgs: unknown[]
+) => Promise<ResolverResult<FieldValues>>;
+
 vi.mock('@hookform/resolvers/zod', async () => {
-	const actual = await vi.importActual('@hookform/resolvers/zod');
+	const actual = await vi.importActual<{ zodResolver: ZodResolverFn }>(
+		'@hookform/resolvers/zod'
+	);
 	return {
 		...actual,
 		zodResolver:
@@ -32,10 +43,7 @@ vi.mock('@hookform/resolvers/zod', async () => {
 				if (shouldBypassValidation.value) {
 					return { values, errors: {} };
 				}
-				return (actual as { zodResolver: Function }).zodResolver(
-					schema,
-					...rest
-				)(values, ...resolverArgs);
+				return actual.zodResolver(schema, ...rest)(values, ...resolverArgs);
 			},
 	};
 });
