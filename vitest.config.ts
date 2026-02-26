@@ -35,6 +35,13 @@ export default defineConfig({
 				'**/node_modules/**',
 				'**/dist/**',
 				'**/*.d.ts',
+				'**/models/**',
+				'**/index.ts',
+				'**/schemas/**',
+				'**/*.test-*.{ts,tsx}',
+				'**/test/**',
+				'src/main.tsx',
+				'src/vite-env.d.ts',
 			],
 			reportsDirectory: './coverage',
 			thresholds: {
