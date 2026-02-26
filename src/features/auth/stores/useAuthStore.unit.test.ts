@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // ---------------------------------------------------------------------------
 // Hoist mock functions so they are safe to reference inside vi.mock factories.
@@ -96,9 +96,18 @@ function resetStore() {
 // ---------------------------------------------------------------------------
 
 describe('useAuthStore', () => {
+	let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
 	beforeEach(() => {
+		consoleErrorSpy = vi
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
 		vi.clearAllMocks();
 		resetStore();
+	});
+
+	afterEach(() => {
+		consoleErrorSpy.mockRestore();
 	});
 
 	// -------------------------------------------------------------------------

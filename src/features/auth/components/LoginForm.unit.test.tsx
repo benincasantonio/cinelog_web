@@ -1,5 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-i18next', () => ({
@@ -26,13 +31,14 @@ import { LoginForm } from './LoginForm';
 const validEmail = 'test@example.com';
 const validPassword = 'password123';
 
-async function fillAndSubmit(user: ReturnType<typeof userEvent.setup>) {
-	await user.type(screen.getByPlaceholderText('LoginForm.email'), validEmail);
-	await user.type(
-		screen.getByPlaceholderText('LoginForm.password'),
-		validPassword
-	);
-	await user.click(screen.getByRole('button', { name: 'LoginForm.submit' }));
+function fillAndSubmit() {
+	fireEvent.change(screen.getByPlaceholderText('LoginForm.email'), {
+		target: { value: validEmail },
+	});
+	fireEvent.change(screen.getByPlaceholderText('LoginForm.password'), {
+		target: { value: validPassword },
+	});
+	fireEvent.click(screen.getByRole('button', { name: 'LoginForm.submit' }));
 }
 
 describe('LoginForm', () => {
@@ -76,12 +82,9 @@ describe('LoginForm', () => {
 
 	describe('validation', () => {
 		it('should not call login with empty fields', async () => {
-			const user = userEvent.setup();
 			render(<LoginForm />);
 
-			await user.click(
-				screen.getByRole('button', { name: 'LoginForm.submit' })
-			);
+			fireEvent.click(screen.getByRole('button', { name: 'LoginForm.submit' }));
 
 			await waitFor(() => {
 				expect(mockLogin).not.toHaveBeenCalled();
@@ -91,11 +94,10 @@ describe('LoginForm', () => {
 
 	describe('successful submission', () => {
 		it('should call login with email and password', async () => {
-			const user = userEvent.setup();
 			mockLogin.mockResolvedValueOnce(undefined);
 			render(<LoginForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(mockLogin).toHaveBeenCalledWith(validEmail, validPassword);
@@ -103,11 +105,10 @@ describe('LoginForm', () => {
 		});
 
 		it('should navigate to / on success', async () => {
-			const user = userEvent.setup();
 			mockLogin.mockResolvedValueOnce(undefined);
 			render(<LoginForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(mockNavigate).toHaveBeenCalledWith('/');
@@ -115,7 +116,6 @@ describe('LoginForm', () => {
 		});
 
 		it('should show submitting text while loading', async () => {
-			const user = userEvent.setup();
 			let resolvePromise: () => void;
 			const promise = new Promise<void>((resolve) => {
 				resolvePromise = resolve;
@@ -123,7 +123,7 @@ describe('LoginForm', () => {
 			mockLogin.mockReturnValueOnce(promise);
 			render(<LoginForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(
@@ -139,11 +139,10 @@ describe('LoginForm', () => {
 
 	describe('error handling', () => {
 		it('should show error message when login throws an Error', async () => {
-			const user = userEvent.setup();
 			mockLogin.mockRejectedValueOnce(new Error('Invalid credentials'));
 			render(<LoginForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
@@ -151,11 +150,10 @@ describe('LoginForm', () => {
 		});
 
 		it('should show generic error for non-Error exceptions', async () => {
-			const user = userEvent.setup();
 			mockLogin.mockRejectedValueOnce('unknown');
 			render(<LoginForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(screen.getByText('LoginForm.error')).toBeInTheDocument();
@@ -163,11 +161,10 @@ describe('LoginForm', () => {
 		});
 
 		it('should not navigate when login fails', async () => {
-			const user = userEvent.setup();
 			mockLogin.mockRejectedValueOnce(new Error('fail'));
 			render(<LoginForm />);
 
-			await fillAndSubmit(user);
+			fillAndSubmit();
 
 			await waitFor(() => {
 				expect(screen.getByText('fail')).toBeInTheDocument();
