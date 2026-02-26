@@ -21,7 +21,7 @@ Phases: 5 (Vitest Setup → Implementation → Unit Tests → Integration Tests 
 **Acceptance Criteria**:
 - [x] File `vitest.config.ts` created at project root
 - [x] Configuration includes React plugin setup
-- [x] Path aliases (@/, @features/) configured to match tsconfig
+- [x] Path alias (@/) configured to match tsconfig
 - [x] jsdom environment configured for React component testing
 - [x] Coverage provider set to v8
 - [x] Include/exclude patterns set for source files
