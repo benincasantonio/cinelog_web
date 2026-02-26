@@ -1,5 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ForgotPasswordForm } from './ForgotPasswordForm';
 
@@ -29,6 +34,18 @@ vi.mock('../repositories/auth-repository', () => ({
 
 describe('ForgotPasswordForm', () => {
 	const mockOnSuccess = vi.fn();
+	const testEmail = 'test@example.com';
+
+	const submitButton = () =>
+		screen.getByRole('button', {
+			name: 'ForgotPasswordForm.submitEmail',
+		});
+
+	const fillEmail = (email = testEmail) => {
+		fireEvent.change(screen.getByPlaceholderText('ForgotPasswordForm.email'), {
+			target: { value: email },
+		});
+	};
 
 	beforeEach(() => {
 		mockForgotPassword.mockClear();
@@ -65,13 +82,9 @@ describe('ForgotPasswordForm', () => {
 
 	describe('Validation', () => {
 		it('should not call forgotPassword with empty email', async () => {
-			const user = userEvent.setup();
 			render(<ForgotPasswordForm onSuccess={mockOnSuccess} />);
 
-			const submitButton = screen.getByRole('button', {
-				name: 'ForgotPasswordForm.submitEmail',
-			});
-			await user.click(submitButton);
+			fireEvent.click(submitButton());
 
 			await waitFor(() => {
 				expect(mockForgotPassword).not.toHaveBeenCalled();
@@ -81,51 +94,34 @@ describe('ForgotPasswordForm', () => {
 
 	describe('Successful submission', () => {
 		it('should call forgotPassword with the entered email', async () => {
-			const user = userEvent.setup();
 			mockForgotPassword.mockResolvedValueOnce(undefined);
 
 			render(<ForgotPasswordForm onSuccess={mockOnSuccess} />);
 
-			const emailInput = screen.getByPlaceholderText(
-				'ForgotPasswordForm.email'
-			);
-			await user.type(emailInput, 'test@example.com');
-
-			const submitButton = screen.getByRole('button', {
-				name: 'ForgotPasswordForm.submitEmail',
-			});
-			await user.click(submitButton);
+			fillEmail();
+			fireEvent.click(submitButton());
 
 			await waitFor(() => {
 				expect(mockForgotPassword).toHaveBeenCalledWith({
-					email: 'test@example.com',
+					email: testEmail,
 				});
 			});
 		});
 
 		it('should call onSuccess with the email after successful submission', async () => {
-			const user = userEvent.setup();
 			mockForgotPassword.mockResolvedValueOnce(undefined);
 
 			render(<ForgotPasswordForm onSuccess={mockOnSuccess} />);
 
-			const emailInput = screen.getByPlaceholderText(
-				'ForgotPasswordForm.email'
-			);
-			await user.type(emailInput, 'test@example.com');
-
-			const submitButton = screen.getByRole('button', {
-				name: 'ForgotPasswordForm.submitEmail',
-			});
-			await user.click(submitButton);
+			fillEmail();
+			fireEvent.click(submitButton());
 
 			await waitFor(() => {
-				expect(mockOnSuccess).toHaveBeenCalledWith('test@example.com');
+				expect(mockOnSuccess).toHaveBeenCalledWith(testEmail);
 			});
 		});
 
 		it('should show submitting text while loading', async () => {
-			const user = userEvent.setup();
 			let resolvePromise: () => void;
 			const promise = new Promise<void>((resolve) => {
 				resolvePromise = resolve;
@@ -134,15 +130,8 @@ describe('ForgotPasswordForm', () => {
 
 			render(<ForgotPasswordForm onSuccess={mockOnSuccess} />);
 
-			const emailInput = screen.getByPlaceholderText(
-				'ForgotPasswordForm.email'
-			);
-			await user.type(emailInput, 'test@example.com');
-
-			const submitButton = screen.getByRole('button', {
-				name: 'ForgotPasswordForm.submitEmail',
-			});
-			await user.click(submitButton);
+			fillEmail();
+			fireEvent.click(submitButton());
 
 			await waitFor(() => {
 				expect(
@@ -160,20 +149,12 @@ describe('ForgotPasswordForm', () => {
 
 	describe('Error handling', () => {
 		it('should show error message when forgotPassword throws an Error', async () => {
-			const user = userEvent.setup();
 			mockForgotPassword.mockRejectedValueOnce(new Error('User not found'));
 
 			render(<ForgotPasswordForm onSuccess={mockOnSuccess} />);
 
-			const emailInput = screen.getByPlaceholderText(
-				'ForgotPasswordForm.email'
-			);
-			await user.type(emailInput, 'test@example.com');
-
-			const submitButton = screen.getByRole('button', {
-				name: 'ForgotPasswordForm.submitEmail',
-			});
-			await user.click(submitButton);
+			fillEmail();
+			fireEvent.click(submitButton());
 
 			await waitFor(() => {
 				expect(screen.getByText('User not found')).toBeInTheDocument();
@@ -181,20 +162,12 @@ describe('ForgotPasswordForm', () => {
 		});
 
 		it('should show generic error message when forgotPassword throws a non-Error', async () => {
-			const user = userEvent.setup();
 			mockForgotPassword.mockRejectedValueOnce('unknown error');
 
 			render(<ForgotPasswordForm onSuccess={mockOnSuccess} />);
 
-			const emailInput = screen.getByPlaceholderText(
-				'ForgotPasswordForm.email'
-			);
-			await user.type(emailInput, 'test@example.com');
-
-			const submitButton = screen.getByRole('button', {
-				name: 'ForgotPasswordForm.submitEmail',
-			});
-			await user.click(submitButton);
+			fillEmail();
+			fireEvent.click(submitButton());
 
 			await waitFor(() => {
 				expect(
@@ -204,20 +177,12 @@ describe('ForgotPasswordForm', () => {
 		});
 
 		it('should not call onSuccess when forgotPassword fails', async () => {
-			const user = userEvent.setup();
 			mockForgotPassword.mockRejectedValueOnce(new Error('Failed'));
 
 			render(<ForgotPasswordForm onSuccess={mockOnSuccess} />);
 
-			const emailInput = screen.getByPlaceholderText(
-				'ForgotPasswordForm.email'
-			);
-			await user.type(emailInput, 'test@example.com');
-
-			const submitButton = screen.getByRole('button', {
-				name: 'ForgotPasswordForm.submitEmail',
-			});
-			await user.click(submitButton);
+			fillEmail();
+			fireEvent.click(submitButton());
 
 			await waitFor(() => {
 				expect(screen.getByText('Failed')).toBeInTheDocument();
