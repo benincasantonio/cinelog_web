@@ -4,7 +4,7 @@ import {
 	NavigationMenuLink,
 	NavigationMenuList,
 } from '@antoniobenincasa/ui';
-import { Menu, Moon, Sun } from 'lucide-react';
+import { Menu, Moon, Sun, User } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
@@ -57,16 +57,6 @@ export const Navbar = () => {
 			path: '/search',
 			visible: authenticatedStatus === true,
 		},
-		{
-			name: t('Navbar.login'),
-			path: '/login',
-			visible: authenticatedStatus === false,
-		},
-		{
-			name: t('Navbar.register'),
-			path: '/registration',
-			visible: authenticatedStatus === false,
-		},
 	];
 
 	const isMobile = useIsMobile();
@@ -112,14 +102,26 @@ export const Navbar = () => {
 					{authenticatedStatus === true && <CreateMovieLogButton />}
 
 					{authenticatedStatus === false ? (
-						<div className="hidden md:flex items-center gap-2">
-							<Button variant="ghost" onClick={() => navigate('/login')}>
-								{t('Navbar.login')}
+						<>
+							<Button
+								variant="ghost"
+								size="icon"
+								className="md:hidden"
+								data-testid="mobile-login-button"
+								onClick={() => navigate('/login')}
+								aria-label={t('Navbar.login')}
+							>
+								<User className="w-5 h-5" />
 							</Button>
-							<Button onClick={() => navigate('/registration')}>
-								{t('Navbar.register')}
-							</Button>
-						</div>
+							<div className="hidden md:flex items-center gap-2">
+								<Button variant="ghost" onClick={() => navigate('/login')}>
+									{t('Navbar.login')}
+								</Button>
+								<Button onClick={() => navigate('/registration')}>
+									{t('Navbar.register')}
+								</Button>
+							</div>
+						</>
 					) : (
 						<>
 							<ProfileDropdownMenu />
