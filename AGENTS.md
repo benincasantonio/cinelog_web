@@ -15,7 +15,7 @@
 
 ## Coding Style & Naming Conventions
 - Use TypeScript + React function components with strict typing.
-- Prefer import aliases: `@/…` for `src/` and `@features/…` for `src/features/`.
+- Prefer import alias `@/…` for `src/`.
 - Naming patterns:
   - Components: `PascalCase.tsx` (e.g., `src/lib/components/Navbar.tsx`)
   - Pages: `PascalCasePage.tsx` (e.g., `src/features/profile/pages/ProfilePage.tsx`)
