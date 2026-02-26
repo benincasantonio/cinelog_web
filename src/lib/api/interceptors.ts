@@ -86,13 +86,17 @@ export const beforeRetryInterceptor = async (options: BeforeRetryState) => {
 					return refreshData;
 				})
 				.catch(() => {
+					const wasAuthenticated =
+						useAuthStore.getState().authenticatedStatus === true;
 					useAuthStore.setState({
 						authenticatedStatus: false,
 						userInfo: null,
 						csrfToken: null,
 					});
-					refreshPromise = null;
-					window.location.href = '/login';
+
+					if (wasAuthenticated) {
+						window.location.href = '/login';
+					}
 					throw new Error('Unauthorized');
 				})
 				.finally(() => {
