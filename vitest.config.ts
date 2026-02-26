@@ -19,7 +19,6 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, './src'),
-			'@features': path.resolve(__dirname, './src/features'),
 		},
 	},
 	test: {
@@ -30,7 +29,7 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'json', 'html', 'lcov'],
-			include: ['src/features/movie/components/MovieLogItem.tsx'],
+			include: ['src/**/*.{ts,tsx}'],
 			exclude: [
 				'**/*.{unit.test,integration.test,spec}.{ts,tsx}',
 				'**/node_modules/**',

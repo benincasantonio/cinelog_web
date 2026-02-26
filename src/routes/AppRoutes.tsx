@@ -4,32 +4,32 @@ import { useAuthStore } from '@/features/auth/stores';
 import { DefaultLayout } from '@/lib/components';
 
 const ForgotPasswordPage = lazy(
-	() => import('@features/auth/pages/ForgotPasswordPage')
+	() => import('@/features/auth/pages/ForgotPasswordPage')
 );
 const ResetPasswordPage = lazy(
-	() => import('@features/auth/pages/ResetPasswordPage')
+	() => import('@/features/auth/pages/ResetPasswordPage')
 );
-const LoginPage = lazy(() => import('@features/auth/pages/LoginPage'));
+const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'));
 const RegistrationPage = lazy(
-	() => import('@features/auth/pages/RegistrationPage')
+	() => import('@/features/auth/pages/RegistrationPage')
 );
-const HomePage = lazy(() => import('@features/home/pages/HomePage'));
+const HomePage = lazy(() => import('@/features/home/pages/HomePage'));
 const MovieSearchPage = lazy(
-	() => import('@features/movie-search/pages/MovieSearchPage')
+	() => import('@/features/movie-search/pages/MovieSearchPage')
 );
 const MovieDetailsPage = lazy(
-	() => import('@features/movie/pages/MovieDetailsPage')
+	() => import('@/features/movie/pages/MovieDetailsPage')
 );
-const ProfilePage = lazy(() => import('@features/profile/pages/ProfilePage'));
+const ProfilePage = lazy(() => import('@/features/profile/pages/ProfilePage'));
 
 const ProfileOverviewPage = lazy(
-	() => import('@features/profile/pages/ProfileOverviewPage')
+	() => import('@/features/profile/pages/ProfileOverviewPage')
 );
 const ProfileMoviesWatchedPage = lazy(
-	() => import('@features/profile/pages/ProfileMoviesWatchedPage')
+	() => import('@/features/profile/pages/ProfileMoviesWatchedPage')
 );
 const ProfileStatsPage = lazy(
-	() => import('@features/profile/pages/ProfileStatsPage')
+	() => import('@/features/profile/pages/ProfileStatsPage')
 );
 
 export const AppRoutes = () => {
