@@ -39,6 +39,7 @@ export default defineConfig({
 				'**/models/**',
 				'**/index.ts',
 				'**/schemas/**',
+				'**/repositories/**',
 				'**/*.test-*.{ts,tsx}',
 				'**/test/**',
 				'src/main.tsx',
