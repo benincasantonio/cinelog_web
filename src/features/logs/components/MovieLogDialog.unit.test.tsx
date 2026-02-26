@@ -85,11 +85,28 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	Dialog: ({
 		children,
 		open,
+		onOpenChange,
 	}: {
 		children: ReactNode;
 		open: boolean;
 		onOpenChange: (open: boolean) => void;
-	}) => (open ? <div data-testid="dialog">{children}</div> : null),
+	}) =>
+		open ? (
+			<div data-testid="dialog">
+				{/* Expose onOpenChange for testing */}
+				<button
+					data-testid="trigger-close-via-overlay"
+					type="button"
+					onClick={() => onOpenChange(false)}
+				/>
+				<button
+					data-testid="trigger-open-via-overlay"
+					type="button"
+					onClick={() => onOpenChange(true)}
+				/>
+				{children}
+			</div>
+		) : null,
 	DialogClose: ({ children }: { children: ReactNode; asChild?: boolean }) => (
 		<div data-testid="dialog-close">{children}</div>
 	),
@@ -275,6 +292,28 @@ describe('CreateMovieLogDialog', () => {
 		});
 	});
 
+	describe('Dialog Close Behaviour (onOpenChange)', () => {
+		beforeEach(() => {
+			mockMovieLogDialogStore.setState({ isOpen: true });
+		});
+
+		it('should call close() when onOpenChange is called with false', () => {
+			render(<CreateMovieLogDialog />);
+
+			fireEvent.click(screen.getByTestId('trigger-close-via-overlay'));
+
+			expect(mockMovieLogDialogStore.getState().close).toHaveBeenCalledTimes(1);
+		});
+
+		it('should NOT call close() when onOpenChange is called with true', () => {
+			render(<CreateMovieLogDialog />);
+
+			fireEvent.click(screen.getByTestId('trigger-open-via-overlay'));
+
+			expect(mockMovieLogDialogStore.getState().close).not.toHaveBeenCalled();
+		});
+	});
+
 	describe('Edit Mode', () => {
 		beforeEach(() => {
 			mockMovieLogDialogStore.setState({
@@ -314,6 +353,17 @@ describe('CreateMovieLogDialog', () => {
 			expect(
 				screen.getByText('CreateMovieLogDialog.submittingUpdate')
 			).toBeInTheDocument();
+		});
+
+		it('should disable the submit button when loading in edit mode', () => {
+			mockMovieLogStore.setState({ isLoading: true });
+
+			render(<CreateMovieLogDialog />);
+
+			const submitButton = screen.getByRole('button', {
+				name: 'CreateMovieLogDialog.submittingUpdate',
+			});
+			expect(submitButton).toBeDisabled();
 		});
 	});
 });

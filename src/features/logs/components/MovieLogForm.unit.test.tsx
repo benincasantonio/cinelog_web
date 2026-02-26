@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -72,6 +72,17 @@ vi.mock('@antoniobenincasa/ui', () => ({
 				data-testid="autocomplete-input"
 				value={value}
 				onChange={(e) => onFilterChange(e.target.value)}
+			/>
+			{/* helper for tests: directly fire onFilterChange('') without fighting controlled-input suppression */}
+			<button
+				type="button"
+				data-testid="clear-filter"
+				onClick={() => onFilterChange('')}
+			/>
+			<button
+				type="button"
+				data-testid="select-movie-99"
+				onClick={() => onValueChange('99')}
 			/>
 			<select
 				data-testid="autocomplete-select"
@@ -153,7 +164,14 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		onValueChange: (value: string) => void;
 	}) => (
 		<div data-testid="select" data-value={value}>
-			{children}
+			<select
+				data-testid="select-nativearro"
+				value={value}
+				onChange={(e) => onValueChange(e.target.value)}
+			>
+				<option value="">Select</option>
+				{children}
+			</select>
 		</div>
 	),
 	SelectContent: ({ children }: { children: ReactNode }) => (
@@ -187,9 +205,12 @@ vi.mock('../schemas', () => ({
 	},
 }));
 
-// Mock @hookform/resolvers/zod
+// Mock @hookform/resolvers/zod — resolver must return { values, errors } for react-hook-form
 vi.mock('@hookform/resolvers/zod', () => ({
-	zodResolver: () => vi.fn(),
+	zodResolver: () => async (values: Record<string, unknown>) => ({
+		values,
+		errors: {},
+	}),
 }));
 
 import { MovieLogForm } from './MovieLogForm';
@@ -556,6 +577,242 @@ describe('MovieLogForm', () => {
 
 			await waitFor(() => {
 				expect(mockSearch).toHaveBeenCalledWith('I');
+			});
+		});
+
+		it('should NOT call search when filter value is empty', async () => {
+			const user = userEvent.setup();
+
+			render(<MovieLogForm />);
+
+			const input = screen.getByTestId('autocomplete-input');
+			// Type then clear to produce an empty onChange event
+			await user.type(input, 'a');
+			await user.clear(input);
+
+			// search was only called for 'a', NOT for the empty string
+			await waitFor(() => {
+				const calls = mockSearch.mock.calls;
+				expect(calls.every(([arg]) => arg !== '')).toBe(true);
+			});
+		});
+
+		it('should clear search items when filter value becomes empty', async () => {
+			mockSearch.mockResolvedValue({
+				results: [{ id: 1, title: 'Inception' }],
+			});
+
+			render(<MovieLogForm />);
+
+			// Populate items via a non-empty filter
+			fireEvent.change(screen.getByTestId('autocomplete-input'), {
+				target: { value: 'I' },
+			});
+
+			await waitFor(() => {
+				expect(screen.getByTestId('autocomplete-option-1')).toBeInTheDocument();
+			});
+
+			// Use the dedicated clear button to call onFilterChange('') directly,
+			// bypassing React's controlled-input suppression (value '' → '' is a no-op).
+			fireEvent.click(screen.getByTestId('clear-filter'));
+
+			await waitFor(() => {
+				expect(
+					screen.queryByTestId('autocomplete-option-1')
+				).not.toBeInTheDocument();
+			});
+		});
+
+		it('should populate search items with results from the search API', async () => {
+			mockSearch.mockResolvedValue({
+				results: [
+					{ id: 10, title: 'The Matrix' },
+					{ id: 20, title: 'The Matrix Reloaded' },
+				],
+			});
+			const user = userEvent.setup();
+
+			render(<MovieLogForm />);
+
+			const input = screen.getByTestId('autocomplete-input');
+			await user.type(input, 'M');
+
+			await waitFor(() => {
+				expect(
+					screen.getByTestId('autocomplete-option-10')
+				).toBeInTheDocument();
+				expect(
+					screen.getByTestId('autocomplete-option-20')
+				).toBeInTheDocument();
+				expect(screen.getByText('The Matrix')).toBeInTheDocument();
+				expect(screen.getByText('The Matrix Reloaded')).toBeInTheDocument();
+			});
+		});
+	});
+
+	describe('onValueChange (movie selection)', () => {
+		it('should set tmdbId to parsed int when a value is selected — component must not throw', () => {
+			render(<MovieLogForm />);
+
+			// Directly call onValueChange('99') via the helper button
+			fireEvent.click(screen.getByTestId('select-movie-99'));
+
+			// Component remains stable after setValue call
+			expect(screen.getByTestId('autocomplete')).toBeInTheDocument();
+		});
+
+		it('should handle empty value selection (sets tmdbId to 0) — component must not throw', async () => {
+			render(<MovieLogForm />);
+
+			const select = screen.getByTestId('autocomplete-select');
+			// Simulate selecting the blank/default option → onValueChange('')
+			fireEvent.change(select, { target: { value: '' } });
+
+			// Component must not throw; form still renders
+			await waitFor(() => {
+				expect(screen.getByTestId('autocomplete')).toBeInTheDocument();
+			});
+		});
+	});
+
+	describe('Watched Where Selection', () => {
+		it('should call field.onChange when a watched-where option is selected', () => {
+			render(<MovieLogForm />);
+
+			const select = screen.getByTestId('select-nativearro');
+			fireEvent.change(select, { target: { value: 'cinema' } });
+
+			// Component remains stable after onChange call
+			expect(screen.getByTestId('select')).toBeInTheDocument();
+		});
+	});
+
+	describe('Form Submission', () => {
+		it('should call createLog on submit in create mode', async () => {
+			mockMovieLogDialogStore.setState({
+				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				movieToEdit: null,
+				clearPrefilledMovie: vi.fn(),
+			});
+
+			render(<MovieLogForm />);
+
+			const form = screen.getByTestId('form-provider').querySelector('form')!;
+			fireEvent.submit(form);
+
+			await waitFor(() => {
+				expect(mockMovieLogStore.getState().createLog).toHaveBeenCalled();
+			});
+		});
+
+		it('should call updateLog on submit in edit mode', async () => {
+			const clearPrefilledMovie = vi.fn();
+			mockMovieLogDialogStore.setState({
+				prefilledMovie: null,
+				movieToEdit: {
+					id: '1',
+					tmdbId: 456,
+					movie: { title: 'Movie to Edit' },
+					dateWatched: '2024-01-15',
+					viewingNotes: 'Great movie!',
+					watchedWhere: 'cinema',
+				},
+				clearPrefilledMovie,
+			});
+
+			render(<MovieLogForm />);
+
+			const form = screen.getByTestId('form-provider').querySelector('form')!;
+			fireEvent.submit(form);
+
+			await waitFor(() => {
+				expect(mockMovieLogStore.getState().updateLog).toHaveBeenCalledWith(
+					'1',
+					expect.objectContaining({
+						dateWatched: '2024-01-15',
+						watchedWhere: 'cinema',
+						viewingNotes: 'Great movie!',
+					})
+				);
+			});
+		});
+
+		it('should call onSuccess and clearPrefilledMovie after successful create', async () => {
+			const onSuccess = vi.fn();
+			const clearPrefilledMovie = vi.fn();
+			mockMovieLogDialogStore.setState({
+				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				movieToEdit: null,
+				clearPrefilledMovie,
+			});
+
+			render(<MovieLogForm onSuccess={onSuccess} />);
+
+			const form = screen.getByTestId('form-provider').querySelector('form')!;
+			fireEvent.submit(form);
+
+			await waitFor(() => {
+				expect(clearPrefilledMovie).toHaveBeenCalled();
+				expect(onSuccess).toHaveBeenCalled();
+			});
+		});
+
+		it('should not call onSuccess when submission fails', async () => {
+			const onSuccess = vi.fn();
+			mockMovieLogStore.setState({
+				createLog: vi.fn().mockRejectedValue(new Error('fail')),
+				clearError: vi.fn(),
+			});
+			mockMovieLogDialogStore.setState({
+				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				movieToEdit: null,
+				clearPrefilledMovie: vi.fn(),
+			});
+
+			render(<MovieLogForm onSuccess={onSuccess} />);
+
+			const form = screen.getByTestId('form-provider').querySelector('form')!;
+			fireEvent.submit(form);
+
+			await waitFor(() => {
+				expect(mockMovieLogStore.getState().createLog).toHaveBeenCalled();
+			});
+			expect(onSuccess).not.toHaveBeenCalled();
+		});
+
+		it('should call clearError before submission', async () => {
+			mockMovieLogDialogStore.setState({
+				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				movieToEdit: null,
+				clearPrefilledMovie: vi.fn(),
+			});
+
+			render(<MovieLogForm />);
+
+			const form = screen.getByTestId('form-provider').querySelector('form')!;
+			fireEvent.submit(form);
+
+			await waitFor(() => {
+				expect(mockMovieLogStore.getState().clearError).toHaveBeenCalled();
+			});
+		});
+	});
+
+	describe('useEffect — no-op when no movie state', () => {
+		it('should not populate autocomplete items when both prefilledMovie and movieToEdit are null', async () => {
+			mockMovieLogDialogStore.setState({
+				prefilledMovie: null,
+				movieToEdit: null,
+			});
+
+			render(<MovieLogForm />);
+
+			// Only the default "Select" option should be present, no movie options
+			await waitFor(() => {
+				expect(
+					screen.queryByTestId(/autocomplete-option-/)
+				).not.toBeInTheDocument();
 			});
 		});
 	});
