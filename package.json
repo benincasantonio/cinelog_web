@@ -16,7 +16,9 @@
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest run --coverage",
 		"test:unit": "VITEST_TEST_TYPE=unit vitest run",
-		"test:integration": "VITEST_TEST_TYPE=integration vitest run"
+		"test:unit:coverage": "VITEST_TEST_TYPE=unit vitest run --coverage",
+		"test:integration": "VITEST_TEST_TYPE=integration vitest run",
+		"test:integration:coverage": "VITEST_TEST_TYPE=integration vitest run --coverage"
 	},
 	"dependencies": {
 		"@antoniobenincasa/ui": "^0.10.0",

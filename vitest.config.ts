@@ -2,8 +2,9 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vitest/config';
 
+const testType = process.env.VITEST_TEST_TYPE || 'all';
+
 const getIncludePattern = () => {
-	const testType = process.env.VITEST_TEST_TYPE || 'all';
 	switch (testType) {
 		case 'unit':
 			return ['**/*.unit.test.{ts,tsx}'];
@@ -44,12 +45,15 @@ export default defineConfig({
 				'src/vite-env.d.ts',
 			],
 			reportsDirectory: './coverage',
-			thresholds: {
-				lines: 80,
-				functions: 80,
-				branches: 80,
-				statements: 80,
-			},
+			thresholds:
+				testType !== 'integration'
+					? {
+							lines: 80,
+							functions: 80,
+							branches: 80,
+							statements: 80,
+						}
+					: undefined,
 		},
 	},
 });
