@@ -165,7 +165,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	}) => (
 		<div data-testid="select" data-value={value}>
 			<input
-				data-testid="select-nativearro"
+				data-testid="select-native-arrow"
 				value={value}
 				onChange={(e) => onValueChange(e.target.value)}
 			/>
@@ -678,7 +678,7 @@ describe('MovieLogForm', () => {
 		it('should call field.onChange when a watched-where option is selected', () => {
 			render(<MovieLogForm />);
 
-			const select = screen.getByTestId('select-nativearro');
+			const select = screen.getByTestId('select-native-arrow');
 			fireEvent.change(select, { target: { value: 'cinema' } });
 
 			// Component remains stable after onChange call
