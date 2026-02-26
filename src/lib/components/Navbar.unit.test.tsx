@@ -72,6 +72,7 @@ vi.mock('lucide-react', () => ({
 	),
 	Moon: () => <span>moon</span>,
 	Sun: () => <span>sun</span>,
+	User: () => <span>user</span>,
 }));
 
 vi.mock('@/features/logs/components', () => ({
@@ -84,8 +85,22 @@ vi.mock('./Logo', () => ({
 }));
 
 vi.mock('./MobileNavbar', () => ({
-	MobileNavbar: ({ isOpen }: { isOpen: boolean }) => (
-		<div data-testid="mobile-navbar">{isOpen ? 'open' : 'closed'}</div>
+	MobileNavbar: ({
+		isOpen,
+		items,
+	}: {
+		isOpen: boolean;
+		items: { name: string; visible?: boolean }[];
+	}) => (
+		<div data-testid="mobile-navbar">
+			{isOpen ? 'open' : 'closed'}
+			<span data-testid="mobile-navbar-items">
+				{items
+					.filter((item) => item.visible !== false)
+					.map((item) => item.name)
+					.join(',')}
+			</span>
+		</div>
 	),
 }));
 
@@ -103,22 +118,34 @@ describe('Navbar', () => {
 		navbarState.isMobile = false;
 	});
 
-	it('renders unauthenticated actions and navigates on auth buttons', () => {
+	it('renders unauthenticated actions and navigates on auth controls', () => {
 		render(
 			<MemoryRouter>
 				<Navbar />
 			</MemoryRouter>
 		);
 
-		expect(screen.getByText('Navbar.home')).toBeInTheDocument();
+		expect(screen.getAllByText('Navbar.home').length).toBeGreaterThan(0);
 		expect(screen.getByText('Navbar.login')).toBeInTheDocument();
 		expect(screen.getByText('Navbar.register')).toBeInTheDocument();
+		expect(screen.getByTestId('mobile-login-button')).toBeInTheDocument();
+		expect(screen.getByTestId('mobile-navbar-items')).toHaveTextContent(
+			'Navbar.home'
+		);
+		expect(screen.getByTestId('mobile-navbar-items')).not.toHaveTextContent(
+			'Navbar.login'
+		);
+		expect(screen.getByTestId('mobile-navbar-items')).not.toHaveTextContent(
+			'Navbar.register'
+		);
 		expect(screen.queryByTestId('create-log-button')).not.toBeInTheDocument();
 
 		fireEvent.click(screen.getByText('Navbar.login'));
+		fireEvent.click(screen.getByTestId('mobile-login-button'));
 		fireEvent.click(screen.getByText('Navbar.register'));
-		expect(mockNavigate).toHaveBeenCalledWith('/login');
-		expect(mockNavigate).toHaveBeenCalledWith('/registration');
+		expect(mockNavigate).toHaveBeenNthCalledWith(1, '/login');
+		expect(mockNavigate).toHaveBeenNthCalledWith(2, '/login');
+		expect(mockNavigate).toHaveBeenNthCalledWith(3, '/registration');
 	});
 
 	it('toggles theme based on current theme value', () => {
@@ -145,6 +172,9 @@ describe('Navbar', () => {
 		expect(screen.getByTestId('profile-dropdown')).toBeInTheDocument();
 		expect(screen.getByText('Navbar.search')).toBeInTheDocument();
 		expect(screen.getByTestId('mobile-navbar')).toHaveTextContent('closed');
+		expect(screen.getByTestId('mobile-navbar-items')).toHaveTextContent(
+			'Navbar.home,Navbar.search'
+		);
 
 		fireEvent.click(screen.getByTestId('menu-icon'));
 		expect(screen.getByTestId('mobile-navbar')).toHaveTextContent('open');
