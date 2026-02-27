@@ -54,6 +54,9 @@ vi.mock('@/features/profile/pages/ProfileMoviesWatchedPage', () => ({
 vi.mock('@/features/profile/pages/ProfileStatsPage', () => ({
 	default: () => <div data-testid="profile-stats-page" />,
 }));
+vi.mock('@antoniobenincasa/ui', () => ({
+	Spinner: () => <div data-testid="spinner" />,
+}));
 
 import { AppRoutes } from './AppRoutes';
 
@@ -79,17 +82,18 @@ describe('AppRoutes', () => {
 		]);
 	});
 
-	it('renders a placeholder while auth is not initialized', () => {
+	it('renders a spinner while auth is not initialized', () => {
 		authState.isInitialized = false;
 		authState.authenticatedStatus = null;
 
-		const { container } = render(
+		render(
 			<MemoryRouter initialEntries={['/random']}>
 				<AppRoutes />
 			</MemoryRouter>
 		);
 
-		expect(container.firstChild).toBeInTheDocument();
+		expect(screen.getByTestId('auth-loading')).toBeInTheDocument();
+		expect(screen.getByTestId('spinner')).toBeInTheDocument();
 		expect(screen.queryByTestId('default-layout')).not.toBeInTheDocument();
 	});
 

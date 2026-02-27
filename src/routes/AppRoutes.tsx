@@ -1,3 +1,4 @@
+import { Spinner } from '@antoniobenincasa/ui';
 import { lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores';
@@ -39,7 +40,14 @@ export const AppRoutes = () => {
 	const isInitialized = useAuthStore((state) => state.isInitialized);
 
 	if (!isInitialized) {
-		return <div />;
+		return (
+			<div
+				data-testid="auth-loading"
+				className="flex min-h-screen items-center justify-center"
+			>
+				<Spinner className="size-10 text-primary" />
+			</div>
+		);
 	}
 
 	return (
