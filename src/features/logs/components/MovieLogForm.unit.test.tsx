@@ -137,7 +137,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		control: { _formValues?: Record<string, unknown> };
 	}) => {
 		// Get value from control's form values if available
-		const value = control?._formValues?.[name] ?? '';
+		const value = control?._formValues?.[name];
 		return (
 			<div data-testid={`form-field-${name}`}>
 				{render({ field: { value, onChange: () => undefined } })}
@@ -434,6 +434,22 @@ describe('MovieLogForm', () => {
 				expect(
 					screen.getByTestId('autocomplete-option-456')
 				).toBeInTheDocument();
+			});
+		});
+
+		it('should fallback to empty option label/value when prefilledMovie fields are missing', async () => {
+			mockMovieLogDialogStore.setState({
+				prefilledMovie: {
+					tmdbId: undefined,
+					title: undefined,
+				} as unknown as { tmdbId: number; title: string },
+				movieToEdit: null,
+			});
+
+			render(<MovieLogForm />);
+
+			await waitFor(() => {
+				expect(screen.getByTestId('autocomplete-option-')).toBeInTheDocument();
 			});
 		});
 	});

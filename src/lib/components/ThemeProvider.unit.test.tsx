@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProviderContext } from '@/lib/context';
 import { ThemeProvider } from './ThemeProvider';
 
@@ -45,5 +45,49 @@ describe('ThemeProvider', () => {
 		});
 		expect(localStorage.getItem('vite-ui-theme')).toBe('dark');
 		expect(document.documentElement).toHaveClass('dark');
+	});
+
+	it('applies system dark theme when defaultTheme is system', () => {
+		vi.stubGlobal(
+			'matchMedia',
+			vi.fn().mockReturnValue({
+				matches: true,
+				media: '(prefers-color-scheme: dark)',
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+			})
+		);
+
+		render(
+			<ThemeProvider defaultTheme="system">
+				<span data-testid="child">child</span>
+			</ThemeProvider>
+		);
+
+		expect(screen.getByTestId('child')).toBeInTheDocument();
+		expect(document.documentElement).toHaveClass('dark');
+		vi.unstubAllGlobals();
+	});
+
+	it('applies system light theme when matchMedia is not dark', () => {
+		vi.stubGlobal(
+			'matchMedia',
+			vi.fn().mockReturnValue({
+				matches: false,
+				media: '(prefers-color-scheme: dark)',
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+			})
+		);
+
+		render(
+			<ThemeProvider defaultTheme="system">
+				<span data-testid="child-light">child</span>
+			</ThemeProvider>
+		);
+
+		expect(screen.getByTestId('child-light')).toBeInTheDocument();
+		expect(document.documentElement).toHaveClass('light');
+		vi.unstubAllGlobals();
 	});
 });

@@ -168,6 +168,17 @@ describe('interceptors', () => {
 
 			expect(mockRequest.headers.set).not.toHaveBeenCalled();
 		});
+
+		it('should skip auth header logic when skipAuth is true', async () => {
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				mockAuthStateWithCsrf('test-csrf-token')
+			);
+			const mockRequest = createMockRequest('POST');
+
+			await beforeRequestInterceptor(mockRequest, { skipAuth: true });
+
+			expect(mockRequest.headers.set).not.toHaveBeenCalled();
+		});
 	});
 
 	describe('afterResponseInterceptor', () => {
@@ -385,6 +396,45 @@ describe('interceptors', () => {
 			);
 		});
 
+		it('should reuse the same refresh promise for concurrent 401 retries', async () => {
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				createMockAuthState(true)
+			);
+			let resolveRefresh:
+				| ((v: { message: string; csrfToken: string }) => void)
+				| undefined;
+			vi.mocked(refreshToken).mockImplementation(
+				() =>
+					new Promise((resolve) => {
+						resolveRefresh = resolve;
+					})
+			);
+
+			const req1 = createMockRequest('POST');
+			const req2 = createMockRequest('POST');
+			const error = createHTTPError(401);
+
+			const p1 = beforeRetryInterceptor({
+				request: req1,
+				options: {} as never,
+				error,
+				retryCount: 1,
+			});
+			const p2 = beforeRetryInterceptor({
+				request: req2,
+				options: {} as never,
+				error,
+				retryCount: 2,
+			});
+
+			resolveRefresh?.({
+				message: 'Token refreshed',
+				csrfToken: 'shared-csrf',
+			});
+			await Promise.all([p1, p2]);
+			expect(refreshToken).toHaveBeenCalledTimes(1);
+		});
+
 		it('should not set CSRF header on retry for GET requests', async () => {
 			vi.mocked(useAuthStore.getState).mockReturnValue(
 				createMockAuthState(true)
@@ -433,6 +483,27 @@ describe('interceptors', () => {
 				csrfToken: null,
 			});
 			expect(window.location.href).toBe('/login');
+		});
+
+		it('should not redirect when refresh fails for non-authenticated users', async () => {
+			vi.mocked(useAuthStore.getState).mockReturnValue(
+				createMockAuthState(null)
+			);
+			vi.mocked(refreshToken).mockRejectedValue(new Error('Refresh failed'));
+
+			const mockRequest = createMockRequest();
+			const error = createHTTPError(401);
+
+			await expect(
+				beforeRetryInterceptor({
+					request: mockRequest,
+					options: {} as never,
+					error,
+					retryCount: 1,
+				})
+			).rejects.toThrow('Unauthorized');
+
+			expect(window.location.href).toBe('');
 		});
 
 		it('should not attempt refresh for non-HTTP errors', async () => {

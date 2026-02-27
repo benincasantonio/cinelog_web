@@ -1,7 +1,7 @@
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import type { MobileNavbarItem } from '../mobile-navbar-item.model';
+import type { MobileNavbarItem } from '../models/mobile-navbar-item.model';
 
 interface MobileNavbarProps {
 	isOpen: boolean;

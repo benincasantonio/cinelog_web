@@ -88,12 +88,17 @@ vi.mock('./MobileNavbar', () => ({
 	MobileNavbar: ({
 		isOpen,
 		items,
+		onClose,
 	}: {
 		isOpen: boolean;
 		items: { name: string; visible?: boolean }[];
+		onClose?: () => void;
 	}) => (
 		<div data-testid="mobile-navbar">
 			{isOpen ? 'open' : 'closed'}
+			<button type="button" data-testid="mobile-navbar-close" onClick={onClose}>
+				close
+			</button>
 			<span data-testid="mobile-navbar-items">
 				{items
 					.filter((item) => item.visible !== false)
@@ -159,6 +164,19 @@ describe('Navbar', () => {
 		expect(mockSetTheme).toHaveBeenCalledWith('light');
 	});
 
+	it('toggles from light to dark and renders moon icon path', () => {
+		navbarState.theme = 'light';
+		render(
+			<MemoryRouter>
+				<Navbar />
+			</MemoryRouter>
+		);
+
+		expect(screen.getByText('moon')).toBeInTheDocument();
+		fireEvent.click(screen.getByLabelText('Toggle theme'));
+		expect(mockSetTheme).toHaveBeenCalledWith('dark');
+	});
+
 	it('shows authenticated content and opens mobile navbar', () => {
 		navbarState.authenticatedStatus = true;
 		render(
@@ -178,5 +196,7 @@ describe('Navbar', () => {
 
 		fireEvent.click(screen.getByTestId('menu-icon'));
 		expect(screen.getByTestId('mobile-navbar')).toHaveTextContent('open');
+		fireEvent.click(screen.getByTestId('mobile-navbar-close'));
+		expect(screen.getByTestId('mobile-navbar')).toHaveTextContent('closed');
 	});
 });

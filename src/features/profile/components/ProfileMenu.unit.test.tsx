@@ -13,7 +13,7 @@ import { ProfileMenu } from './ProfileMenu';
 describe('ProfileMenu', () => {
 	it('renders all profile navigation links for a handle', () => {
 		render(
-			<MemoryRouter>
+			<MemoryRouter initialEntries={['/profile/neo']}>
 				<ProfileMenu handle="neo" />
 			</MemoryRouter>
 		);
@@ -26,5 +26,7 @@ describe('ProfileMenu', () => {
 		expect(links[0]).toHaveAttribute('href', '/profile/neo');
 		expect(links[1]).toHaveAttribute('href', '/profile/neo/movie-watched');
 		expect(links[2]).toHaveAttribute('href', '/profile/neo/stats');
+		expect(links[0].className).toContain('bg-primary/10');
+		expect(links[1].className).toContain('text-gray-600');
 	});
 });

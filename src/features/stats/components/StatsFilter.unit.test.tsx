@@ -195,6 +195,32 @@ describe('StatsFilter', () => {
 				expect(mockFetchStats).toHaveBeenCalled();
 			});
 		});
+
+		it('should submit null values when year inputs are cleared', async () => {
+			const mockSetYearFrom = vi.fn();
+			const mockSetYearTo = vi.fn();
+			const mockFetchStats = vi.fn();
+			mockStatsStore.setState({
+				...mockStatsStore.getState(),
+				filters: { yearFrom: 2023, yearTo: 2024 },
+				setYearFrom: mockSetYearFrom,
+				setYearTo: mockSetYearTo,
+				fetchStats: mockFetchStats,
+			});
+
+			const user = userEvent.setup();
+			render(<StatsFilter />);
+
+			await user.clear(screen.getByTestId('input-StatsFilter.yearFrom'));
+			await user.clear(screen.getByTestId('input-StatsFilter.yearTo'));
+			await user.click(screen.getByTestId('apply-button'));
+
+			await waitFor(() => {
+				expect(mockSetYearFrom).toHaveBeenCalledWith(null);
+				expect(mockSetYearTo).toHaveBeenCalledWith(null);
+				expect(mockFetchStats).toHaveBeenCalled();
+			});
+		});
 	});
 
 	describe('reset button', () => {

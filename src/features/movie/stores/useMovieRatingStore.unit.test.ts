@@ -31,6 +31,13 @@ describe('useMovieRatingStore', () => {
 		expect(useMovieRatingStore.getState().tmdbId).toBeNull();
 	});
 
+	it('sets open state directly with setIsOpen', () => {
+		useMovieRatingStore.getState().setIsOpen(true);
+		expect(useMovieRatingStore.getState().isOpen).toBe(true);
+		useMovieRatingStore.getState().setIsOpen(false);
+		expect(useMovieRatingStore.getState().isOpen).toBe(false);
+	});
+
 	it('returns early when tmdbId is missing', async () => {
 		const result = await useMovieRatingStore.getState().submitRating(7, 'ok');
 		expect(result).toBeUndefined();

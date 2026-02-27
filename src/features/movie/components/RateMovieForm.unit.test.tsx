@@ -144,4 +144,42 @@ describe('RateMovieForm', () => {
 			);
 		});
 	});
+
+	it('shows validation message when submitted without selecting rating', async () => {
+		render(<RateMovieForm />);
+		const form = screen
+			.getByRole('button', { name: 'RateMovieForm.save' })
+			.closest('form');
+		expect(form).not.toBeNull();
+
+		fireEvent.submit(form as HTMLFormElement);
+
+		await waitFor(() => {
+			expect(
+				screen.getByText('RateMovieForm.validation.rating')
+			).toBeInTheDocument();
+		});
+	});
+
+	it('renders spinner and disabled actions while loading', () => {
+		storeState.isLoading = true;
+		render(<RateMovieForm />);
+
+		expect(screen.getByText('spinner')).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', { name: 'RateMovieForm.cancel' })
+		).toBeDisabled();
+	});
+
+	it('handles existing movie rating with null comment', async () => {
+		storeState.movieRating = { rating: 6, comment: null };
+		render(<RateMovieForm />);
+
+		await waitFor(() => {
+			expect(screen.getByTestId('current-rating')).toHaveTextContent('6');
+			expect(screen.getByLabelText('RateMovieForm.reviewOptional')).toHaveValue(
+				''
+			);
+		});
+	});
 });

@@ -76,4 +76,16 @@ describe('MobileNavbar', () => {
 		fireEvent.keyDown(window, { key: 'Escape' });
 		expect(onClose).not.toHaveBeenCalled();
 	});
+
+	it('does not close on Escape when menu is closed', () => {
+		const onClose = vi.fn();
+		render(
+			<MemoryRouter>
+				<MobileNavbar isOpen={false} items={items} onClose={onClose} />
+			</MemoryRouter>
+		);
+
+		fireEvent.keyDown(window, { key: 'Escape' });
+		expect(onClose).not.toHaveBeenCalled();
+	});
 });

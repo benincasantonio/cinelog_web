@@ -15,7 +15,7 @@ import {
 } from '@/features/logs/components';
 import { useTheme } from '@/lib/hooks/useTheme';
 import { useIsMobile } from '../hooks';
-import type { MobileNavbarItem } from '../mobile-navbar-item.model';
+import type { MobileNavbarItem } from '../models/mobile-navbar-item.model';
 import { Logo } from './Logo';
 import { MobileNavbar } from './MobileNavbar';
 import { ProfileDropdownMenu } from './ProfileDropdownMenu';
