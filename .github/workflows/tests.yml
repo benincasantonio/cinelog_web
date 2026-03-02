@@ -3,22 +3,22 @@ name: All Tests
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, develop ]
 
 jobs:
   lint:
     uses: ./.github/workflows/lint.yml
 
-  unit-test:
+  unit-tests:
     needs: [lint]
     uses: ./.github/workflows/unit-tests.yml
 
-  integration-test:
+  integration-tests:
     needs: [lint]
     uses: ./.github/workflows/integration-tests.yml
 
-  playwright-test:
-    needs: [unit-test, integration-test]
+  playwright:
+    needs: [unit-tests, integration-tests]
     uses: ./.github/workflows/playwright.yml
