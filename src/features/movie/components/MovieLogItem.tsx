@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { LogListItem } from '@/features/logs/models';
 import { useMovieLogDialogStore } from '@/features/logs/stores';
-import { useMovieRatingStore } from '@/features/movie/stores/useMovieRatingStore';
 import { MovieVote } from './MovieVote';
 
 interface MovieLogItemProps {
@@ -21,7 +20,6 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 	const navigate = useNavigate();
 
 	const { open } = useMovieLogDialogStore();
-	const openRateModal = useMovieRatingStore((state) => state.openModal);
 	const handleTitleClick = () => {
 		if (log.tmdbId) {
 			navigate(`/movies/${log.tmdbId}`);
@@ -32,12 +30,6 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 		open({
 			movieToEdit: log,
 		});
-	};
-
-	const editMovieRating = () => {
-		if (log.tmdbId) {
-			openRateModal(log.tmdbId.toString());
-		}
 	};
 
 	return (
@@ -100,9 +92,6 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 					<DropdownMenuContent>
 						<DropdownMenuItem onClick={editMovieLog}>
 							{t('MovieLogItem.edit')}
-						</DropdownMenuItem>
-						<DropdownMenuItem onClick={editMovieRating}>
-							{t('MovieLogItem.editRating')}
 						</DropdownMenuItem>
 						{/* TODO: Implement delete functionality - see GitHub issue */}
 						{/* <DropdownMenuItem variant="destructive">

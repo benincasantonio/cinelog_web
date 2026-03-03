@@ -6,19 +6,10 @@ import { MovieLogItem } from './MovieLogItem';
 
 // Mock useMovieLogDialogStore
 const mockOpen = vi.fn();
-const mockOpenRateModal = vi.fn();
 vi.mock('@/features/logs/stores', () => ({
 	useMovieLogDialogStore: () => ({
 		open: mockOpen,
 	}),
-}));
-vi.mock('@/features/movie/stores/useMovieRatingStore', () => ({
-	useMovieRatingStore: (
-		selector: (state: { openModal: (tmdbId: string) => void }) => unknown
-	) =>
-		selector({
-			openModal: mockOpenRateModal,
-		}),
 }));
 
 // Mock useNavigate from react-router-dom
@@ -95,7 +86,6 @@ describe('MovieLogItem', () => {
 	beforeEach(() => {
 		mockNavigate.mockClear();
 		mockOpen.mockClear();
-		mockOpenRateModal.mockClear();
 	});
 
 	describe('T3.1.1: Component Renders Without Crashing', () => {
@@ -271,30 +261,12 @@ describe('MovieLogItem', () => {
 			const log = createMockLog();
 			render(<MovieLogItem log={log} />);
 
-			await user.click(screen.getByText('MovieLogItem.edit'));
+			const editButton = screen.getByTestId('dropdown-item');
+			await user.click(editButton);
 
 			expect(mockOpen).toHaveBeenCalledWith({
 				movieToEdit: log,
 			});
-		});
-	});
-
-	describe('Edit Movie Rating', () => {
-		it('should render edit rating menu item', () => {
-			const log = createMockLog();
-			render(<MovieLogItem log={log} />);
-
-			expect(screen.getByText('MovieLogItem.editRating')).toBeInTheDocument();
-		});
-
-		it('should call openModal with tmdbId when edit rating menu item is clicked', async () => {
-			const user = userEvent.setup();
-			const log = createMockLog({ tmdbId: 278 });
-			render(<MovieLogItem log={log} />);
-
-			await user.click(screen.getByText('MovieLogItem.editRating'));
-
-			expect(mockOpenRateModal).toHaveBeenCalledWith('278');
 		});
 	});
 
