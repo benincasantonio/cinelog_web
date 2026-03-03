@@ -10,8 +10,10 @@ import { useTranslation } from 'react-i18next';
 import type { LogListItem } from '@/features/logs/models';
 import { type GetLogsParams, getLogs } from '@/features/logs/repositories';
 import { useMovieLogDialogStore } from '@/features/logs/stores';
+import type { MovieRatingResponse } from '../models';
 import { MovieLogList } from './MovieLogList';
 import { MoviesWatchedLoading } from './MoviesWatchedLoading';
+import { RateMovieModal } from './RateMovieModal';
 
 export const MoviesWatched = () => {
 	const { t } = useTranslation();
@@ -25,6 +27,23 @@ export const MoviesWatched = () => {
 
 	const currentYear = new Date().getFullYear();
 	const years = Array.from({ length: 11 }, (_, i) => currentYear - i);
+
+	const handleRatingSuccess = (movieRating: MovieRatingResponse) => {
+		const tmdbId = Number(movieRating.tmdbId);
+		if (Number.isNaN(tmdbId)) {
+			return;
+		}
+
+		setLogs((currentLogs) =>
+			currentLogs.map((log) => {
+				if (log.tmdbId !== tmdbId) {
+					return log;
+				}
+
+				return { ...log, movieRating: movieRating.rating };
+			})
+		);
+	};
 
 	useEffect(() => {
 		const fetchLogs = async () => {
@@ -93,6 +112,7 @@ export const MoviesWatched = () => {
 
 			{/* Movies List */}
 			<MovieLogList logs={logs} />
+			<RateMovieModal onSuccess={handleRatingSuccess} />
 		</div>
 	);
 };
