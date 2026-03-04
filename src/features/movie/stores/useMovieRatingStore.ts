@@ -7,6 +7,7 @@ interface MovieRatingState {
 	isLoading: boolean;
 	tmdbId: string | null;
 	movieRating: MovieRatingResponse | null;
+	triggerCount: number;
 	openModal: (tmdbId: string, movieRating?: MovieRatingResponse | null) => void;
 	closeModal: () => void;
 	setIsOpen: (isOpen: boolean) => void;
@@ -14,6 +15,7 @@ interface MovieRatingState {
 		rating: number,
 		comment?: string
 	) => Promise<MovieRatingResponse | void>;
+	triggerUpdate: () => void;
 }
 
 export const useMovieRatingStore = create<MovieRatingState>((set, get) => ({
@@ -21,10 +23,13 @@ export const useMovieRatingStore = create<MovieRatingState>((set, get) => ({
 	isLoading: false,
 	tmdbId: null,
 	movieRating: null,
+	triggerCount: 0,
 	openModal: (tmdbId, movieRating = null) =>
 		set({ isOpen: true, tmdbId, movieRating }),
 	closeModal: () => set({ isOpen: false, tmdbId: null, movieRating: null }),
 	setIsOpen: (isOpen) => set({ isOpen }),
+	triggerUpdate: () =>
+		set((state) => ({ triggerCount: state.triggerCount + 1 })),
 	submitRating: async (rating, comment) => {
 		const { tmdbId } = get();
 		if (!tmdbId) return;
@@ -37,6 +42,7 @@ export const useMovieRatingStore = create<MovieRatingState>((set, get) => ({
 				comment: comment?.trim() || null,
 			});
 			set({ isOpen: false });
+			get().triggerUpdate();
 			return movieRating;
 		} catch (error) {
 			console.error('Failed to rate movie', error);
