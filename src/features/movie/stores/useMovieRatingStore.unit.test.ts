@@ -18,6 +18,7 @@ describe('useMovieRatingStore', () => {
 			isLoading: false,
 			tmdbId: null,
 			movieRating: null,
+			triggerCount: 0,
 		});
 	});
 
@@ -61,9 +62,18 @@ describe('useMovieRatingStore', () => {
 		expect(result).toEqual(response);
 		expect(useMovieRatingStore.getState().isOpen).toBe(false);
 		expect(useMovieRatingStore.getState().isLoading).toBe(false);
+		expect(useMovieRatingStore.getState().triggerCount).toBe(1);
 	});
 
-	it('handles submit error and resets loading', async () => {
+	it('increments triggerCount on triggerUpdate', () => {
+		expect(useMovieRatingStore.getState().triggerCount).toBe(0);
+		useMovieRatingStore.getState().triggerUpdate();
+		expect(useMovieRatingStore.getState().triggerCount).toBe(1);
+		useMovieRatingStore.getState().triggerUpdate();
+		expect(useMovieRatingStore.getState().triggerCount).toBe(2);
+	});
+
+	it('does not increment triggerCount on submit failure', async () => {
 		const consoleSpy = vi
 			.spyOn(console, 'error')
 			.mockImplementation(() => undefined);
