@@ -115,4 +115,48 @@ describe('RateMovie', () => {
 
 		expect(screen.getByText('Rate 1 star')).toBeInTheDocument();
 	});
+
+	it('should show numeric badge with current rating when rating is set', () => {
+		render(<RateMovie rating={7} onChangeRating={mockOnChangeRating} />);
+
+		expect(screen.getByText('7/10')).toBeInTheDocument();
+	});
+
+	it('should show numeric badge with hovered value while hovering', () => {
+		render(<RateMovie rating={3} onChangeRating={mockOnChangeRating} />);
+
+		const eighthStarContainer = screen.getByText('Rate 8 stars').parentElement!;
+		fireEvent.mouseEnter(eighthStarContainer);
+
+		expect(screen.getByText('8/10')).toBeInTheDocument();
+	});
+
+	it('should revert numeric badge to current rating after mouse leave', () => {
+		render(<RateMovie rating={3} onChangeRating={mockOnChangeRating} />);
+
+		const eighthStarContainer = screen.getByText('Rate 8 stars').parentElement!;
+		fireEvent.mouseEnter(eighthStarContainer);
+		expect(screen.getByText('8/10')).toBeInTheDocument();
+
+		const container = eighthStarContainer.parentElement!;
+		fireEvent.mouseLeave(container);
+
+		expect(screen.getByText('3/10')).toBeInTheDocument();
+	});
+
+	it('should hide numeric badge when no rating and not hovering', () => {
+		render(<RateMovie onChangeRating={mockOnChangeRating} />);
+
+		const badgeEl = document.querySelector('[aria-live="polite"]');
+		expect(badgeEl).toHaveClass('opacity-0');
+	});
+
+	it('should show numeric badge when hovering with no prior rating', () => {
+		render(<RateMovie onChangeRating={mockOnChangeRating} />);
+
+		const fifthStarContainer = screen.getByText('Rate 5 stars').parentElement!;
+		fireEvent.mouseEnter(fifthStarContainer);
+
+		expect(screen.getByText('5/10')).toBeInTheDocument();
+	});
 });
