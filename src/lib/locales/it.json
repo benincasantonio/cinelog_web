@@ -67,6 +67,9 @@
 		"back": "← Indietro",
 		"noImage": "Nessuna immagine"
 	},
+	"RateMovie": {
+		"ratingLabel": "{{value}} su 10"
+	},
 	"RateMovieModal": {
 		"title": "Vota Film",
 		"description": "Condividi i tuoi pensieri e vota questo film."

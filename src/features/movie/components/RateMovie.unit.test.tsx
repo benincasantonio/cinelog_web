@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 let mockIsMobile = false;
@@ -15,6 +14,15 @@ vi.mock('lucide-react', () => ({
 		className: string;
 		onClick: () => void;
 	}) => <svg data-testid="star" className={className} onClick={onClick} />,
+}));
+
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string, params?: Record<string, unknown>) => {
+			if (key === 'RateMovie.ratingLabel') return `${params?.value} out of 10`;
+			return key;
+		},
+	}),
 }));
 
 import { RateMovie } from './RateMovie';
@@ -119,7 +127,7 @@ describe('RateMovie', () => {
 	it('should show numeric badge with current rating when rating is set', () => {
 		render(<RateMovie rating={7} onChangeRating={mockOnChangeRating} />);
 
-		expect(screen.getByText('7/10')).toBeInTheDocument();
+		expect(screen.getByText('7 out of 10')).toBeInTheDocument();
 	});
 
 	it('should show numeric badge with hovered value while hovering', () => {
@@ -128,7 +136,7 @@ describe('RateMovie', () => {
 		const eighthStarContainer = screen.getByText('Rate 8 stars').parentElement!;
 		fireEvent.mouseEnter(eighthStarContainer);
 
-		expect(screen.getByText('8/10')).toBeInTheDocument();
+		expect(screen.getByText('8 out of 10')).toBeInTheDocument();
 	});
 
 	it('should revert numeric badge to current rating after mouse leave', () => {
@@ -136,12 +144,12 @@ describe('RateMovie', () => {
 
 		const eighthStarContainer = screen.getByText('Rate 8 stars').parentElement!;
 		fireEvent.mouseEnter(eighthStarContainer);
-		expect(screen.getByText('8/10')).toBeInTheDocument();
+		expect(screen.getByText('8 out of 10')).toBeInTheDocument();
 
 		const container = eighthStarContainer.parentElement!;
 		fireEvent.mouseLeave(container);
 
-		expect(screen.getByText('3/10')).toBeInTheDocument();
+		expect(screen.getByText('3 out of 10')).toBeInTheDocument();
 	});
 
 	it('should hide numeric badge when no rating and not hovering', () => {
@@ -157,6 +165,6 @@ describe('RateMovie', () => {
 		const fifthStarContainer = screen.getByText('Rate 5 stars').parentElement!;
 		fireEvent.mouseEnter(fifthStarContainer);
 
-		expect(screen.getByText('5/10')).toBeInTheDocument();
+		expect(screen.getByText('5 out of 10')).toBeInTheDocument();
 	});
 });

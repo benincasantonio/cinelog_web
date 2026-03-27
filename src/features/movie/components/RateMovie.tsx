@@ -1,5 +1,6 @@
 import { Star } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '@/lib/hooks';
 
 export interface RateMovieProps {
@@ -14,25 +15,28 @@ export const RateMovie = ({ rating, onChangeRating }: RateMovieProps) => {
 
 	const isMobile = useIsMobile();
 
+	const { t } = useTranslation();
+
 	const displayValue = hoveredRating ?? rating ?? null;
 
 	return (
-		<div
-			className="flex items-center gap-2"
-			onMouseLeave={() => setHoveredRating(null)}
-		>
-			{Array.from({ length: ratingScale }, (_, index) => index + 1).map(
-				(value) => (
-					<div
-						className="relative cursor-pointer"
-						key={value}
-						onMouseEnter={() => setHoveredRating(value)}
-					>
-						<span className="sr-only">{`Rate ${value} star${
-							value > 1 ? 's' : ''
-						}`}</span>
-						<Star
-							className={`cursor-pointer
+		<div className="flex flex-col items-center gap-2">
+			<div
+				className="flex items-center gap-2"
+				onMouseLeave={() => setHoveredRating(null)}
+			>
+				{Array.from({ length: ratingScale }, (_, index) => index + 1).map(
+					(value) => (
+						<div
+							className="relative cursor-pointer"
+							key={value}
+							onMouseEnter={() => setHoveredRating(value)}
+						>
+							<span className="sr-only">{`Rate ${value} star${
+								value > 1 ? 's' : ''
+							}`}</span>
+							<Star
+								className={`cursor-pointer
                 ${isMobile ? 'w-5 h-5' : 'w-8 h-8'} ${
 									(
 										hoveredRating !== null
@@ -42,22 +46,18 @@ export const RateMovie = ({ rating, onChangeRating }: RateMovieProps) => {
 										? 'text-yellow-400'
 										: 'text-gray-300 dark:text-gray-600'
 								}`}
-							onClick={() => onChangeRating(value)}
-						/>
-					</div>
-				)
-			)}
-			<div
-				aria-live="polite"
-				aria-label={
-					displayValue !== null ? `${displayValue} out of 10` : undefined
-				}
-				className={`ml-1 w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center text-xs font-bold text-white transition-opacity duration-150 ${
-					displayValue !== null ? 'opacity-100' : 'opacity-0'
-				}`}
-			>
-				{displayValue !== null ? `${displayValue}/10` : ''}
+								onClick={() => onChangeRating(value)}
+							/>
+						</div>
+					)
+				)}
 			</div>
+			<p
+				className={`text-sm ${!displayValue ? 'opacity-0' : ''}`}
+				aria-live="polite"
+			>
+				{t('RateMovie.ratingLabel', { value: displayValue ?? 0 })}
+			</p>
 		</div>
 	);
 };
