@@ -67,6 +67,9 @@
 		"back": "← Retour",
 		"noImage": "Pas d'Image"
 	},
+	"RateMovie": {
+		"ratingLabel": "{{value}} sur 10"
+	},
 	"RateMovieModal": {
 		"title": "Noter le film",
 		"description": "Partagez votre avis et notez ce film."

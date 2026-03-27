@@ -67,6 +67,9 @@
 		"back": "← Back",
 		"noImage": "No Image"
 	},
+	"RateMovie": {
+		"ratingLabel": "{{value}} out of 10"
+	},
 	"RateMovieModal": {
 		"title": "Rate Movie",
 		"description": "Share your thoughts and rate this movie."
