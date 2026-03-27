@@ -33,6 +33,8 @@
 		"watched": "Watched:",
 		"noImage": "No Image",
 		"edit": "Edit",
+		"editRating": "Edit Rating",
+		"vote": "Vote",
 		"delete": "Delete"
 	},
 	"ProfileHeader": {

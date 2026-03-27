@@ -33,6 +33,8 @@
 		"watched": "Visto:",
 		"noImage": "Nessuna Immagine",
 		"edit": "Modifica",
+		"editRating": "Modifica Voto",
+		"vote": "Vota",
 		"delete": "Elimina"
 	},
 	"ProfileHeader": {
