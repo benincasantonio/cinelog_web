@@ -1,3 +1,4 @@
+import { NotificationProvider } from '@antoniobenincasa/ui';
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores';
@@ -13,9 +14,11 @@ function App() {
 
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="cinelog-theme">
-			<BrowserRouter>
-				<AppRoutes />
-			</BrowserRouter>
+			<NotificationProvider>
+				<BrowserRouter>
+					<AppRoutes />
+				</BrowserRouter>
+			</NotificationProvider>
 		</ThemeProvider>
 	);
 }

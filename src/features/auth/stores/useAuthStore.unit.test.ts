@@ -487,4 +487,25 @@ describe('useAuthStore', () => {
 			expect(callOrder).toEqual(['getUserInfo', 'fetchCsrfToken']);
 		});
 	});
+
+	// -------------------------------------------------------------------------
+	// updateUserInfo
+	// -------------------------------------------------------------------------
+
+	describe('updateUserInfo', () => {
+		it('should update userInfo in the store', () => {
+			useAuthStore.getState().updateUserInfo(mockUser);
+
+			expect(useAuthStore.getState().userInfo).toEqual(mockUser);
+		});
+
+		it('should overwrite existing userInfo', () => {
+			useAuthStore.setState({ userInfo: mockUser });
+			const updatedUser = { ...mockUser, firstName: 'Janet' };
+
+			useAuthStore.getState().updateUserInfo(updatedUser);
+
+			expect(useAuthStore.getState().userInfo?.firstName).toBe('Janet');
+		});
+	});
 });

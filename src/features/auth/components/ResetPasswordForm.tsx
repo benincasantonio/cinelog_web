@@ -34,7 +34,7 @@ export const ResetPasswordForm = ({
 	const [error, setError] = useState<string | null>(null);
 
 	const localizedSchema = resetPasswordSchema(
-		t('ResetPasswordForm.validation.passwordsMismatch')
+		t('ResetPasswordForm.passwordsMismatch')
 	);
 
 	const form = useForm<ResetPasswordSchema>({
