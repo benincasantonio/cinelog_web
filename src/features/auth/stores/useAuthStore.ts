@@ -21,6 +21,7 @@ export const useAuthStore = create<{
 	logout: () => Promise<void>;
 	register: (request: RegisterRequest) => Promise<void>;
 	fetchUserInfo: () => Promise<void>;
+	updateUserInfo: (userInfo: UserResponse) => void;
 }>((set, get) => ({
 	isInitialized: false,
 	csrfToken: null,
@@ -57,6 +58,7 @@ export const useAuthStore = create<{
 			throw error;
 		}
 	},
+	updateUserInfo: (userInfo: UserResponse) => set({ userInfo }),
 	fetchUserInfo: async () => {
 		set({ isUserInfoLoading: true });
 		try {

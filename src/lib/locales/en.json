@@ -42,7 +42,8 @@
 	"ProfileMenu": {
 		"overview": "Overview",
 		"moviesWatched": "Movies Watched",
-		"stats": "Stats"
+		"stats": "Stats",
+		"settings": "Settings"
 	},
 	"ProfileOverviewPage": {
 		"pageTitle": "Cinelog - Overview",
@@ -129,9 +130,7 @@
 		"submittingReset": "Resetting...",
 		"errorReset": "Failed to reset password. Please check your code and try again.",
 		"backToEmail": "← Back",
-		"validation": {
-			"passwordsMismatch": "Passwords do not match"
-		}
+		"passwordsMismatch": "Passwords do not match"
 	},
 	"RegistrationForm": {
 		"firstName": "First Name",
@@ -250,5 +249,42 @@
 	},
 	"ProfileMoviesWatchedPage": {
 		"pageTitle": "Cinelog - Movies Watched"
+	},
+	"ProfileSettingsPage": {
+		"profileSection": "Profile",
+		"passwordSection": "Change Password"
+	},
+	"UpdateProfileForm": {
+		"email": "Email",
+		"handle": "Handle",
+		"firstName": "First Name",
+		"lastName": "Last Name",
+		"dateOfBirth": "Date of Birth",
+		"bio": "Bio",
+		"bioPlaceholder": "Tell us about yourself",
+		"submit": "Save Changes",
+		"submitting": "Saving...",
+		"success": "Profile updated successfully",
+		"error": "Failed to update profile",
+		"firstNameRequired": "First name is required",
+		"lastNameRequired": "Last name is required",
+		"dateOfBirthRequired": "Date of birth is required",
+		"dateOfBirthInvalidFormat": "Date of birth must be in YYYY-MM-DD format",
+		"dateOfBirthInvalidDate": "Date of birth is not a valid date",
+		"dateOfBirthPast": "Date of birth must be in the past"
+	},
+	"ChangePasswordForm": {
+		"currentPassword": "Current Password",
+		"newPassword": "New Password",
+		"confirmPassword": "Confirm New Password",
+		"submit": "Change Password",
+		"submitting": "Changing...",
+		"success": "Password changed successfully",
+		"error": "Failed to change password",
+		"passwordsMismatch": "Passwords do not match"
+	},
+	"ApiError": {
+		"invalidCurrentPassword": "Current password is incorrect",
+		"samePassword": "New password must be different from the current password"
 	}
 }

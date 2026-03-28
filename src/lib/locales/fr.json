@@ -42,7 +42,8 @@
 	"ProfileMenu": {
 		"overview": "Aperçu",
 		"moviesWatched": "Films vus",
-		"stats": "Statistiques"
+		"stats": "Statistiques",
+		"settings": "Paramètres"
 	},
 	"ProfileOverviewPage": {
 		"pageTitle": "Cinelog - Aperçu",
@@ -129,9 +130,7 @@
 		"submittingReset": "Réinitialisation en cours...",
 		"errorReset": "Échec de la réinitialisation. Vérifiez votre code et réessayez.",
 		"backToEmail": "← Retour",
-		"validation": {
-			"passwordsMismatch": "Les mots de passe ne correspondent pas"
-		}
+		"passwordsMismatch": "Les mots de passe ne correspondent pas"
 	},
 	"RegistrationForm": {
 		"firstName": "Prénom",
@@ -246,5 +245,42 @@
 	},
 	"ProfileMoviesWatchedPage": {
 		"pageTitle": "Cinelog - Films Vus"
+	},
+	"ProfileSettingsPage": {
+		"profileSection": "Profil",
+		"passwordSection": "Changer le mot de passe"
+	},
+	"UpdateProfileForm": {
+		"email": "Email",
+		"handle": "Identifiant",
+		"firstName": "Prénom",
+		"lastName": "Nom",
+		"dateOfBirth": "Date de naissance",
+		"bio": "Biographie",
+		"bioPlaceholder": "Parlez-nous de vous",
+		"submit": "Enregistrer les modifications",
+		"submitting": "Enregistrement...",
+		"success": "Profil mis à jour avec succès",
+		"error": "Échec de la mise à jour du profil",
+		"firstNameRequired": "Le prénom est obligatoire",
+		"lastNameRequired": "Le nom est obligatoire",
+		"dateOfBirthRequired": "La date de naissance est obligatoire",
+		"dateOfBirthInvalidFormat": "La date de naissance doit être au format AAAA-MM-JJ",
+		"dateOfBirthInvalidDate": "La date de naissance n'est pas une date valide",
+		"dateOfBirthPast": "La date de naissance doit être dans le passé"
+	},
+	"ChangePasswordForm": {
+		"currentPassword": "Mot de passe actuel",
+		"newPassword": "Nouveau mot de passe",
+		"confirmPassword": "Confirmer le nouveau mot de passe",
+		"submit": "Changer le mot de passe",
+		"submitting": "Modification en cours...",
+		"success": "Mot de passe changé avec succès",
+		"error": "Échec du changement de mot de passe",
+		"passwordsMismatch": "Les mots de passe ne correspondent pas"
+	},
+	"ApiError": {
+		"invalidCurrentPassword": "Le mot de passe actuel est incorrect",
+		"samePassword": "Le nouveau mot de passe doit être différent du mot de passe actuel"
 	}
 }

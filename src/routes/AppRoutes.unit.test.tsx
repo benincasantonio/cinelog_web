@@ -19,6 +19,7 @@ vi.mock('@/lib/components', () => ({
 			<Outlet />
 		</div>
 	),
+	OwnerRoute: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('@/features/auth/pages/ForgotPasswordPage', () => ({
@@ -51,6 +52,9 @@ vi.mock('@/features/profile/pages/ProfileOverviewPage', () => ({
 vi.mock('@/features/profile/pages/ProfileMoviesWatchedPage', () => ({
 	default: () => <div data-testid="profile-movies-page" />,
 }));
+vi.mock('@/features/profile/pages/ProfileSettingsPage', () => ({
+	default: () => <div data-testid="profile-settings-page" />,
+}));
 vi.mock('@/features/profile/pages/ProfileStatsPage', () => ({
 	default: () => <div data-testid="profile-stats-page" />,
 }));
@@ -78,6 +82,7 @@ describe('AppRoutes', () => {
 			import('@/features/profile/pages/ProfilePage'),
 			import('@/features/profile/pages/ProfileOverviewPage'),
 			import('@/features/profile/pages/ProfileMoviesWatchedPage'),
+			import('@/features/profile/pages/ProfileSettingsPage'),
 			import('@/features/profile/pages/ProfileStatsPage'),
 		]);
 	});

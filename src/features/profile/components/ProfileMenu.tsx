@@ -3,9 +3,11 @@ import {
 	Film,
 	LayoutDashboard,
 	type LucideIcon,
+	Settings,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
+import { useAuthStore } from '@/features/auth/stores';
 
 interface ProfileMenuItem {
 	label: string;
@@ -20,6 +22,8 @@ interface ProfileMenuProps {
 
 export const ProfileMenu = ({ handle }: ProfileMenuProps) => {
 	const { t } = useTranslation();
+	const userInfo = useAuthStore((state) => state.userInfo);
+	const isOwnProfile = userInfo?.handle === handle;
 
 	const menuItems: ProfileMenuItem[] = [
 		{
@@ -38,6 +42,15 @@ export const ProfileMenu = ({ handle }: ProfileMenuProps) => {
 			icon: BarChart3,
 			path: `/profile/${handle}/stats`,
 		},
+		...(isOwnProfile
+			? [
+					{
+						label: t('ProfileMenu.settings'),
+						icon: Settings,
+						path: `/profile/${handle}/settings`,
+					},
+				]
+			: []),
 	];
 
 	return (

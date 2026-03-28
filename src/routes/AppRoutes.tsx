@@ -2,7 +2,7 @@ import { Spinner } from '@antoniobenincasa/ui';
 import { lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores';
-import { DefaultLayout } from '@/lib/components';
+import { DefaultLayout, OwnerRoute } from '@/lib/components';
 
 const ForgotPasswordPage = lazy(
 	() => import('@/features/auth/pages/ForgotPasswordPage')
@@ -28,6 +28,9 @@ const ProfileOverviewPage = lazy(
 );
 const ProfileMoviesWatchedPage = lazy(
 	() => import('@/features/profile/pages/ProfileMoviesWatchedPage')
+);
+const ProfileSettingsPage = lazy(
+	() => import('@/features/profile/pages/ProfileSettingsPage')
 );
 const ProfileStatsPage = lazy(
 	() => import('@/features/profile/pages/ProfileStatsPage')
@@ -78,6 +81,14 @@ export const AppRoutes = () => {
 								element={<ProfileMoviesWatchedPage />}
 							/>
 							<Route path="stats" element={<ProfileStatsPage />} />
+							<Route
+								path="settings"
+								element={
+									<OwnerRoute>
+										<ProfileSettingsPage />
+									</OwnerRoute>
+								}
+							/>
 						</Route>
 					</>
 				) : (
