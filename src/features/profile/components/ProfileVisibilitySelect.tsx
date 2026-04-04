@@ -29,7 +29,7 @@ export const ProfileVisibilitySelect = ({
 			<SelectContent>
 				{VISIBLE_OPTIONS.map((option) => (
 					<SelectItem key={option} value={option}>
-						{t(`UpdateProfileForm.profileVisibility.${option}`)}
+						{t(`ProfileVisibilitySelect.${option}`)}
 					</SelectItem>
 				))}
 			</SelectContent>

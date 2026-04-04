@@ -15,6 +15,9 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
+import { ProfileVisibilitySelect } from '@/features/profile/components/ProfileVisibilitySelect';
+import type { ProfileVisibility } from '@/lib/models';
+import { PROFILE_VISIBILITY_VALUES } from '@/lib/models';
 import { useAuthStore } from '../stores';
 
 type RegistrationSchema = {
@@ -25,6 +28,7 @@ type RegistrationSchema = {
 	handle: string;
 	dateOfBirth: Date;
 	bio?: string;
+	profileVisibility: ProfileVisibility;
 };
 
 export const RegistrationForm = () => {
@@ -46,6 +50,7 @@ export const RegistrationForm = () => {
 				message: t('RegistrationForm.validation.dobPast'),
 			}),
 			bio: z.string().optional(),
+			profileVisibility: z.enum(PROFILE_VISIBILITY_VALUES),
 		})
 		.strict();
 
@@ -59,6 +64,7 @@ export const RegistrationForm = () => {
 			handle: '',
 			dateOfBirth: undefined,
 			bio: '',
+			profileVisibility: 'private',
 		},
 	});
 
@@ -75,7 +81,7 @@ export const RegistrationForm = () => {
 				handle: data.handle,
 				dateOfBirth: data.dateOfBirth?.toISOString() ?? '',
 				bio: data.bio,
-				profileVisibility: 'private',
+				profileVisibility: data.profileVisibility,
 			});
 
 			navigate('/login');
@@ -212,6 +218,21 @@ export const RegistrationForm = () => {
 									placeholder={t('RegistrationForm.bioPlaceholder')}
 								/>
 							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="profileVisibility"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>{t('ProfileVisibilitySelect.label')}</FormLabel>
+							<ProfileVisibilitySelect
+								value={field.value}
+								onChange={(value) => field.onChange(value as ProfileVisibility)}
+							/>
 							<FormMessage />
 						</FormItem>
 					)}

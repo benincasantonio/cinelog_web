@@ -258,11 +258,6 @@
 		"dateOfBirth": "Data di nascita",
 		"bio": "Biografia",
 		"bioPlaceholder": "Raccontaci qualcosa di te",
-		"profileVisibility": {
-			"label": "Visibilità del profilo",
-			"public": "Pubblico",
-			"private": "Privato"
-		},
 		"submit": "Salva Modifiche",
 		"submitting": "Salvataggio...",
 		"success": "Profilo aggiornato con successo",
@@ -291,5 +286,10 @@
 	},
 	"ProfilePage": {
 		"privateProfile": "Questo profilo è privato"
+	},
+	"ProfileVisibilitySelect": {
+		"label": "Visibilità del profilo",
+		"public": "Pubblico",
+		"private": "Privato"
 	}
 }

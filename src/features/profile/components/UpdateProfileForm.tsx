@@ -186,9 +186,7 @@ export const UpdateProfileForm = () => {
 					name="profileVisibility"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>
-								{t('UpdateProfileForm.profileVisibility.label')}
-							</FormLabel>
+							<FormLabel>{t('ProfileVisibilitySelect.label')}</FormLabel>
 							<ProfileVisibilitySelect
 								value={field.value ?? 'private'}
 								onChange={(value) => field.onChange(value as ProfileVisibility)}
