@@ -10,10 +10,15 @@ import { useTranslation } from 'react-i18next';
 import type { LogListItem } from '@/features/logs/models';
 import { type GetLogsParams, getLogs } from '@/features/logs/repositories';
 import { useMovieLogDialogStore } from '@/features/logs/stores';
+import { extractApiError } from '@/lib/api/api-error';
 import { MovieLogList } from './MovieLogList';
 import { MoviesWatchedLoading } from './MoviesWatchedLoading';
 
-export const MoviesWatched = () => {
+interface MoviesWatchedProps {
+	handle: string;
+}
+
+export const MoviesWatched = ({ handle }: MoviesWatchedProps) => {
 	const { t } = useTranslation();
 	const [logs, setLogs] = useState<LogListItem[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -39,10 +44,13 @@ export const MoviesWatched = () => {
 					params.dateWatchedTo = `${selectedYear}-12-31`;
 				}
 
-				const response = await getLogs(params);
+				const response = await getLogs(handle, params);
 				setLogs(response.logs);
 			} catch (err) {
-				if (err instanceof Error) {
+				const apiError = await extractApiError(err);
+				if (apiError?.error_code_name === 'PROFILE_NOT_PUBLIC') {
+					setError(t('ApiError.profileNotPublic'));
+				} else if (err instanceof Error) {
 					setError(err.message);
 				} else {
 					setError(t('MoviesWatched.errorLoading'));
@@ -53,7 +61,7 @@ export const MoviesWatched = () => {
 		};
 
 		fetchLogs();
-	}, [selectedYear, refreshCounter]);
+	}, [handle, selectedYear, refreshCounter, t]);
 
 	if (isLoading) {
 		return <MoviesWatchedLoading />;
@@ -69,7 +77,6 @@ export const MoviesWatched = () => {
 
 	return (
 		<div className="flex flex-col">
-			{/* Year Filter */}
 			<div className="p-4 border-b border-gray-300 dark:border-gray-700">
 				<div className="flex items-center gap-4">
 					<label className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -91,7 +98,6 @@ export const MoviesWatched = () => {
 				</div>
 			</div>
 
-			{/* Movies List */}
 			<MovieLogList logs={logs} />
 		</div>
 	);

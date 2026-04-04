@@ -1,10 +1,17 @@
 import type { ChangePasswordRequest } from '@/features/profile/models/change-password-request';
 import type { UpdateProfileRequest } from '@/features/profile/models/update-profile-request';
 import { apiClient } from '@/lib/api/client';
+import type { UserProfileResponse } from '../models/user-profile-response';
 import type { UserResponse } from '../models/user-response';
 
 export const getUserInfo = async (): Promise<UserResponse> => {
 	return await apiClient.get('v1/users/info').json();
+};
+
+export const getProfile = async (
+	handle: string
+): Promise<UserProfileResponse> => {
+	return await apiClient.get(`v1/users/${handle}/profile`).json();
 };
 
 export const updateProfile = async (

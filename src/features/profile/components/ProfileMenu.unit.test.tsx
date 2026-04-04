@@ -8,21 +8,6 @@ vi.mock('react-i18next', () => ({
 	}),
 }));
 
-const mockUserInfo = {
-	id: '1',
-	firstName: 'Neo',
-	lastName: 'Anderson',
-	email: 'neo@matrix.com',
-	handle: 'neo',
-	dateOfBirth: '1990-01-01',
-};
-
-vi.mock('@/features/auth/stores', () => ({
-	useAuthStore: (
-		selector: (state: { userInfo: typeof mockUserInfo | null }) => unknown
-	) => selector({ userInfo: mockUserInfo }),
-}));
-
 import { ProfileMenu } from './ProfileMenu';
 
 describe('ProfileMenu', () => {
@@ -30,45 +15,42 @@ describe('ProfileMenu', () => {
 		vi.clearAllMocks();
 	});
 
-	it('renders all profile navigation links for a handle', () => {
+	it('renders overview and movies watched for any profile', () => {
 		render(
 			<MemoryRouter initialEntries={['/profile/neo']}>
-				<ProfileMenu handle="neo" />
+				<ProfileMenu handle="neo" isOwnProfile={false} />
 			</MemoryRouter>
 		);
 
 		expect(screen.getByText('ProfileMenu.overview')).toBeInTheDocument();
 		expect(screen.getByText('ProfileMenu.moviesWatched')).toBeInTheDocument();
-		expect(screen.getByText('ProfileMenu.stats')).toBeInTheDocument();
-
-		const links = screen.getAllByRole('link');
-		expect(links[0]).toHaveAttribute('href', '/profile/neo');
-		expect(links[1]).toHaveAttribute('href', '/profile/neo/movie-watched');
-		expect(links[2]).toHaveAttribute('href', '/profile/neo/stats');
-		expect(links[0].className).toContain('bg-primary/10');
-		expect(links[1].className).toContain('text-gray-600');
 	});
 
-	it('shows Settings link when viewing own profile', () => {
+	it('shows Stats and Settings links when viewing own profile', () => {
 		render(
 			<MemoryRouter initialEntries={['/profile/neo']}>
-				<ProfileMenu handle="neo" />
+				<ProfileMenu handle="neo" isOwnProfile={true} />
 			</MemoryRouter>
 		);
 
+		expect(screen.getByText('ProfileMenu.stats')).toBeInTheDocument();
 		expect(screen.getByText('ProfileMenu.settings')).toBeInTheDocument();
+
 		const links = screen.getAllByRole('link');
+		expect(links).toHaveLength(4);
+		expect(links[2]).toHaveAttribute('href', '/profile/neo/stats');
 		expect(links[3]).toHaveAttribute('href', '/profile/neo/settings');
 	});
 
-	it('hides Settings link when viewing another user profile', () => {
+	it('hides Stats and Settings links when viewing another user profile', () => {
 		render(
 			<MemoryRouter initialEntries={['/profile/morpheus']}>
-				<ProfileMenu handle="morpheus" />
+				<ProfileMenu handle="morpheus" isOwnProfile={false} />
 			</MemoryRouter>
 		);
 
+		expect(screen.queryByText('ProfileMenu.stats')).not.toBeInTheDocument();
 		expect(screen.queryByText('ProfileMenu.settings')).not.toBeInTheDocument();
-		expect(screen.getAllByRole('link')).toHaveLength(3);
+		expect(screen.getAllByRole('link')).toHaveLength(2);
 	});
 });

@@ -290,6 +290,10 @@
 	},
 	"ApiError": {
 		"invalidCurrentPassword": "Current password is incorrect",
-		"samePassword": "New password must be different from the current password"
+		"samePassword": "New password must be different from the current password",
+		"profileNotPublic": "This profile is not public"
+	},
+	"ProfilePage": {
+		"privateProfile": "This profile is private"
 	}
 }

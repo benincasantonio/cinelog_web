@@ -286,6 +286,10 @@
 	},
 	"ApiError": {
 		"invalidCurrentPassword": "La password attuale non è corretta",
-		"samePassword": "La nuova password deve essere diversa dalla password attuale"
+		"samePassword": "La nuova password deve essere diversa dalla password attuale",
+		"profileNotPublic": "Questo profilo non è pubblico"
+	},
+	"ProfilePage": {
+		"privateProfile": "Questo profilo è privato"
 	}
 }

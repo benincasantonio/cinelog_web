@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { useAuthStore } from '@/features/auth/stores';
 
 interface ProfileMenuItem {
 	label: string;
@@ -18,12 +17,11 @@ interface ProfileMenuItem {
 
 interface ProfileMenuProps {
 	handle: string;
+	isOwnProfile: boolean;
 }
 
-export const ProfileMenu = ({ handle }: ProfileMenuProps) => {
+export const ProfileMenu = ({ handle, isOwnProfile }: ProfileMenuProps) => {
 	const { t } = useTranslation();
-	const userInfo = useAuthStore((state) => state.userInfo);
-	const isOwnProfile = userInfo?.handle === handle;
 
 	const menuItems: ProfileMenuItem[] = [
 		{
@@ -37,13 +35,13 @@ export const ProfileMenu = ({ handle }: ProfileMenuProps) => {
 			icon: Film,
 			path: `/profile/${handle}/movie-watched`,
 		},
-		{
-			label: t('ProfileMenu.stats'),
-			icon: BarChart3,
-			path: `/profile/${handle}/stats`,
-		},
 		...(isOwnProfile
 			? [
+					{
+						label: t('ProfileMenu.stats'),
+						icon: BarChart3,
+						path: `/profile/${handle}/stats`,
+					},
 					{
 						label: t('ProfileMenu.settings'),
 						icon: Settings,
