@@ -262,6 +262,11 @@
 		"dateOfBirth": "Date of Birth",
 		"bio": "Bio",
 		"bioPlaceholder": "Tell us about yourself",
+		"profileVisibility": {
+			"label": "Profile Visibility",
+			"public": "Public",
+			"private": "Private"
+		},
 		"submit": "Save Changes",
 		"submitting": "Saving...",
 		"success": "Profile updated successfully",

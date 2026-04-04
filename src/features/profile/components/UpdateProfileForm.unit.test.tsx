@@ -35,6 +35,7 @@ const mockUserInfo = {
 	handle: 'janedoe',
 	dateOfBirth: '1990-01-15',
 	bio: 'My bio',
+	profileVisibility: 'private' as const,
 };
 
 const mockUpdateUserInfo = vi.fn();
@@ -45,6 +46,29 @@ vi.mock('@/features/auth/stores', () => ({
 			updateUserInfo: typeof mockUpdateUserInfo;
 		}) => unknown
 	) => selector({ userInfo: mockUserInfo, updateUserInfo: mockUpdateUserInfo }),
+}));
+
+vi.mock('./ProfileVisibilitySelect', () => ({
+	ProfileVisibilitySelect: ({
+		value,
+		onChange,
+	}: {
+		value: string;
+		onChange: (value: string) => void;
+	}) => (
+		<div data-testid="profile-visibility-select" data-value={value}>
+			<button
+				type="button"
+				data-testid="visibility-public"
+				onClick={() => onChange('public')}
+			/>
+			<button
+				type="button"
+				data-testid="visibility-private"
+				onClick={() => onChange('private')}
+			/>
+		</div>
+	),
 }));
 
 import { UpdateProfileForm } from './UpdateProfileForm';
@@ -333,6 +357,84 @@ describe('UpdateProfileForm', () => {
 					message: 'UpdateProfileForm.error',
 				});
 			});
+		});
+	});
+
+	describe('profile visibility', () => {
+		it('should render the profile visibility select with current value', () => {
+			render(<UpdateProfileForm />);
+
+			expect(screen.getByTestId('profile-visibility-select')).toHaveAttribute(
+				'data-value',
+				'private'
+			);
+		});
+
+		it('should send profileVisibility in payload when changed', async () => {
+			const updatedUser = {
+				...mockUserInfo,
+				profileVisibility: 'public' as const,
+			};
+			mockUpdateProfile.mockResolvedValueOnce(updatedUser);
+			render(<UpdateProfileForm />);
+
+			fireEvent.click(screen.getByTestId('visibility-public'));
+			fireEvent.click(
+				screen.getByRole('button', { name: 'UpdateProfileForm.submit' })
+			);
+
+			await waitFor(() => {
+				expect(mockUpdateProfile).toHaveBeenCalledWith({
+					profileVisibility: 'public',
+				});
+			});
+		});
+
+		it('should not send profileVisibility when unchanged', async () => {
+			render(<UpdateProfileForm />);
+
+			fireEvent.click(
+				screen.getByRole('button', { name: 'UpdateProfileForm.submit' })
+			);
+
+			await waitFor(() => {
+				expect(mockUpdateProfile).not.toHaveBeenCalled();
+			});
+		});
+
+		it('should enable submit button when only visibility is changed', () => {
+			render(<UpdateProfileForm />);
+
+			fireEvent.click(screen.getByTestId('visibility-public'));
+
+			expect(
+				screen.getByRole('button', { name: 'UpdateProfileForm.submit' })
+			).toBeEnabled();
+		});
+
+		it('should reset form with updated visibility after save', async () => {
+			const updatedUser = {
+				...mockUserInfo,
+				profileVisibility: 'public' as const,
+			};
+			mockUpdateProfile.mockResolvedValueOnce(updatedUser);
+			render(<UpdateProfileForm />);
+
+			fireEvent.click(screen.getByTestId('visibility-public'));
+			fireEvent.click(
+				screen.getByRole('button', { name: 'UpdateProfileForm.submit' })
+			);
+
+			await waitFor(() => {
+				expect(screen.getByTestId('profile-visibility-select')).toHaveAttribute(
+					'data-value',
+					'public'
+				);
+			});
+
+			expect(
+				screen.getByRole('button', { name: 'UpdateProfileForm.submit' })
+			).toBeDisabled();
 		});
 	});
 });

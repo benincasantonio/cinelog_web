@@ -258,6 +258,11 @@
 		"dateOfBirth": "Date de naissance",
 		"bio": "Biographie",
 		"bioPlaceholder": "Parlez-nous de vous",
+		"profileVisibility": {
+			"label": "Visibilité du profil",
+			"public": "Public",
+			"private": "Privé"
+		},
 		"submit": "Enregistrer les modifications",
 		"submitting": "Enregistrement...",
 		"success": "Profil mis à jour avec succès",

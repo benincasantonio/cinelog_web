@@ -1,12 +1,10 @@
 import type { ProfileVisibility } from '@/lib/models';
 
-export type UserResponse = {
-	id: string;
+export type UserProfileResponse = {
 	firstName: string;
 	lastName: string;
-	email: string;
 	handle: string;
-	dateOfBirth: string;
 	bio?: string;
 	profileVisibility: ProfileVisibility;
+	dateOfBirth: string;
 };

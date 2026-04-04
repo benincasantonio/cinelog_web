@@ -1,3 +1,5 @@
+import type { ProfileVisibility } from '@/lib/models';
+
 export type RegisterRequest = {
 	firstName: string;
 	lastName: string;
@@ -6,4 +8,5 @@ export type RegisterRequest = {
 	handle: string;
 	dateOfBirth: string;
 	bio?: string;
+	profileVisibility: ProfileVisibility;
 };

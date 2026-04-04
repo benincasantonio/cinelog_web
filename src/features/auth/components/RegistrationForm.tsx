@@ -75,6 +75,7 @@ export const RegistrationForm = () => {
 				handle: data.handle,
 				dateOfBirth: data.dateOfBirth?.toISOString() ?? '',
 				bio: data.bio,
+				profileVisibility: 'private',
 			});
 
 			navigate('/login');

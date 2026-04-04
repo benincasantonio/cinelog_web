@@ -15,8 +15,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth/stores';
+import type { UpdateProfileRequest } from '@/features/profile/models';
+import type { ProfileVisibility } from '@/lib/models';
 import { type UpdateProfileSchema, updateProfileSchema } from '../schemas';
 import { useUserStore } from '../stores';
+import { ProfileVisibilitySelect } from './ProfileVisibilitySelect';
 
 export const UpdateProfileForm = () => {
 	const { t } = useTranslation();
@@ -43,6 +46,7 @@ export const UpdateProfileForm = () => {
 			lastName: userInfo?.lastName ?? '',
 			bio: userInfo?.bio ?? '',
 			dateOfBirth: userInfo?.dateOfBirth ?? '',
+			profileVisibility: userInfo?.profileVisibility ?? 'private',
 		},
 		mode: 'onBlur',
 	});
@@ -52,11 +56,11 @@ export const UpdateProfileForm = () => {
 	const handleSubmit = async (data: UpdateProfileSchema) => {
 		setLoading(true);
 
-		const payload: Partial<UpdateProfileSchema> = {};
+		const payload: Record<string, unknown> = {};
 		for (const key of Object.keys(data) as (keyof UpdateProfileSchema)[]) {
-			const newValue = data[key] ?? '';
-			const currentValue = userInfo?.[key] ?? '';
-			if (newValue !== currentValue) {
+			const newValue = data[key];
+			const currentValue = userInfo?.[key];
+			if (newValue !== undefined && newValue !== currentValue) {
 				payload[key] = newValue;
 			}
 		}
@@ -67,13 +71,14 @@ export const UpdateProfileForm = () => {
 		}
 
 		try {
-			const updatedUser = await updateProfile(payload);
+			const updatedUser = await updateProfile(payload as UpdateProfileRequest);
 			updateUserInfo(updatedUser);
 			form.reset({
 				firstName: updatedUser.firstName ?? '',
 				lastName: updatedUser.lastName ?? '',
 				bio: updatedUser.bio ?? '',
 				dateOfBirth: updatedUser.dateOfBirth ?? '',
+				profileVisibility: updatedUser.profileVisibility,
 			});
 			notify({
 				variant: 'success',
@@ -171,6 +176,23 @@ export const UpdateProfileForm = () => {
 									placeholder={t('UpdateProfileForm.bioPlaceholder')}
 								/>
 							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="profileVisibility"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>
+								{t('UpdateProfileForm.profileVisibility.label')}
+							</FormLabel>
+							<ProfileVisibilitySelect
+								value={field.value ?? 'private'}
+								onChange={(value) => field.onChange(value as ProfileVisibility)}
+							/>
 							<FormMessage />
 						</FormItem>
 					)}
