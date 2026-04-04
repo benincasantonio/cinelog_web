@@ -287,6 +287,11 @@
 	"ProfilePage": {
 		"privateProfile": "Ce profil est privé"
 	},
+	"ProfileNotFoundPage": {
+		"title": "Utilisateur introuvable",
+		"description": "L'utilisateur que vous recherchez n'existe pas.",
+		"goHome": "Retour à l'accueil"
+	},
 	"ProfileVisibilitySelect": {
 		"label": "Visibilité du profil",
 		"public": "Public",

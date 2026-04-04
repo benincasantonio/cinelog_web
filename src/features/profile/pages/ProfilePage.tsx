@@ -3,7 +3,9 @@ import { useParams } from 'react-router-dom';
 import type { UserProfileResponse } from '@/features/auth/models/user-profile-response';
 import { getProfile } from '@/features/auth/repositories/user-repository';
 import { useAuthStore } from '@/features/auth/stores';
+import { extractApiError } from '@/lib/api/api-error';
 import { Profile, ProfileLoading } from '../components';
+import ProfileNotFoundPage from './ProfileNotFoundPage';
 
 const ProfilePage = () => {
 	const { handle } = useParams<{ handle: string }>();
@@ -12,6 +14,7 @@ const ProfilePage = () => {
 		null
 	);
 	const [isProfileLoading, setIsProfileLoading] = useState(false);
+	const [notFound, setNotFound] = useState(false);
 
 	const isOwnProfile = userInfo?.handle === handle;
 
@@ -19,9 +22,17 @@ const ProfilePage = () => {
 		if (!handle || isOwnProfile) return;
 
 		setIsProfileLoading(true);
+		setNotFound(false);
 		getProfile(handle)
 			.then(setProfileData)
-			.catch(() => setProfileData(null))
+			.catch(async (err) => {
+				const apiError = await extractApiError(err);
+				if (apiError?.error_code_name === 'USER_NOT_FOUND') {
+					setNotFound(true);
+				} else {
+					setProfileData(null);
+				}
+			})
 			.finally(() => setIsProfileLoading(false));
 	}, [handle, isOwnProfile]);
 
@@ -31,6 +42,10 @@ const ProfilePage = () => {
 
 	if (!handle) {
 		return null;
+	}
+
+	if (notFound) {
+		return <ProfileNotFoundPage />;
 	}
 
 	if (isOwnProfile) {

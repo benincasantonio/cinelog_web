@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockUseAuthStore = vi.fn();
 const mockGetProfile = vi.fn();
+const mockExtractApiError = vi.fn();
 
 vi.mock('@/features/auth/stores', () => ({
 	useAuthStore: () => mockUseAuthStore(),
@@ -11,6 +12,10 @@ vi.mock('@/features/auth/stores', () => ({
 
 vi.mock('@/features/auth/repositories/user-repository', () => ({
 	getProfile: (...args: unknown[]) => mockGetProfile(...args),
+}));
+
+vi.mock('@/lib/api/api-error', () => ({
+	extractApiError: (...args: unknown[]) => mockExtractApiError(...args),
 }));
 
 vi.mock('../components', () => ({
@@ -150,12 +155,13 @@ describe('ProfilePage', () => {
 		);
 	});
 
-	it('renders nothing when profile fetch fails', async () => {
+	it('renders nothing when profile fetch fails with non-USER_NOT_FOUND error', async () => {
 		mockUseAuthStore.mockReturnValue({
 			userInfo: ownUserInfo,
 			isUserInfoLoading: false,
 		});
-		mockGetProfile.mockRejectedValueOnce(new Error('Not found'));
+		mockGetProfile.mockRejectedValueOnce(new Error('Server error'));
+		mockExtractApiError.mockResolvedValueOnce(null);
 
 		renderWithRouter('unknown');
 
@@ -163,5 +169,54 @@ describe('ProfilePage', () => {
 
 		expect(screen.queryByTestId('profile')).not.toBeInTheDocument();
 		expect(screen.queryByTestId('profile-loading')).not.toBeInTheDocument();
+		expect(
+			screen.queryByText('ProfileNotFoundPage.title')
+		).not.toBeInTheDocument();
+	});
+
+	it('renders ProfileNotFoundPage when API returns USER_NOT_FOUND', async () => {
+		mockUseAuthStore.mockReturnValue({
+			userInfo: ownUserInfo,
+			isUserInfoLoading: false,
+		});
+		mockGetProfile.mockRejectedValueOnce(new Error('Not found'));
+		mockExtractApiError.mockResolvedValueOnce({
+			error_code_name: 'USER_NOT_FOUND',
+			error_code: 404,
+			error_message: 'User not found',
+			error_description: 'User not found',
+		});
+
+		renderWithRouter('unknown');
+
+		await waitFor(() =>
+			expect(screen.getByText('ProfileNotFoundPage.title')).toBeInTheDocument()
+		);
+
+		expect(screen.queryByTestId('profile')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('profile-loading')).not.toBeInTheDocument();
+	});
+
+	it('renders nothing when API returns a different error code', async () => {
+		mockUseAuthStore.mockReturnValue({
+			userInfo: ownUserInfo,
+			isUserInfoLoading: false,
+		});
+		mockGetProfile.mockRejectedValueOnce(new Error('Forbidden'));
+		mockExtractApiError.mockResolvedValueOnce({
+			error_code_name: 'SOME_OTHER_ERROR',
+			error_code: 500,
+			error_message: 'Internal error',
+			error_description: 'Internal error',
+		});
+
+		renderWithRouter('unknown');
+
+		await waitFor(() => expect(mockGetProfile).toHaveBeenCalledWith('unknown'));
+
+		expect(screen.queryByTestId('profile')).not.toBeInTheDocument();
+		expect(
+			screen.queryByText('ProfileNotFoundPage.title')
+		).not.toBeInTheDocument();
 	});
 });
