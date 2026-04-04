@@ -255,11 +255,27 @@ describe('MovieLogItem', () => {
 		});
 	});
 
+	describe('Dropdown Menu Visibility', () => {
+		it('should render dropdown menu when isDropdownMenuVisible is true', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
+
+			expect(screen.getByTestId('dropdown-trigger')).toBeInTheDocument();
+		});
+
+		it('should not render dropdown menu when isDropdownMenuVisible is false', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} isDropdownMenuVisible={false} />);
+
+			expect(screen.queryByTestId('dropdown-trigger')).not.toBeInTheDocument();
+		});
+	});
+
 	describe('Edit Movie Log', () => {
 		it('should call open with movieToEdit when edit menu item is clicked', async () => {
 			const user = userEvent.setup();
 			const log = createMockLog();
-			render(<MovieLogItem log={log} />);
+			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
 
 			const editButton = screen.getByTestId('dropdown-item');
 			await user.click(editButton);

@@ -24,6 +24,33 @@ vi.mock('../stores', () => ({
 	useAuthStore: () => ({ register: mockRegister }),
 }));
 
+vi.mock('@/features/profile/components/ProfileVisibilitySelect', () => ({
+	ProfileVisibilitySelect: ({
+		value,
+		onChange,
+	}: {
+		value: string;
+		onChange: (value: string) => void;
+	}) => (
+		<div data-testid="profile-visibility-select" data-value={value}>
+			<button
+				type="button"
+				data-testid="select-public"
+				onClick={() => onChange('public')}
+			>
+				public
+			</button>
+			<button
+				type="button"
+				data-testid="select-private"
+				onClick={() => onChange('private')}
+			>
+				private
+			</button>
+		</div>
+	),
+}));
+
 const { shouldBypassValidation } = vi.hoisted(() => ({
 	shouldBypassValidation: { value: false },
 }));
@@ -113,6 +140,9 @@ describe('RegistrationForm', () => {
 			expect(
 				screen.getByPlaceholderText('RegistrationForm.bioPlaceholder')
 			).toBeInTheDocument();
+			expect(
+				screen.getByText('ProfileVisibilitySelect.label')
+			).toBeInTheDocument();
 		});
 
 		it('should render the submit button', () => {
@@ -178,6 +208,7 @@ describe('RegistrationForm', () => {
 						email: 'john@example.com',
 						password: 'password123',
 						handle: 'johndoe',
+						profileVisibility: 'private',
 					})
 				);
 			});
@@ -292,6 +323,36 @@ describe('RegistrationForm', () => {
 				expect(screen.getByText('fail')).toBeInTheDocument();
 			});
 			expect(mockNavigate).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('profile visibility', () => {
+		it('should default to private', () => {
+			render(<RegistrationForm />);
+
+			expect(screen.getByTestId('profile-visibility-select')).toHaveAttribute(
+				'data-value',
+				'private'
+			);
+		});
+
+		it('should send public profileVisibility when changed to public', async () => {
+			mockRegister.mockResolvedValueOnce(undefined);
+			render(<RegistrationForm />);
+
+			fillForm();
+			fireEvent.click(screen.getByTestId('select-public'));
+			fireEvent.click(
+				screen.getByRole('button', { name: 'RegistrationForm.submit' })
+			);
+
+			await waitFor(() => {
+				expect(mockRegister).toHaveBeenCalledWith(
+					expect.objectContaining({
+						profileVisibility: 'public',
+					})
+				);
+			});
 		});
 	});
 });

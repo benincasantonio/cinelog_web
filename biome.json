@@ -176,7 +176,9 @@
 						"noCommonJs": "error",
 						"noNamespace": "error",
 						"useArrayLiterals": "error",
-						"useAsConstAssertion": "error"
+						"useAsConstAssertion": "error",
+						"useImportType": "error",
+						"useExportType": "error"
 					},
 					"suspicious": {
 						"noExplicitAny": "error",

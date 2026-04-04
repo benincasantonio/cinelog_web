@@ -4,9 +4,13 @@ import { MovieLogItem } from './MovieLogItem';
 
 interface MovieLogListProps {
 	logs: LogListItem[];
+	isDropdownMenuVisible?: boolean;
 }
 
-export const MovieLogList = ({ logs }: MovieLogListProps) => {
+export const MovieLogList = ({
+	logs,
+	isDropdownMenuVisible,
+}: MovieLogListProps) => {
 	const { t } = useTranslation();
 
 	if (logs.length === 0) {
@@ -23,7 +27,11 @@ export const MovieLogList = ({ logs }: MovieLogListProps) => {
 				{t('MovieLogList.watchedMovie', { count: logs.length })}
 			</h3>
 			{logs.map((log) => (
-				<MovieLogItem key={log.id} log={log} />
+				<MovieLogItem
+					key={log.id}
+					log={log}
+					isDropdownMenuVisible={isDropdownMenuVisible}
+				/>
 			))}
 		</div>
 	);
