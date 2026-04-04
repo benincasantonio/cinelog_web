@@ -1,9 +1,9 @@
 import { User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { UserResponse } from '@/features/auth/models/user-response';
+import type { UserProfileResponse } from '@/features/auth/models/user-profile-response';
 
 interface ProfileHeaderProps {
-	userInfo: UserResponse | null;
+	userInfo: UserProfileResponse | null;
 }
 
 export const ProfileHeader = ({ userInfo }: ProfileHeaderProps) => {

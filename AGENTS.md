@@ -94,3 +94,9 @@ All work must be tied to a GitHub issue. Follow this workflow:
 ## Configuration & Secrets
 - Copy `/.env.example` to `/.env` and set required `VITE_*` values.
 - Do not commit secrets; `.env*` files are ignored by Git.
+
+## Programming Rules
+
+Detailed conventions live in `docs/programming-rules/`:
+
+- [Models](docs/programming-rules/models.md) — conventions for defining types, value enums, and barrel exports

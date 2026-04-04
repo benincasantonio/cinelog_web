@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PROFILE_VISIBILITY_VALUES } from '@/lib/models';
 
 export const updateProfileSchema = (messages: {
 	firstNameRequired: string;
@@ -61,6 +62,7 @@ export const updateProfileSchema = (messages: {
 						});
 					}
 				}),
+			profileVisibility: z.enum(PROFILE_VISIBILITY_VALUES).optional(),
 		})
 		.strict();
 
