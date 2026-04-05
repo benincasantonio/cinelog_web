@@ -19,7 +19,7 @@ const ProfilePage = () => {
 	const isOwnProfile = userInfo?.handle === handle;
 
 	useEffect(() => {
-		if (!handle || isOwnProfile) return;
+		if (!handle || isOwnProfile || isUserInfoLoading) return;
 
 		setIsProfileLoading(true);
 		setNotFound(false);
@@ -34,7 +34,7 @@ const ProfilePage = () => {
 				}
 			})
 			.finally(() => setIsProfileLoading(false));
-	}, [handle, isOwnProfile]);
+	}, [handle, isOwnProfile, isUserInfoLoading]);
 
 	if (isUserInfoLoading || isProfileLoading) {
 		return <ProfileLoading />;
