@@ -25,12 +25,14 @@ export type CreateFooRequest = {
 
 ## Barrel Exports
 
-Each `models/` directory must have an `index.ts` that re-exports everything:
+Each `models/` directory must have an `index.ts` that re-exports all models explicitly:
 
 - Use `export type { X }` for type-only exports.
-- Use `export *` for files that also export runtime values (const arrays, objects).
+- Use named exports `export { X }` for runtime values (const arrays, objects).
+- Do **not** use `export *` — keep exports explicit so unused values are not accidentally exposed.
 
 ```ts
 export type { CreateFooRequest } from './create-foo-request';
-export * from './foo';
+export type { Foo } from './foo';
+export { FOO_VALUES } from './foo';
 ```
