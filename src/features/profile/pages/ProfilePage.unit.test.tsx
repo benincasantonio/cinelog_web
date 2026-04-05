@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import ProfilePage from './ProfilePage';
 
 const mockUseAuthStore = vi.fn();
 const mockGetProfile = vi.fn();
@@ -35,8 +36,6 @@ vi.mock('../components', () => ({
 	ProfileLoading: () => <div data-testid="profile-loading">Loading</div>,
 }));
 
-import ProfilePage from './ProfilePage';
-
 function renderWithRouter(handle: string) {
 	return render(
 		<MemoryRouter initialEntries={[`/profile/${handle}`]}>
@@ -58,7 +57,7 @@ describe('ProfilePage', () => {
 	};
 
 	beforeEach(() => {
-		vi.clearAllMocks();
+		vi.resetAllMocks();
 	});
 
 	it('renders ProfileLoading when user info is loading', async () => {
@@ -76,13 +75,15 @@ describe('ProfilePage', () => {
 		expect(screen.queryByTestId('profile')).not.toBeInTheDocument();
 	});
 
-	it('renders own profile using auth store data', () => {
+	it('renders own profile using auth store data', async () => {
 		mockUseAuthStore.mockReturnValue({
 			userInfo: ownUserInfo,
 			isUserInfoLoading: false,
 		});
 
-		renderWithRouter('neo');
+		await act(() => {
+			renderWithRouter('neo');
+		});
 
 		expect(screen.getByTestId('profile')).toBeInTheDocument();
 		expect(screen.getByTestId('profile')).toHaveTextContent(
@@ -99,7 +100,7 @@ describe('ProfilePage', () => {
 			firstName: 'Morpheus',
 			lastName: 'Leader',
 			handle: 'morpheus',
-			dateOfBirth: '1985-05-05',
+			dateOfBirth: '',
 			profileVisibility: 'public',
 		};
 
