@@ -56,12 +56,12 @@ export const UpdateProfileForm = () => {
 	const handleSubmit = async (data: UpdateProfileSchema) => {
 		setLoading(true);
 
-		const payload: Record<string, unknown> = {};
+		const payload: Partial<UpdateProfileRequest> = {};
 		for (const key of Object.keys(data) as (keyof UpdateProfileSchema)[]) {
 			const newValue = data[key];
 			const currentValue = userInfo?.[key];
 			if (newValue !== undefined && newValue !== currentValue) {
-				payload[key] = newValue;
+				payload[key as keyof UpdateProfileRequest] = newValue as never;
 			}
 		}
 
