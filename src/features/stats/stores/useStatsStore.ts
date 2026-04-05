@@ -15,7 +15,7 @@ interface StatsStore {
 	appliedFilters: GetStatsParams | null;
 	canApplyFilters(): boolean;
 	isAllTime(): boolean;
-	activePreset(): StatsFilterPreset;
+	activePreset(): StatsFilterPreset | 'custom';
 	setAllTime(value: boolean): void;
 	setYearFrom: (yearFrom: number | null) => void;
 	setYearTo: (yearTo: number | null) => void;
@@ -57,7 +57,7 @@ export const useStatsStore = create<StatsStore>((set, get) => ({
 		return !filters?.yearFrom && !filters?.yearTo;
 	},
 
-	activePreset(): StatsFilterPreset {
+	activePreset(): StatsFilterPreset | 'custom' {
 		const { filters } = get();
 		const preset = STATS_FILTER_PRESETS.find(
 			(p) => p.from === filters?.yearFrom && p.to === filters?.yearTo

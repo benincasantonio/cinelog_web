@@ -8,7 +8,7 @@ vi.mock('../repositories', () => ({
 	updateLog: vi.fn(),
 }));
 
-import { LogCreateResponse } from '../models';
+import type { LogCreateResponse } from '../models';
 import { createLog, updateLog } from '../repositories';
 
 const mockCreateLog = vi.mocked(createLog);

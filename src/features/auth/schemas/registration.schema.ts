@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PROFILE_VISIBILITY_VALUES } from '@/lib/models';
 
 export const registrationSchema = z
 	.object({
@@ -11,6 +12,7 @@ export const registrationSchema = z
 			message: 'Date of birth must be in the past',
 		}),
 		bio: z.string().optional(),
+		profileVisibility: z.enum(PROFILE_VISIBILITY_VALUES),
 	})
 	.strict();
 

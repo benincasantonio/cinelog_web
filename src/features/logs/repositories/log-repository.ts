@@ -26,6 +26,7 @@ export const createLog = async (
 };
 
 export const getLogs = async (
+	handle: string,
 	params: GetLogsParams = {}
 ): Promise<LogListResponse> => {
 	const searchParams: Record<string, string> = {};
@@ -37,7 +38,7 @@ export const getLogs = async (
 	if (params.dateWatchedTo) searchParams.dateWatchedTo = params.dateWatchedTo;
 
 	return apiClient
-		.get('v1/logs/', {
+		.get(`v1/logs/${handle}`, {
 			searchParams,
 		})
 		.json();

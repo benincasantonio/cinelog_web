@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { HTTPError } from 'ky';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockGetLogs = vi.fn();
@@ -72,7 +73,23 @@ vi.mock('./MoviesWatchedLoading', () => ({
 
 import { MoviesWatched } from './MoviesWatched';
 
+function createHttpError(errorCodeName: string) {
+	const response = new Response(
+		JSON.stringify({
+			error_code_name: errorCodeName,
+			error_code: 403,
+			error_message: 'Forbidden',
+			error_description: 'Profile is not public',
+		}),
+		{ status: 403 }
+	);
+	const request = new Request('http://localhost/v1/logs/test');
+	return new HTTPError(response, request, {} as never);
+}
+
 describe('MoviesWatched', () => {
+	const handle = 'neo';
+
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockUseMovieLogDialogStore.mockReturnValue({ triggerCount: 0 });
@@ -82,14 +99,14 @@ describe('MoviesWatched', () => {
 		const currentYear = new Date().getFullYear();
 		mockGetLogs.mockResolvedValueOnce({ logs: [{ id: '1' }] });
 
-		render(<MoviesWatched />);
+		render(<MoviesWatched handle={handle} />);
 
 		expect(screen.getByTestId('movies-watched-loading')).toBeInTheDocument();
 
 		await waitFor(() =>
 			expect(screen.getByTestId('movie-log-list')).toHaveTextContent('1')
 		);
-		expect(mockGetLogs).toHaveBeenCalledWith({
+		expect(mockGetLogs).toHaveBeenCalledWith(handle, {
 			dateWatchedFrom: `${currentYear}-01-01`,
 			dateWatchedTo: `${currentYear}-12-31`,
 		});
@@ -97,24 +114,22 @@ describe('MoviesWatched', () => {
 
 	it('fetches all years when year filter changes to all', async () => {
 		const user = userEvent.setup();
-		mockGetLogs
-			.mockResolvedValueOnce({ logs: [] })
-			.mockResolvedValueOnce({ logs: [{ id: '2' }] });
+		mockGetLogs.mockResolvedValue({ logs: [] });
 
-		render(<MoviesWatched />);
+		render(<MoviesWatched handle={handle} />);
 		await waitFor(() =>
 			expect(screen.getByTestId('movie-log-list')).toBeInTheDocument()
 		);
 
 		await user.click(screen.getByTestId('select-all'));
 
-		await waitFor(() => expect(mockGetLogs).toHaveBeenLastCalledWith({}));
+		await waitFor(() => expect(mockGetLogs).toHaveBeenCalledWith(handle, {}));
 	});
 
 	it('renders fallback translated error for unknown thrown values', async () => {
 		mockGetLogs.mockRejectedValueOnce('unknown-error');
 
-		render(<MoviesWatched />);
+		render(<MoviesWatched handle={handle} />);
 
 		await waitFor(() =>
 			expect(screen.getByText('MoviesWatched.errorLoading')).toBeInTheDocument()
@@ -124,10 +139,20 @@ describe('MoviesWatched', () => {
 	it('renders Error message when request throws Error instance', async () => {
 		mockGetLogs.mockRejectedValueOnce(new Error('network-failed'));
 
-		render(<MoviesWatched />);
+		render(<MoviesWatched handle={handle} />);
 
 		await waitFor(() =>
 			expect(screen.getByText('network-failed')).toBeInTheDocument()
+		);
+	});
+
+	it('renders profile not public error when API returns PROFILE_NOT_PUBLIC', async () => {
+		mockGetLogs.mockRejectedValueOnce(createHttpError('PROFILE_NOT_PUBLIC'));
+
+		render(<MoviesWatched handle={handle} />);
+
+		await waitFor(() =>
+			expect(screen.getByText('ApiError.profileNotPublic')).toBeInTheDocument()
 		);
 	});
 });

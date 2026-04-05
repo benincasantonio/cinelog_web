@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-i18next', () => ({
@@ -8,10 +9,25 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('@/features/movie/components/MoviesWatched', () => ({
-	MoviesWatched: () => <div data-testid="movies-watched">Movies Watched</div>,
+	MoviesWatched: ({ handle }: { handle: string }) => (
+		<div data-testid="movies-watched">{handle}</div>
+	),
 }));
 
 import ProfileMoviesWatchedPage from './ProfileMoviesWatchedPage';
+
+function renderWithRouter(handle: string) {
+	return render(
+		<MemoryRouter initialEntries={[`/profile/${handle}/movie-watched`]}>
+			<Routes>
+				<Route
+					path="/profile/:handle/movie-watched"
+					element={<ProfileMoviesWatchedPage />}
+				/>
+			</Routes>
+		</MemoryRouter>
+	);
+}
 
 describe('ProfileMoviesWatchedPage', () => {
 	beforeEach(() => {
@@ -19,7 +35,7 @@ describe('ProfileMoviesWatchedPage', () => {
 	});
 
 	it('should render the page title', () => {
-		render(<ProfileMoviesWatchedPage />);
+		renderWithRouter('neo');
 
 		const titleElement = document.querySelector('title');
 		expect(titleElement).toBeInTheDocument();
@@ -28,9 +44,10 @@ describe('ProfileMoviesWatchedPage', () => {
 		);
 	});
 
-	it('should render the MoviesWatched component', () => {
-		render(<ProfileMoviesWatchedPage />);
+	it('should render the MoviesWatched component with handle', () => {
+		renderWithRouter('neo');
 
 		expect(screen.getByTestId('movies-watched')).toBeInTheDocument();
+		expect(screen.getByTestId('movies-watched')).toHaveTextContent('neo');
 	});
 });
