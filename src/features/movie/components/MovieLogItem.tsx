@@ -13,9 +13,13 @@ import { MovieVote } from './MovieVote';
 
 interface MovieLogItemProps {
 	log: LogListItem;
+	isDropdownMenuVisible?: boolean;
 }
 
-export const MovieLogItem = ({ log }: MovieLogItemProps) => {
+export const MovieLogItem = ({
+	log,
+	isDropdownMenuVisible,
+}: MovieLogItemProps) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 
@@ -84,23 +88,26 @@ export const MovieLogItem = ({ log }: MovieLogItemProps) => {
 				</div>
 			</div>
 
-			<div className="ml-auto">
-				<DropdownMenu>
-					<DropdownMenuTrigger className="outline-none">
-						<MoreVertical className="h-5 w-5" />
-					</DropdownMenuTrigger>
-					<DropdownMenuContent>
-						<DropdownMenuItem onClick={editMovieLog}>
-							{t('MovieLogItem.edit')}
-						</DropdownMenuItem>
-						{/* TODO: Implement delete functionality - see GitHub issue */}
-						{/* <DropdownMenuItem variant="destructive">
+			{isDropdownMenuVisible && (
+				<div className="ml-auto">
+					<DropdownMenu>
+						<DropdownMenuTrigger className="outline-none">
+							<MoreVertical className="h-5 w-5" />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuItem onClick={editMovieLog}>
+								{t('MovieLogItem.edit')}
+							</DropdownMenuItem>
+
+							{/* TODO: Implement delete functionality - see GitHub issue */}
+							{/* <DropdownMenuItem variant="destructive">
 							{' '}
 							{t('MovieLogItem.delete')}
 						</DropdownMenuItem> */}
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</div>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			)}
 		</div>
 	);
 };

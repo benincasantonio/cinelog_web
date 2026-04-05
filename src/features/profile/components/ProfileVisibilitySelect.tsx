@@ -23,7 +23,7 @@ export const ProfileVisibilitySelect = ({
 
 	return (
 		<Select value={value} onValueChange={onChange}>
-			<SelectTrigger>
+			<SelectTrigger className="w-full">
 				<SelectValue />
 			</SelectTrigger>
 			<SelectContent>

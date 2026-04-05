@@ -16,9 +16,13 @@ import { MoviesWatchedLoading } from './MoviesWatchedLoading';
 
 interface MoviesWatchedProps {
 	handle: string;
+	isDropdownMenuVisible?: boolean;
 }
 
-export const MoviesWatched = ({ handle }: MoviesWatchedProps) => {
+export const MoviesWatched = ({
+	handle,
+	isDropdownMenuVisible,
+}: MoviesWatchedProps) => {
 	const { t } = useTranslation();
 	const [logs, setLogs] = useState<LogListItem[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +102,7 @@ export const MoviesWatched = ({ handle }: MoviesWatchedProps) => {
 				</div>
 			</div>
 
-			<MovieLogList logs={logs} />
+			<MovieLogList logs={logs} isDropdownMenuVisible={isDropdownMenuVisible} />
 		</div>
 	);
 };
