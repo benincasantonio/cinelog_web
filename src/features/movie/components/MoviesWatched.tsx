@@ -5,14 +5,17 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@antoniobenincasa/ui';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { LogListItem } from '@/features/logs/models';
 import { type GetLogsParams, getLogs } from '@/features/logs/repositories';
 import { useMovieLogDialogStore } from '@/features/logs/stores';
+import type { MovieRatingResponse } from '@/features/movie/models';
+import { useMovieRatingStore } from '@/features/movie/stores/useMovieRatingStore';
 import { extractApiError } from '@/lib/api/api-error';
 import { MovieLogList } from './MovieLogList';
 import { MoviesWatchedLoading } from './MoviesWatchedLoading';
+import { RateMovieModal } from './RateMovieModal';
 
 interface MoviesWatchedProps {
 	handle: string;
@@ -30,42 +33,72 @@ export const MoviesWatched = ({
 	const [selectedYear, setSelectedYear] = useState<string>(
 		new Date().getFullYear().toString()
 	);
-	const refreshCounter = useMovieLogDialogStore((state) => state.triggerCount);
+	const movieLogRefreshCounter = useMovieLogDialogStore(
+		(state) => state.triggerCount
+	);
+	const movieRatingRefreshCounter = useMovieRatingStore(
+		(state) => state.triggerCount
+	);
+
+	const handleRatingSuccess = useCallback(
+		(movieRating: MovieRatingResponse) => {
+			setLogs((prev) =>
+				prev.map((log) =>
+					log.tmdbId.toString() === movieRating.tmdbId
+						? { ...log, movieRating: movieRating.rating }
+						: log
+				)
+			);
+		},
+		[]
+	);
 
 	const currentYear = new Date().getFullYear();
 	const years = Array.from({ length: 11 }, (_, i) => currentYear - i);
 
-	useEffect(() => {
-		const fetchLogs = async () => {
-			setIsLoading(true);
-			setError(null);
+	const fetchLogs = useCallback(async () => {
+		setIsLoading(true);
+		setError(null);
 
-			try {
-				const params: GetLogsParams = {};
+		try {
+			const params: GetLogsParams = {};
 
-				if (selectedYear !== 'all') {
-					params.dateWatchedFrom = `${selectedYear}-01-01`;
-					params.dateWatchedTo = `${selectedYear}-12-31`;
-				}
-
-				const response = await getLogs(handle, params);
-				setLogs(response.logs);
-			} catch (err) {
-				const apiError = await extractApiError(err);
-				if (apiError?.error_code_name === 'PROFILE_NOT_PUBLIC') {
-					setError(t('ApiError.profileNotPublic'));
-				} else if (err instanceof Error) {
-					setError(err.message);
-				} else {
-					setError(t('MoviesWatched.errorLoading'));
-				}
-			} finally {
-				setIsLoading(false);
+			if (selectedYear !== 'all') {
+				params.dateWatchedFrom = `${selectedYear}-01-01`;
+				params.dateWatchedTo = `${selectedYear}-12-31`;
 			}
-		};
 
+			const response = await getLogs(handle, params);
+			setLogs(response.logs);
+		} catch (err) {
+			const apiError = await extractApiError(err);
+			if (apiError?.error_code_name === 'PROFILE_NOT_PUBLIC') {
+				setError(t('ApiError.profileNotPublic'));
+			} else if (err instanceof Error) {
+				setError(err.message);
+			} else {
+				setError(t('MoviesWatched.errorLoading'));
+			}
+		} finally {
+			setIsLoading(false);
+		}
+	}, [selectedYear, t]);
+
+	const fetchLogsRef = useRef(fetchLogs);
+	useEffect(() => {
+		fetchLogsRef.current = fetchLogs;
+	}, [fetchLogs]);
+
+	// Initial load and re-fetch when year changes
+	useEffect(() => {
 		fetchLogs();
-	}, [handle, selectedYear, refreshCounter, t]);
+	}, [
+		handle,
+		selectedYear,
+		movieLogRefreshCounter,
+		movieRatingRefreshCounter,
+		t,
+	]);
 
 	if (isLoading) {
 		return <MoviesWatchedLoading />;
@@ -103,6 +136,7 @@ export const MoviesWatched = ({
 			</div>
 
 			<MovieLogList logs={logs} isDropdownMenuVisible={isDropdownMenuVisible} />
+			<RateMovieModal onSuccess={handleRatingSuccess} />
 		</div>
 	);
 };
