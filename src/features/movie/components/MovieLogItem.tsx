@@ -37,7 +37,7 @@ export const MovieLogItem = ({
 	};
 
 	return (
-		<div className="group flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-white/10">
+		<div className="group flex items-center gap-2 md:gap-4 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-white/10 overflow-hidden">
 			<div
 				className="w-15 h-22.5 shrink-0 rounded-lg bg-cover bg-center shadow-md group-hover:shadow-lg transition-shadow"
 				style={{
@@ -65,14 +65,14 @@ export const MovieLogItem = ({
 				>
 					{log.movie?.title || t('MovieLogItem.unknownTitle')}
 				</h4>
-				<div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
+				<div className="flex flex-col items-start md:flex-row md:items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
 					<span>
 						{t('MovieLogItem.watched')}&nbsp;
 						{new Date(log.dateWatched).toLocaleDateString()}
 					</span>
 					{log.watchedWhere && (
 						<>
-							<span className="w-1 h-1 rounded-full bg-gray-600 dark:bg-gray-400"></span>
+							<span className="w-1 h-1 rounded-full hidden md:inline-block bg-gray-600 dark:bg-gray-400"></span>
 							<span className="capitalize">{log.watchedWhere}</span>
 						</>
 					)}
