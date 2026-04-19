@@ -89,4 +89,14 @@ describe('useMovieDetailsStore', () => {
 		);
 		consoleSpy.mockRestore();
 	});
+
+	it('handles movie rating with no content', async () => {
+		mockGetMovieRating.mockResolvedValueOnce(undefined);
+
+		await useMovieDetailsStore.getState().loadMovieRating(10);
+
+		expect(mockGetMovieRating).toHaveBeenCalledWith(10);
+		expect(useMovieDetailsStore.getState().movieRating).toBeUndefined();
+		expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(false);
+	});
 });

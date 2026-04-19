@@ -13,12 +13,13 @@ export const createOrUpdateRating = async (
 };
 
 export const getMovieRating = async (
-	tmdbId: number,
-	userId?: string
-): Promise<MovieRatingResponse> => {
-	return apiClient
-		.get(`v1/movie-ratings/${tmdbId}`, {
-			searchParams: userId ? { user_id: userId } : undefined,
-		})
-		.json();
+	tmdbId: number
+): Promise<MovieRatingResponse | undefined> => {
+	const response = await apiClient.get(`v1/movie-ratings/${tmdbId}`);
+
+	if (response.status === 204) {
+		return undefined;
+	}
+
+	return await response.json();
 };
