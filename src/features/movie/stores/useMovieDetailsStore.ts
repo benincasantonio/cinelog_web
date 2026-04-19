@@ -41,9 +41,15 @@ export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
 			set({ isMovieRatingLoading: true, movieRating: undefined });
 			try {
 				const rating = await getMovieRating(tmdbId);
-				set({ movieRating: rating, isMovieRatingLoading: false });
+
+				if (!rating) {
+					return;
+				}
+
+				set({ movieRating: rating });
 			} catch (error) {
 				console.error('Error loading movie rating:', error);
+			} finally {
 				set({ isMovieRatingLoading: false });
 			}
 		},
