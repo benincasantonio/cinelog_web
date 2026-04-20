@@ -12,6 +12,14 @@ vi.mock('@/features/logs/stores', () => ({
 	}),
 }));
 
+// Mock useMovieRatingStore
+const mockOpenModal = vi.fn();
+vi.mock('@/features/movie/stores/useMovieRatingStore', () => ({
+	useMovieRatingStore: () => ({
+		openModal: mockOpenModal,
+	}),
+}));
+
 // Mock useNavigate from react-router-dom
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -86,6 +94,7 @@ describe('MovieLogItem', () => {
 	beforeEach(() => {
 		mockNavigate.mockClear();
 		mockOpen.mockClear();
+		mockOpenModal.mockClear();
 	});
 
 	describe('T3.1.1: Component Renders Without Crashing', () => {
@@ -277,12 +286,53 @@ describe('MovieLogItem', () => {
 			const log = createMockLog();
 			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
 
-			const editButton = screen.getByTestId('dropdown-item');
+			const editButton = screen.getByText('MovieLogItem.edit');
 			await user.click(editButton);
 
 			expect(mockOpen).toHaveBeenCalledWith({
 				movieToEdit: log,
 			});
+		});
+	});
+
+	describe('Edit Movie Rating', () => {
+		it('should call openModal with tmdbId and rating when edit rating is clicked', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog({ tmdbId: 550, movieRating: 8 });
+			render(<MovieLogItem log={log} />);
+
+			const editRatingButton = screen.getByText('MovieLogItem.editRating');
+			await user.click(editRatingButton);
+
+			expect(mockOpenModal).toHaveBeenCalledWith(
+				'550',
+				expect.objectContaining({ rating: 8 })
+			);
+		});
+
+		it('should show "Vote" label and call openModal without rating when movieRating is null', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog({ tmdbId: 550, movieRating: null });
+			render(<MovieLogItem log={log} />);
+
+			expect(
+				screen.queryByText('MovieLogItem.editRating')
+			).not.toBeInTheDocument();
+
+			const voteButton = screen.getByText('MovieLogItem.vote');
+			await user.click(voteButton);
+
+			expect(mockOpenModal).toHaveBeenCalledWith('550', null);
+		});
+
+		it('should show "Vote" label when movieRating is undefined', () => {
+			const log = createMockLog({ movieRating: undefined });
+			render(<MovieLogItem log={log} />);
+
+			expect(
+				screen.queryByText('MovieLogItem.editRating')
+			).not.toBeInTheDocument();
+			expect(screen.getByText('MovieLogItem.vote')).toBeInTheDocument();
 		});
 	});
 
