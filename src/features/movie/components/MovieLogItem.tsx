@@ -5,10 +5,15 @@ import {
 	DropdownMenuTrigger,
 } from '@antoniobenincasa/ui';
 import { MoreVertical } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { DeleteMovieLogDialog } from '@/features/logs/components';
 import type { LogListItem } from '@/features/logs/models';
-import { useMovieLogDialogStore } from '@/features/logs/stores';
+import {
+	useMovieLogDialogStore,
+	useMovieLogStore,
+} from '@/features/logs/stores';
 import { MovieVote } from './MovieVote';
 
 interface MovieLogItemProps {
@@ -22,8 +27,11 @@ export const MovieLogItem = ({
 }: MovieLogItemProps) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-	const { open } = useMovieLogDialogStore();
+	const { open, triggerUpdate } = useMovieLogDialogStore();
+	const { deleteLog } = useMovieLogStore();
+
 	const handleTitleClick = () => {
 		if (log.tmdbId) {
 			navigate(`/movies/${log.tmdbId}`);
@@ -34,6 +42,16 @@ export const MovieLogItem = ({
 		open({
 			movieToEdit: log,
 		});
+	};
+
+	const handleDelete = async () => {
+		try {
+			await deleteLog(log.id);
+			setIsDeleteDialogOpen(false);
+			triggerUpdate();
+		} catch {
+			// Error is handled by the store
+		}
 	};
 
 	return (
@@ -99,15 +117,22 @@ export const MovieLogItem = ({
 								{t('MovieLogItem.edit')}
 							</DropdownMenuItem>
 
-							{/* TODO: Implement delete functionality - see GitHub issue */}
-							{/* <DropdownMenuItem variant="destructive">
-							{' '}
-							{t('MovieLogItem.delete')}
-						</DropdownMenuItem> */}
+							<DropdownMenuItem
+								variant="destructive"
+								onClick={() => setIsDeleteDialogOpen(true)}
+							>
+								{t('MovieLogItem.delete')}
+							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>
 			)}
+
+			<DeleteMovieLogDialog
+				isOpen={isDeleteDialogOpen}
+				onClose={() => setIsDeleteDialogOpen(false)}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 };

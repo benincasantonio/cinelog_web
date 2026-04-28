@@ -4,12 +4,45 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LogListItem } from '@/features/logs/models';
 import { MovieLogItem } from './MovieLogItem';
 
-// Mock useMovieLogDialogStore
+// Mock useMovieLogDialogStore and useMovieLogStore
 const mockOpen = vi.fn();
+const mockTriggerUpdate = vi.fn();
+const mockDeleteLog = vi.fn();
 vi.mock('@/features/logs/stores', () => ({
 	useMovieLogDialogStore: () => ({
 		open: mockOpen,
+		triggerUpdate: mockTriggerUpdate,
 	}),
+	useMovieLogStore: () => ({
+		deleteLog: mockDeleteLog,
+	}),
+}));
+
+// Mock DeleteMovieLogDialog
+vi.mock('@/features/logs/components', () => ({
+	DeleteMovieLogDialog: ({
+		isOpen,
+		onClose,
+		onConfirm,
+	}: {
+		isOpen: boolean;
+		onClose: () => void;
+		onConfirm: () => Promise<void>;
+	}) => (
+		<div data-testid="delete-dialog">
+			{isOpen && (
+				<div>
+					<span data-testid="dialog-open">open</span>
+					<button data-testid="dialog-confirm" onClick={onConfirm}>
+						Confirm
+					</button>
+					<button data-testid="dialog-cancel" onClick={onClose}>
+						Cancel
+					</button>
+				</div>
+			)}
+		</div>
+	),
 }));
 
 // Mock useNavigate from react-router-dom
@@ -86,6 +119,8 @@ describe('MovieLogItem', () => {
 	beforeEach(() => {
 		mockNavigate.mockClear();
 		mockOpen.mockClear();
+		mockTriggerUpdate.mockClear();
+		mockDeleteLog.mockClear();
 	});
 
 	describe('T3.1.1: Component Renders Without Crashing', () => {
@@ -277,12 +312,75 @@ describe('MovieLogItem', () => {
 			const log = createMockLog();
 			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
 
-			const editButton = screen.getByTestId('dropdown-item');
-			await user.click(editButton);
+			const items = screen.getAllByTestId('dropdown-item');
+			await user.click(items[0]);
 
 			expect(mockOpen).toHaveBeenCalledWith({
 				movieToEdit: log,
 			});
+		});
+	});
+
+	describe('Delete Movie Log', () => {
+		it('should render delete menu item when dropdown is visible', () => {
+			const log = createMockLog();
+			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
+
+			const items = screen.getAllByTestId('dropdown-item');
+			expect(items.length).toBe(2);
+			expect(items[1]).toHaveTextContent('MovieLogItem.delete');
+		});
+
+		it('should open delete confirmation dialog when delete is clicked', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog();
+			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
+
+			const items = screen.getAllByTestId('dropdown-item');
+			await user.click(items[1]);
+
+			expect(screen.getByTestId('dialog-open')).toBeInTheDocument();
+		});
+
+		it('should call deleteLog and triggerUpdate on confirm', async () => {
+			mockDeleteLog.mockResolvedValueOnce(undefined);
+			const user = userEvent.setup();
+			const log = createMockLog();
+			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
+
+			const items = screen.getAllByTestId('dropdown-item');
+			await user.click(items[1]);
+			await user.click(screen.getByTestId('dialog-confirm'));
+
+			expect(mockDeleteLog).toHaveBeenCalledWith(log.id);
+			expect(mockTriggerUpdate).toHaveBeenCalled();
+		});
+
+		it('should not call triggerUpdate when delete fails', async () => {
+			mockDeleteLog.mockRejectedValueOnce(new Error('Delete failed'));
+			const user = userEvent.setup();
+			const log = createMockLog();
+			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
+
+			const items = screen.getAllByTestId('dropdown-item');
+			await user.click(items[1]);
+			await user.click(screen.getByTestId('dialog-confirm'));
+
+			expect(mockDeleteLog).toHaveBeenCalledWith(log.id);
+			expect(mockTriggerUpdate).not.toHaveBeenCalled();
+		});
+
+		it('should close dialog when cancel is clicked', async () => {
+			const user = userEvent.setup();
+			const log = createMockLog();
+			render(<MovieLogItem log={log} isDropdownMenuVisible={true} />);
+
+			const items = screen.getAllByTestId('dropdown-item');
+			await user.click(items[1]);
+			expect(screen.getByTestId('dialog-open')).toBeInTheDocument();
+
+			await user.click(screen.getByTestId('dialog-cancel'));
+			expect(screen.queryByTestId('dialog-open')).not.toBeInTheDocument();
 		});
 	});
 

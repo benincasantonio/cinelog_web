@@ -175,6 +175,12 @@
 		"submittingUpdate": "Aggiornamento Log...",
 		"error": "Si è verificato un errore durante la creazione del log"
 	},
+	"DeleteMovieLogDialog": {
+		"title": "Elimina Log Film",
+		"description": "Sei sicuro di voler eliminare questo log film? Questa azione non può essere annullata.",
+		"cancel": "Annulla",
+		"confirm": "Elimina"
+	},
 	"WatchedWhere": {
 		"cinema": "Cinema",
 		"streaming": "Streaming",

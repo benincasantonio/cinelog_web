@@ -5,13 +5,15 @@ import { useMovieLogStore } from './movieLogStore';
 // Mock the repository functions
 vi.mock('../repositories', () => ({
 	createLog: vi.fn(),
+	deleteLog: vi.fn(),
 	updateLog: vi.fn(),
 }));
 
 import type { LogCreateResponse } from '../models';
-import { createLog, updateLog } from '../repositories';
+import { createLog, deleteLog, updateLog } from '../repositories';
 
 const mockCreateLog = vi.mocked(createLog);
+const mockDeleteLog = vi.mocked(deleteLog);
 const mockUpdateLog = vi.mocked(updateLog);
 
 describe('useMovieLogStore', () => {
@@ -42,6 +44,11 @@ describe('useMovieLogStore', () => {
 		it('should have error as null initially', () => {
 			const { result } = renderHook(() => useMovieLogStore());
 			expect(result.current.error).toBeNull();
+		});
+
+		it('should have isDeleteMovieLogLoading as false initially', () => {
+			const { result } = renderHook(() => useMovieLogStore());
+			expect(result.current.isDeleteMovieLogLoading).toBe(false);
 		});
 	});
 
@@ -212,6 +219,84 @@ describe('useMovieLogStore', () => {
 			});
 
 			expect(result.current.error).toBe('Failed to update movie log');
+		});
+	});
+
+	describe('deleteLog', () => {
+		const logId = 'log-1';
+
+		it('should set isDeleteMovieLogLoading to true while deleting log', async () => {
+			mockDeleteLog.mockImplementation(
+				() => new Promise((resolve) => setTimeout(resolve, 100))
+			);
+
+			const { result } = renderHook(() => useMovieLogStore());
+
+			act(() => {
+				result.current.deleteLog(logId);
+			});
+
+			expect(result.current.isDeleteMovieLogLoading).toBe(true);
+		});
+
+		it('should set isDeleteMovieLogLoading to false after successful delete', async () => {
+			mockDeleteLog.mockResolvedValueOnce(undefined);
+
+			const { result } = renderHook(() => useMovieLogStore());
+
+			await act(async () => {
+				await result.current.deleteLog(logId);
+			});
+
+			expect(result.current.isDeleteMovieLogLoading).toBe(false);
+			expect(result.current.error).toBeNull();
+		});
+
+		it('should set error on failed delete', async () => {
+			const errorMessage = 'Delete failed';
+			mockDeleteLog.mockRejectedValueOnce(new Error(errorMessage));
+
+			const { result } = renderHook(() => useMovieLogStore());
+
+			await act(async () => {
+				try {
+					await result.current.deleteLog(logId);
+				} catch {
+					// Expected to throw
+				}
+			});
+
+			expect(result.current.isDeleteMovieLogLoading).toBe(false);
+			expect(result.current.error).toBe(errorMessage);
+		});
+
+		it('should throw error on failed delete', async () => {
+			const errorMessage = 'Delete failed';
+			mockDeleteLog.mockRejectedValueOnce(new Error(errorMessage));
+
+			const { result } = renderHook(() => useMovieLogStore());
+
+			await expect(
+				act(async () => {
+					await result.current.deleteLog(logId);
+				})
+			).rejects.toThrow(errorMessage);
+		});
+
+		it('should set default error message when error is not an Error instance', async () => {
+			mockDeleteLog.mockRejectedValueOnce('Unknown error');
+
+			const { result } = renderHook(() => useMovieLogStore());
+
+			await act(async () => {
+				try {
+					await result.current.deleteLog(logId);
+				} catch {
+					// Expected to throw
+				}
+			});
+
+			expect(result.current.error).toBe('Failed to delete movie log');
 		});
 	});
 

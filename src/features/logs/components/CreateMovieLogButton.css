@@ -1,0 +1,10 @@
+.create-movie-log-button {
+	display: none;
+	justify-items: center;
+}
+
+@media (min-width: 768px) {
+	.create-movie-log-button {
+		display: inline-flex;
+	}
+}

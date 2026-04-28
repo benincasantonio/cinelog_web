@@ -179,6 +179,12 @@
 		"submittingUpdate": "Updating Log...",
 		"error": "An error occurred while creating the log"
 	},
+	"DeleteMovieLogDialog": {
+		"title": "Delete Movie Log",
+		"description": "Are you sure you want to delete this movie log? This action cannot be undone.",
+		"cancel": "Cancel",
+		"confirm": "Delete"
+	},
 	"WatchedWhere": {
 		"cinema": "Cinema",
 		"streaming": "Streaming",
