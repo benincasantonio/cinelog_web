@@ -5,41 +5,19 @@ import type { LogListItem } from '@/features/logs/models';
 import { TestWrapper } from './MovieLogItem.test-setup';
 import { createMockLog } from './MovieLogItem.test-utils';
 
-// Mock useMovieLogDialogStore
-vi.mock('@/features/logs/stores', () => ({
-	useMovieLogDialogStore: () => ({
-		open: vi.fn(),
-	}),
+// Mock only at the HTTP boundary (repository layer)
+vi.mock('@/features/logs/repositories', () => ({
+	createLog: vi.fn(),
+	deleteLog: vi.fn(),
+	getLogs: vi.fn(),
+	updateLog: vi.fn(),
 }));
 
-// Mock react-i18next
+// Mock react-i18next (requires provider setup otherwise)
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
 		t: (key: string) => key,
 	}),
-}));
-
-// Mock MovieVote component
-vi.mock('./MovieVote', () => ({
-	MovieVote: ({ vote }: { vote: number }) => (
-		<div data-testid="movie-vote">{vote}</div>
-	),
-}));
-
-// Mock DropdownMenu components to prevent multiple button issues
-vi.mock('@antoniobenincasa/ui', () => ({
-	DropdownMenu: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="dropdown-menu">{children}</div>
-	),
-	DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="dropdown-trigger">{children}</div>
-	),
-	DropdownMenuContent: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="dropdown-content">{children}</div>
-	),
-	DropdownMenuItem: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="dropdown-item">{children}</div>
-	),
 }));
 
 describe('MovieLogItem Integration Tests', () => {
@@ -89,7 +67,7 @@ describe('MovieLogItem Integration Tests', () => {
 			// Simulate navigating back to list and clicking another movie
 			const log2 = createMockLog({
 				tmdbId: 278,
-				movie: { ...createMockLog().movie, title: 'Shawshank Redemption' },
+				movie: { ...createMockLog().movie!, title: 'Shawshank Redemption' },
 			});
 			rerender(<TestWrapper log={log2} />);
 
@@ -208,7 +186,7 @@ describe('MovieLogItem Integration Tests', () => {
 		it('should handle re-renders with different log data', () => {
 			const log1 = createMockLog({
 				tmdbId: 550,
-				movie: { ...createMockLog().movie, title: 'Fight Club' },
+				movie: { ...createMockLog().movie!, title: 'Fight Club' },
 			});
 			const { rerender } = render(<TestWrapper log={log1} />);
 
@@ -216,7 +194,7 @@ describe('MovieLogItem Integration Tests', () => {
 
 			const log2 = createMockLog({
 				tmdbId: 278,
-				movie: { ...createMockLog().movie, title: 'Shawshank Redemption' },
+				movie: { ...createMockLog().movie!, title: 'Shawshank Redemption' },
 			});
 			rerender(<TestWrapper log={log2} />);
 
@@ -349,7 +327,7 @@ describe('MovieLogItem Integration Tests', () => {
 
 			it('should handle missing vote average gracefully', () => {
 				const log = createMockLog({
-					movie: { ...createMockLog().movie, voteAverage: undefined },
+					movie: { ...createMockLog().movie!, voteAverage: undefined },
 				});
 				render(<TestWrapper log={log} />);
 
@@ -359,7 +337,7 @@ describe('MovieLogItem Integration Tests', () => {
 
 			it('should display component even with null movie title', () => {
 				const log = createMockLog({
-					movie: { ...createMockLog().movie, title: '' },
+					movie: { ...createMockLog().movie!, title: '' },
 				});
 				render(<TestWrapper log={log} />);
 
@@ -432,7 +410,7 @@ describe('MovieLogItem Integration Tests', () => {
 			it('should handle movie title with special characters', () => {
 				const log = createMockLog({
 					movie: {
-						...createMockLog().movie,
+						...createMockLog().movie!,
 						title: 'O\'Brien\'s "Movie" & Friends',
 					},
 				});
@@ -444,7 +422,7 @@ describe('MovieLogItem Integration Tests', () => {
 			it('should handle very long movie title', () => {
 				const longTitle = 'A'.repeat(500);
 				const log = createMockLog({
-					movie: { ...createMockLog().movie, title: longTitle },
+					movie: { ...createMockLog().movie!, title: longTitle },
 				});
 				render(<TestWrapper log={log} />);
 

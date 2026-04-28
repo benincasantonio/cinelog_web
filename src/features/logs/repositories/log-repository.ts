@@ -54,3 +54,7 @@ export const updateLog = async (
 		})
 		.json();
 };
+
+export const deleteLog = async (logId: string): Promise<void> => {
+	await apiClient.delete(`v1/logs/${logId}`);
+};

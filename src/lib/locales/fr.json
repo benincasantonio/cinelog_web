@@ -175,6 +175,12 @@
 		"submittingUpdate": "Mise à jour du journal...",
 		"error": "Une erreur s'est produite lors de la création du journal"
 	},
+	"DeleteMovieLogDialog": {
+		"title": "Supprimer le journal",
+		"description": "Êtes-vous sûr de vouloir supprimer ce journal ? Cette action est irréversible.",
+		"cancel": "Annuler",
+		"confirm": "Supprimer"
+	},
 	"WatchedWhere": {
 		"cinema": "Cinéma",
 		"streaming": "Streaming",
