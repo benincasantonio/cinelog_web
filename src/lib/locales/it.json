@@ -14,6 +14,16 @@
 			"it": "Italiano"
 		}
 	},
+	"ThemeDropdown": {
+		"theme": "Tema"
+	},
+	"ThemeDropdownRadioGroup": {
+		"themes": {
+			"light": "Chiaro",
+			"dark": "Scuro",
+			"system": "Usa tema di sistema"
+		}
+	},
 	"MoviesWatched": {
 		"filterByYear": "Filtra per Anno:",
 		"selectYear": "Seleziona anno",
@@ -200,6 +210,7 @@
 	"Navbar": {
 		"home": "Home",
 		"search": "Cerca",
+		"theme": "Tema",
 		"login": "Accedi",
 		"register": "Registrati"
 	},

@@ -13,6 +13,7 @@ import { Languages, LogOut, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores';
+import { ThemeDropdown } from './ThemeDropdown';
 
 export const ProfileDropdownMenu = () => {
 	const navigate = useNavigate();
@@ -70,6 +71,7 @@ export const ProfileDropdownMenu = () => {
 						</DropdownMenuItem>
 					</DropdownMenuSubContent>
 				</DropdownMenuSub>
+				<ThemeDropdown context="submenu" />
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					variant="destructive"

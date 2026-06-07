@@ -13,7 +13,7 @@ function App() {
 	}, [fetchUserInfo]);
 
 	return (
-		<ThemeProvider defaultTheme="dark" storageKey="cinelog-theme">
+		<ThemeProvider defaultTheme="system" storageKey="cinelog-theme">
 			<NotificationProvider>
 				<BrowserRouter>
 					<AppRoutes />
