@@ -7,6 +7,7 @@ describe('ThemeProvider', () => {
 	beforeEach(() => {
 		localStorage.clear();
 		document.documentElement.className = '';
+		vi.unstubAllGlobals();
 	});
 
 	it('uses stored theme and applies class', () => {
@@ -88,6 +89,43 @@ describe('ThemeProvider', () => {
 
 		expect(screen.getByTestId('child-light')).toBeInTheDocument();
 		expect(document.documentElement).toHaveClass('light');
-		vi.unstubAllGlobals();
+	});
+
+	it('updates the applied theme when system preference changes', async () => {
+		let changeListener:
+			| ((event: MediaQueryListEvent | { matches: boolean }) => void)
+			| undefined;
+
+		vi.stubGlobal(
+			'matchMedia',
+			vi.fn().mockReturnValue({
+				matches: false,
+				media: '(prefers-color-scheme: dark)',
+				addEventListener: vi.fn(
+					(
+						eventName: string,
+						listener: (
+							event: MediaQueryListEvent | { matches: boolean }
+						) => void
+					) => {
+						if (eventName === 'change') changeListener = listener;
+					}
+				),
+				removeEventListener: vi.fn(),
+			})
+		);
+
+		render(
+			<ThemeProvider defaultTheme="system">
+				<span data-testid="child-system-change">child</span>
+			</ThemeProvider>
+		);
+
+		expect(document.documentElement).toHaveClass('light');
+		changeListener?.({ matches: true });
+
+		await waitFor(() => {
+			expect(document.documentElement).toHaveClass('dark');
+		});
 	});
 });

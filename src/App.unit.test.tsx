@@ -15,8 +15,22 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('./lib/components/ThemeProvider', () => ({
-	ThemeProvider: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="theme-provider">{children}</div>
+	ThemeProvider: ({
+		children,
+		defaultTheme,
+		storageKey,
+	}: {
+		children: React.ReactNode;
+		defaultTheme?: string;
+		storageKey?: string;
+	}) => (
+		<div
+			data-testid="theme-provider"
+			data-default-theme={defaultTheme}
+			data-storage-key={storageKey}
+		>
+			{children}
+		</div>
 	),
 }));
 
@@ -41,6 +55,19 @@ describe('App', () => {
 		render(<App />);
 
 		expect(screen.getByTestId('theme-provider')).toBeInTheDocument();
+	});
+
+	it('should configure ThemeProvider with system as the default theme', () => {
+		render(<App />);
+
+		expect(screen.getByTestId('theme-provider')).toHaveAttribute(
+			'data-default-theme',
+			'system'
+		);
+		expect(screen.getByTestId('theme-provider')).toHaveAttribute(
+			'data-storage-key',
+			'cinelog-theme'
+		);
 	});
 
 	it('should render BrowserRouter inside ThemeProvider', () => {

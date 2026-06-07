@@ -8,7 +8,7 @@ const mockSetTheme = vi.fn();
 
 const navbarState = {
 	authenticatedStatus: false as boolean | null,
-	theme: 'dark' as 'dark' | 'light',
+	theme: 'dark' as 'dark' | 'light' | 'system',
 	isMobile: false,
 };
 
@@ -62,6 +62,35 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	NavigationMenuLink: ({ children }: { children?: ReactNode }) => (
 		<div>{children}</div>
 	),
+	DropdownMenu: ({ children }: { children?: ReactNode }) => (
+		<div>{children}</div>
+	),
+	DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => (
+		<div>{children}</div>
+	),
+	DropdownMenuContent: ({ children }: { children?: ReactNode }) => (
+		<div>{children}</div>
+	),
+	DropdownMenuRadioGroup: ({
+		children,
+		value,
+	}: {
+		children?: ReactNode;
+		value?: string;
+	}) => <div data-value={value}>{children}</div>,
+	DropdownMenuRadioItem: ({
+		children,
+		onClick,
+		value,
+	}: {
+		children?: ReactNode;
+		onClick?: () => void;
+		value?: string;
+	}) => (
+		<button type="button" data-value={value} onClick={onClick}>
+			{children}
+		</button>
+	),
 }));
 
 vi.mock('lucide-react', () => ({
@@ -72,6 +101,7 @@ vi.mock('lucide-react', () => ({
 	),
 	Moon: () => <span>moon</span>,
 	Sun: () => <span>sun</span>,
+	SunMoon: () => <span>sun-moon</span>,
 	User: () => <span>user</span>,
 }));
 
@@ -153,28 +183,47 @@ describe('Navbar', () => {
 		expect(mockNavigate).toHaveBeenNthCalledWith(3, '/registration');
 	});
 
-	it('toggles theme based on current theme value', () => {
+	it('lets logged-out users select any theme from the navbar menu', () => {
 		render(
 			<MemoryRouter>
 				<Navbar />
 			</MemoryRouter>
 		);
 
-		fireEvent.click(screen.getByLabelText('Toggle theme'));
+		expect(screen.getByLabelText('Navbar.theme')).toBeInTheDocument();
+		expect(screen.getByLabelText('Navbar.theme')).toHaveTextContent('moon');
+		fireEvent.click(screen.getByText('ThemeDropdownRadioGroup.themes.light'));
+		fireEvent.click(screen.getByText('ThemeDropdownRadioGroup.themes.dark'));
+		fireEvent.click(screen.getByText('ThemeDropdownRadioGroup.themes.system'));
+
 		expect(mockSetTheme).toHaveBeenCalledWith('light');
+		expect(mockSetTheme).toHaveBeenCalledWith('dark');
+		expect(mockSetTheme).toHaveBeenCalledWith('system');
 	});
 
-	it('toggles from light to dark and renders moon icon path', () => {
-		navbarState.theme = 'light';
+	it('uses a sun-moon icon for the guest system theme trigger', () => {
+		navbarState.theme = 'system';
+
 		render(
 			<MemoryRouter>
 				<Navbar />
 			</MemoryRouter>
 		);
 
-		expect(screen.getByText('moon')).toBeInTheDocument();
-		fireEvent.click(screen.getByLabelText('Toggle theme'));
-		expect(mockSetTheme).toHaveBeenCalledWith('dark');
+		expect(screen.getByLabelText('Navbar.theme')).toHaveTextContent('sun-moon');
+	});
+
+	it('does not render the guest theme menu for authenticated users', () => {
+		navbarState.authenticatedStatus = true;
+
+		render(
+			<MemoryRouter>
+				<Navbar />
+			</MemoryRouter>
+		);
+
+		expect(screen.queryByLabelText('Navbar.theme')).not.toBeInTheDocument();
+		expect(screen.getByTestId('profile-dropdown')).toBeInTheDocument();
 	});
 
 	it('shows authenticated content and opens mobile navbar', () => {

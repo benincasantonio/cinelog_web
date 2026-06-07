@@ -1,10 +1,13 @@
 import {
 	Button,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
 	NavigationMenu,
 	NavigationMenuLink,
 	NavigationMenuList,
 } from '@antoniobenincasa/ui';
-import { Menu, Moon, Sun, User } from 'lucide-react';
+import { Menu, Moon, Sun, SunMoon, User } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
@@ -19,6 +22,8 @@ import type { MobileNavbarItem } from '../models/mobile-navbar-item.model';
 import { Logo } from './Logo';
 import { MobileNavbar } from './MobileNavbar';
 import { ProfileDropdownMenu } from './ProfileDropdownMenu';
+import { ThemeDropdown } from './ThemeDropdown';
+import { ThemeIcon } from './ThemeIcon';
 
 export const Navbar = () => {
 	const { t } = useTranslation();
@@ -26,12 +31,8 @@ export const Navbar = () => {
 	const authenticatedStatus = useAuthStore(
 		(state) => state.authenticatedStatus
 	);
-	const { theme, setTheme } = useTheme();
+	const { theme } = useTheme();
 	const [isOpen, setIsOpen] = useState(false);
-
-	const toggleTheme = () => {
-		setTheme(theme === 'dark' ? 'light' : 'dark');
-	};
 
 	const navigationData: {
 		label: string;
@@ -86,23 +87,24 @@ export const Navbar = () => {
 
 				{/* Right side - Auth buttons or User menu */}
 				<div className="flex items-center gap-4">
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={toggleTheme}
-						aria-label="Toggle theme"
-					>
-						{theme === 'dark' ? (
-							<Sun className="w-5 h-5" />
-						) : (
-							<Moon className="w-5 h-5" />
-						)}
-					</Button>
-
 					{authenticatedStatus === true && <CreateMovieLogButton />}
 
 					{authenticatedStatus === false ? (
 						<>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										variant="ghost"
+										className="gap-2 px-3"
+										aria-label={t('Navbar.theme')}
+									>
+										<ThemeIcon theme={theme} />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end">
+									<ThemeDropdown context="inline" />
+								</DropdownMenuContent>
+							</DropdownMenu>
 							<Button
 								variant="ghost"
 								size="icon"
