@@ -7,7 +7,7 @@ import {
 	NavigationMenuLink,
 	NavigationMenuList,
 } from '@antoniobenincasa/ui';
-import { Menu, Moon, Sun, SunMoon, User } from 'lucide-react';
+import { Menu, User } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
