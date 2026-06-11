@@ -1,8 +1,8 @@
-export * from './MovieDetailsHero';
-export * from './MovieGenres';
-export * from './MovieRuntime';
-export * from './MoviesWatched.tsx';
-export * from './MovieVote';
-export * from './RateMovie';
-export * from './RateMovieForm';
-export * from './RateMovieModal';
+export { MovieDetailsHero } from './MovieDetailsHero';
+export { MovieGenres } from './MovieGenres';
+export { MovieRuntime } from './MovieRuntime';
+export { MoviesWatched } from './MoviesWatched';
+export { MovieVote } from './MovieVote';
+export { RateMovie } from './RateMovie';
+export { RateMovieForm } from './RateMovieForm';
+export { RateMovieModal } from './RateMovieModal';
