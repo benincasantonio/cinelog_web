@@ -9,4 +9,5 @@ export type RegisterRequest = {
 	dateOfBirth: string;
 	bio?: string;
 	profileVisibility: ProfileVisibility;
+	verificationCode: string;
 };

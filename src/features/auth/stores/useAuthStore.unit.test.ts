@@ -11,12 +11,14 @@ const {
 	mockLogin,
 	mockLogout,
 	mockRegister,
+	mockSendRegistrationCode,
 	mockFetchCsrfToken,
 	mockGetUserInfo,
 } = vi.hoisted(() => ({
 	mockLogin: vi.fn(),
 	mockLogout: vi.fn(),
 	mockRegister: vi.fn(),
+	mockSendRegistrationCode: vi.fn(),
 	mockFetchCsrfToken: vi.fn(),
 	mockGetUserInfo: vi.fn(),
 }));
@@ -25,6 +27,7 @@ vi.mock('@/features/auth/repositories/auth-repository', () => ({
 	login: mockLogin,
 	logout: mockLogout,
 	register: mockRegister,
+	sendRegistrationCode: mockSendRegistrationCode,
 	fetchCsrfToken: mockFetchCsrfToken,
 }));
 
@@ -349,6 +352,49 @@ describe('useAuthStore', () => {
 			await expect(
 				useAuthStore.getState().register(mockRegisterRequest)
 			).rejects.toBe('Unknown failure');
+		});
+	});
+
+	// -------------------------------------------------------------------------
+	// sendRegistrationCode
+	// -------------------------------------------------------------------------
+
+	describe('sendRegistrationCode', () => {
+		it('should call the repository with the provided request', async () => {
+			mockSendRegistrationCode.mockResolvedValueOnce(undefined);
+
+			await useAuthStore
+				.getState()
+				.sendRegistrationCode({ email: 'jane@example.com' });
+
+			expect(mockSendRegistrationCode).toHaveBeenCalledWith({
+				email: 'jane@example.com',
+			});
+		});
+
+		it('should resolve without changing auth-related state', async () => {
+			mockSendRegistrationCode.mockResolvedValueOnce(undefined);
+
+			await useAuthStore
+				.getState()
+				.sendRegistrationCode({ email: 'jane@example.com' });
+
+			const state = useAuthStore.getState();
+			expect(state.authenticatedStatus).toBeNull();
+			expect(state.userInfo).toBeNull();
+			expect(state.csrfToken).toBeNull();
+		});
+
+		it('should re-throw errors from the repository', async () => {
+			mockSendRegistrationCode.mockRejectedValueOnce(
+				new Error('Too many requests')
+			);
+
+			await expect(
+				useAuthStore
+					.getState()
+					.sendRegistrationCode({ email: 'jane@example.com' })
+			).rejects.toThrow('Too many requests');
 		});
 	});
 

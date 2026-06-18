@@ -5,7 +5,6 @@ import {
 	screen,
 	waitFor,
 } from '@testing-library/react';
-import type { FieldValues, ResolverResult } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-i18next', () => ({
@@ -20,9 +19,24 @@ vi.mock('react-router-dom', () => ({
 }));
 
 const mockRegister = vi.fn();
+const mockSendCode = vi.fn();
 vi.mock('../stores', () => ({
-	useAuthStore: () => ({ register: mockRegister }),
+	useAuthStore: () => ({
+		register: mockRegister,
+		sendRegistrationCode: mockSendCode,
+	}),
 }));
+
+const mockExtractApiError = vi.fn();
+vi.mock('@/lib/api/api-error', async () => {
+	const actual = await vi.importActual<typeof import('@/lib/api/api-error')>(
+		'@/lib/api/api-error'
+	);
+	return {
+		...actual,
+		extractApiError: (...args: unknown[]) => mockExtractApiError(...args),
+	};
+});
 
 vi.mock('@/features/profile/components/ProfileVisibilitySelect', () => ({
 	ProfileVisibilitySelect: ({
@@ -40,49 +54,13 @@ vi.mock('@/features/profile/components/ProfileVisibilitySelect', () => ({
 			>
 				public
 			</button>
-			<button
-				type="button"
-				data-testid="select-private"
-				onClick={() => onChange('private')}
-			>
-				private
-			</button>
 		</div>
 	),
 }));
 
-const { shouldBypassValidation } = vi.hoisted(() => ({
-	shouldBypassValidation: { value: false },
-}));
-
-type ZodResolverFn = (
-	schema: unknown,
-	...rest: unknown[]
-) => (
-	values: FieldValues,
-	...resolverArgs: unknown[]
-) => Promise<ResolverResult<FieldValues>>;
-
-vi.mock('@hookform/resolvers/zod', async () => {
-	const actual = await vi.importActual<{ zodResolver: ZodResolverFn }>(
-		'@hookform/resolvers/zod'
-	);
-	return {
-		...actual,
-		zodResolver:
-			(schema: unknown, ...rest: unknown[]) =>
-			async (values: Record<string, unknown>, ...resolverArgs: unknown[]) => {
-				if (shouldBypassValidation.value) {
-					return { values, errors: {} };
-				}
-				return actual.zodResolver(schema, ...rest)(values, ...resolverArgs);
-			},
-	};
-});
-
 import { RegistrationForm } from './RegistrationForm';
 
-function fillForm() {
+function fillDetails() {
 	fireEvent.change(screen.getByPlaceholderText('RegistrationForm.firstName'), {
 		target: { value: 'John' },
 	});
@@ -98,103 +76,263 @@ function fillForm() {
 	fireEvent.change(screen.getByPlaceholderText('RegistrationForm.handle'), {
 		target: { value: 'johndoe' },
 	});
-	const dateInput = screen.getByPlaceholderText('RegistrationForm.dateOfBirth');
-	fireEvent.change(dateInput, { target: { value: '2000-01-01' } });
+	fireEvent.change(
+		screen.getByPlaceholderText('RegistrationForm.dateOfBirth'),
+		{ target: { value: '2000-01-01' } }
+	);
 }
 
-function fillAndSubmit() {
-	fillForm();
+function fillAndSubmit(code = 'A1B2C3') {
+	fillDetails();
+	fireEvent.change(
+		screen.getByPlaceholderText('RegistrationForm.codePlaceholder'),
+		{ target: { value: code } }
+	);
 	fireEvent.click(
-		screen.getByRole('button', { name: 'RegistrationForm.submit' })
+		screen.getByRole('button', { name: 'RegistrationForm.createAccount' })
 	);
 }
 
 describe('RegistrationForm', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		shouldBypassValidation.value = false;
+		vi.useRealTimers();
+		mockExtractApiError.mockResolvedValue(null);
 	});
 
-	describe('rendering', () => {
-		it('should render all form fields', () => {
+	describe('single-step rendering and validation', () => {
+		it('renders registration details, verification code, and create account together', () => {
 			render(<RegistrationForm />);
 
 			expect(
 				screen.getByPlaceholderText('RegistrationForm.firstName')
 			).toBeInTheDocument();
 			expect(
-				screen.getByPlaceholderText('RegistrationForm.lastName')
+				screen.getByPlaceholderText('RegistrationForm.codePlaceholder')
 			).toBeInTheDocument();
 			expect(
-				screen.getByPlaceholderText('RegistrationForm.email')
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
 			).toBeInTheDocument();
 			expect(
-				screen.getByPlaceholderText('RegistrationForm.password')
-			).toBeInTheDocument();
+				screen.getByRole('button', {
+					name: 'RegistrationForm.createAccount',
+				})
+			).toBeEnabled();
 			expect(
-				screen.getByPlaceholderText('RegistrationForm.handle')
-			).toBeInTheDocument();
+				screen.queryByRole('button', { name: 'RegistrationForm.continue' })
+			).not.toBeInTheDocument();
 			expect(
-				screen.getByPlaceholderText('RegistrationForm.dateOfBirth')
-			).toBeInTheDocument();
-			expect(
-				screen.getByPlaceholderText('RegistrationForm.bioPlaceholder')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('ProfileVisibilitySelect.label')
-			).toBeInTheDocument();
+				screen.queryByRole('button', { name: 'RegistrationForm.back' })
+			).not.toBeInTheDocument();
 		});
 
-		it('should render the submit button', () => {
-			render(<RegistrationForm />);
-
-			expect(
-				screen.getByRole('button', { name: 'RegistrationForm.submit' })
-			).toBeInTheDocument();
-		});
-	});
-
-	describe('date of birth input', () => {
-		it('should set undefined when date input is cleared', async () => {
-			render(<RegistrationForm />);
-
-			const dateInput = screen.getByPlaceholderText(
-				'RegistrationForm.dateOfBirth'
-			);
-			fireEvent.change(dateInput, { target: { value: '2000-01-01' } });
-			fireEvent.change(dateInput, { target: { value: '' } });
-
-			expect(dateInput).toHaveValue('');
-		});
-
-		it('should display the date formatted as YYYY-MM-DD when a value is set', async () => {
-			render(<RegistrationForm />);
-
-			const dateInput = screen.getByPlaceholderText(
-				'RegistrationForm.dateOfBirth'
-			);
-			fireEvent.change(dateInput, { target: { value: '1995-06-15' } });
-
-			expect(dateInput).toHaveValue('1995-06-15');
-		});
-	});
-
-	describe('validation', () => {
-		it('should not call register with empty fields', async () => {
+		it('validates the complete form when create account is pressed', async () => {
 			render(<RegistrationForm />);
 
 			fireEvent.click(
-				screen.getByRole('button', { name: 'RegistrationForm.submit' })
+				screen.getByRole('button', {
+					name: 'RegistrationForm.createAccount',
+				})
 			);
 
-			await waitFor(() => {
-				expect(mockRegister).not.toHaveBeenCalled();
+			expect(
+				await screen.findByText('RegistrationForm.validation.codeLength')
+			).toBeInTheDocument();
+			expect(mockRegister).not.toHaveBeenCalled();
+		});
+
+		it('validates an incomplete verification code on submit', async () => {
+			render(<RegistrationForm />);
+			fillDetails();
+			fireEvent.change(
+				screen.getByPlaceholderText('RegistrationForm.codePlaceholder'),
+				{ target: { value: 'ABC' } }
+			);
+
+			fireEvent.click(
+				screen.getByRole('button', {
+					name: 'RegistrationForm.createAccount',
+				})
+			);
+
+			expect(
+				await screen.findByText('RegistrationForm.validation.codeLength')
+			).toBeInTheDocument();
+			expect(mockRegister).not.toHaveBeenCalled();
+		});
+
+		it('accepts and normalizes the hexadecimal code generated by the backend', () => {
+			render(<RegistrationForm />);
+			const codeInput = screen.getByPlaceholderText(
+				'RegistrationForm.codePlaceholder'
+			);
+
+			fireEvent.change(codeInput, { target: { value: 'a1b2c3' } });
+
+			expect(codeInput).toHaveValue('A1B2C3');
+		});
+
+		it('uses API-compatible limits for handle and bio', async () => {
+			render(<RegistrationForm />);
+			fillDetails();
+			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.handle'), {
+				target: { value: 'ab' },
 			});
+			fireEvent.change(
+				screen.getByPlaceholderText('RegistrationForm.bioPlaceholder'),
+				{ target: { value: 'x'.repeat(501) } }
+			);
+			fireEvent.change(
+				screen.getByPlaceholderText('RegistrationForm.codePlaceholder'),
+				{ target: { value: 'ABC123' } }
+			);
+
+			fireEvent.click(
+				screen.getByRole('button', {
+					name: 'RegistrationForm.createAccount',
+				})
+			);
+
+			await waitFor(() => expect(mockRegister).not.toHaveBeenCalled());
 		});
 	});
 
-	describe('successful submission', () => {
-		it('should call register with form data', async () => {
+	describe('send code', () => {
+		it('validates email and does not send when email is invalid', async () => {
+			render(<RegistrationForm />);
+			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.email'), {
+				target: { value: 'invalid-email' },
+			});
+
+			fireEvent.click(
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
+			);
+
+			expect(
+				await screen.findByText('RegistrationForm.validation.email')
+			).toBeInTheDocument();
+			expect(mockSendCode).not.toHaveBeenCalled();
+		});
+
+		it('sends the code to the entered email and starts the cooldown', async () => {
+			mockSendCode.mockResolvedValueOnce(undefined);
+			render(<RegistrationForm />);
+			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.email'), {
+				target: { value: 'john@example.com' },
+			});
+
+			fireEvent.click(
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
+			);
+
+			await waitFor(() => {
+				expect(mockSendCode).toHaveBeenCalledWith({
+					email: 'john@example.com',
+				});
+			});
+			expect(screen.getByText('RegistrationForm.codeSent')).toBeInTheDocument();
+			expect(
+				screen.getByRole('button', { name: 'RegistrationForm.resendIn' })
+			).toBeDisabled();
+		});
+
+		it('resets code, confirmation, and cooldown when the email changes', async () => {
+			mockSendCode.mockResolvedValueOnce(undefined);
+			render(<RegistrationForm />);
+			const emailInput = screen.getByPlaceholderText('RegistrationForm.email');
+			const codeInput = screen.getByPlaceholderText(
+				'RegistrationForm.codePlaceholder'
+			);
+			fireEvent.change(emailInput, {
+				target: { value: 'john@example.com' },
+			});
+			fireEvent.click(
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
+			);
+			await screen.findByText('RegistrationForm.codeSent');
+			fireEvent.change(codeInput, { target: { value: 'ABC123' } });
+
+			fireEvent.change(emailInput, {
+				target: { value: 'jane@example.com' },
+			});
+
+			await waitFor(() => {
+				expect(
+					screen.queryByText('RegistrationForm.codeSent')
+				).not.toBeInTheDocument();
+			});
+			expect(codeInput).toHaveValue('');
+			expect(
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
+			).toBeEnabled();
+		});
+
+		it('re-enables resend after the cooldown elapses', async () => {
+			vi.useFakeTimers();
+			mockSendCode.mockResolvedValueOnce(undefined);
+			render(<RegistrationForm />);
+			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.email'), {
+				target: { value: 'john@example.com' },
+			});
+			fireEvent.click(
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
+			);
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			for (let second = 0; second < 60; second++) {
+				await act(async () => {
+					vi.advanceTimersByTime(1000);
+				});
+			}
+
+			expect(
+				screen.getByRole('button', { name: 'RegistrationForm.resendCode' })
+			).toBeEnabled();
+		});
+
+		it('shows the rate-limit error and restores the send button', async () => {
+			mockExtractApiError.mockResolvedValueOnce({
+				error_code_name: 'RATE_LIMIT_EXCEEDED',
+			});
+			mockSendCode.mockRejectedValueOnce(new Error('429'));
+			render(<RegistrationForm />);
+			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.email'), {
+				target: { value: 'john@example.com' },
+			});
+
+			fireEvent.click(
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
+			);
+
+			expect(
+				await screen.findByText('ApiError.rateLimitExceeded')
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
+			).toBeEnabled();
+		});
+
+		it('shows a generic send error for network failures', async () => {
+			mockSendCode.mockRejectedValueOnce(new Error('network'));
+			render(<RegistrationForm />);
+			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.email'), {
+				target: { value: 'john@example.com' },
+			});
+
+			fireEvent.click(
+				screen.getByRole('button', { name: 'RegistrationForm.sendCode' })
+			);
+
+			expect(
+				await screen.findByText('RegistrationForm.sendCodeError')
+			).toBeInTheDocument();
+		});
+	});
+
+	describe('submission', () => {
+		it('submits the full payload with the verification code', async () => {
 			mockRegister.mockResolvedValueOnce(undefined);
 			render(<RegistrationForm />);
 
@@ -209,150 +347,119 @@ describe('RegistrationForm', () => {
 						password: 'password123',
 						handle: 'johndoe',
 						profileVisibility: 'private',
+						verificationCode: 'A1B2C3',
 					})
 				);
 			});
+			expect(mockNavigate).toHaveBeenCalledWith('/login');
 		});
 
-		it('should send empty string for dateOfBirth when not set', async () => {
-			shouldBypassValidation.value = true;
-			mockRegister.mockResolvedValueOnce(undefined);
+		it('guards against double submission while registration is pending', async () => {
+			let resolveRegistration: () => void;
+			mockRegister.mockReturnValueOnce(
+				new Promise<void>((resolve) => {
+					resolveRegistration = resolve;
+				})
+			);
 			render(<RegistrationForm />);
 
-			// Fill all fields except dateOfBirth
-			fireEvent.change(
-				screen.getByPlaceholderText('RegistrationForm.firstName'),
-				{ target: { value: 'John' } }
-			);
-			fireEvent.change(
-				screen.getByPlaceholderText('RegistrationForm.lastName'),
-				{
-					target: { value: 'Doe' },
-				}
-			);
-			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.email'), {
-				target: { value: 'john@example.com' },
+			fillAndSubmit();
+
+			const submitButton = await screen.findByRole('button', {
+				name: 'RegistrationForm.submitting',
 			});
+			expect(submitButton).toBeDisabled();
+			fireEvent.click(submitButton);
+			expect(mockRegister).toHaveBeenCalledTimes(1);
+
+			await act(async () => resolveRegistration!());
+		});
+
+		it('submits the selected profile visibility', async () => {
+			mockRegister.mockResolvedValueOnce(undefined);
+			render(<RegistrationForm />);
+			fillDetails();
+			fireEvent.click(screen.getByTestId('select-public'));
 			fireEvent.change(
-				screen.getByPlaceholderText('RegistrationForm.password'),
-				{
-					target: { value: 'password123' },
-				}
+				screen.getByPlaceholderText('RegistrationForm.codePlaceholder'),
+				{ target: { value: 'ABC123' } }
 			);
-			fireEvent.change(screen.getByPlaceholderText('RegistrationForm.handle'), {
-				target: { value: 'johndoe' },
-			});
 			fireEvent.click(
-				screen.getByRole('button', { name: 'RegistrationForm.submit' })
+				screen.getByRole('button', {
+					name: 'RegistrationForm.createAccount',
+				})
 			);
 
 			await waitFor(() => {
 				expect(mockRegister).toHaveBeenCalledWith(
-					expect.objectContaining({
-						dateOfBirth: '',
-					})
+					expect.objectContaining({ profileVisibility: 'public' })
 				);
-			});
-		});
-
-		it('should navigate to /login on success', async () => {
-			mockRegister.mockResolvedValueOnce(undefined);
-			render(<RegistrationForm />);
-
-			fillAndSubmit();
-
-			await waitFor(() => {
-				expect(mockNavigate).toHaveBeenCalledWith('/login');
-			});
-		});
-
-		it('should show submitting text while loading', async () => {
-			let resolvePromise: () => void;
-			const promise = new Promise<void>((resolve) => {
-				resolvePromise = resolve;
-			});
-			mockRegister.mockReturnValueOnce(promise);
-			render(<RegistrationForm />);
-
-			fillAndSubmit();
-
-			await waitFor(() => {
-				expect(
-					screen.getByRole('button', {
-						name: 'RegistrationForm.submitting',
-					})
-				).toBeDisabled();
-			});
-
-			await act(async () => {
-				resolvePromise!();
 			});
 		});
 	});
 
-	describe('error handling', () => {
-		it('should show error message when register throws an Error', async () => {
-			mockRegister.mockRejectedValueOnce(new Error('Email already taken'));
+	describe('registration errors', () => {
+		it.each([
+			[
+				'EMAIL_VERIFICATION_CODE_REQUIRED',
+				'ApiError.emailVerificationCodeRequired',
+			],
+			[
+				'EMAIL_VERIFICATION_CODE_EXPIRED',
+				'ApiError.emailVerificationCodeExpired',
+			],
+			[
+				'INVALID_EMAIL_VERIFICATION_CODE',
+				'ApiError.invalidEmailVerificationCode',
+			],
+			[
+				'EMAIL_VERIFICATION_CODE_ATTEMPTS_EXCEEDED',
+				'ApiError.emailVerificationCodeAttemptsExceeded',
+			],
+			['EMAIL_ALREADY_EXISTS', 'ApiError.emailAlreadyExists'],
+			['HANDLE_ALREADY_TAKEN', 'ApiError.handleAlreadyTaken'],
+		])('maps %s to its form field', async (errorCode, message) => {
+			mockExtractApiError.mockResolvedValueOnce({
+				error_code_name: errorCode,
+			});
+			mockRegister.mockRejectedValueOnce(new Error('request failed'));
 			render(<RegistrationForm />);
 
 			fillAndSubmit();
 
-			await waitFor(() => {
-				expect(screen.getByText('Email already taken')).toBeInTheDocument();
-			});
-		});
-
-		it('should show generic error for non-Error exceptions', async () => {
-			mockRegister.mockRejectedValueOnce('unknown');
-			render(<RegistrationForm />);
-
-			fillAndSubmit();
-
-			await waitFor(() => {
-				expect(screen.getByText('RegistrationForm.error')).toBeInTheDocument();
-			});
-		});
-
-		it('should not navigate when register fails', async () => {
-			mockRegister.mockRejectedValueOnce(new Error('fail'));
-			render(<RegistrationForm />);
-
-			fillAndSubmit();
-
-			await waitFor(() => {
-				expect(screen.getByText('fail')).toBeInTheDocument();
-			});
+			expect(await screen.findByText(message)).toBeInTheDocument();
 			expect(mockNavigate).not.toHaveBeenCalled();
 		});
-	});
 
-	describe('profile visibility', () => {
-		it('should default to private', () => {
+		it('shows a localized rate-limit error for registration', async () => {
+			mockExtractApiError.mockResolvedValueOnce({
+				error_code_name: 'RATE_LIMIT_EXCEEDED',
+			});
+			mockRegister.mockRejectedValueOnce(new Error('429'));
 			render(<RegistrationForm />);
 
-			expect(screen.getByTestId('profile-visibility-select')).toHaveAttribute(
-				'data-value',
-				'private'
-			);
+			fillAndSubmit();
+
+			expect(
+				await screen.findByText('ApiError.rateLimitExceeded')
+			).toBeInTheDocument();
 		});
 
-		it('should send public profileVisibility when changed to public', async () => {
-			mockRegister.mockResolvedValueOnce(undefined);
+		it.each([
+			'ERROR_CREATING_USER',
+			'UNKNOWN_ERROR',
+		])('shows a generic localized error for %s', async (errorCode) => {
+			mockExtractApiError.mockResolvedValueOnce({
+				error_code_name: errorCode,
+			});
+			mockRegister.mockRejectedValueOnce(new Error('technical details'));
 			render(<RegistrationForm />);
 
-			fillForm();
-			fireEvent.click(screen.getByTestId('select-public'));
-			fireEvent.click(
-				screen.getByRole('button', { name: 'RegistrationForm.submit' })
-			);
+			fillAndSubmit();
 
-			await waitFor(() => {
-				expect(mockRegister).toHaveBeenCalledWith(
-					expect.objectContaining({
-						profileVisibility: 'public',
-					})
-				);
-			});
+			expect(
+				await screen.findByText('RegistrationForm.error')
+			).toBeInTheDocument();
 		});
 	});
 });

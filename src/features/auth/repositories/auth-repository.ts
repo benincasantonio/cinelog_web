@@ -8,6 +8,7 @@ import type {
 import type { ForgotPasswordRequest } from '../models/forgot-password';
 import type { RegisterRequest } from '../models/register-request';
 import type { ResetPasswordRequest } from '../models/reset-password';
+import type { SendCodeRequest } from '../models/send-code-request';
 
 /**
  * Uses raw fetch() instead of apiClient to avoid a circular dependency:
@@ -68,6 +69,19 @@ export const register = async (request: RegisterRequest): Promise<void> => {
 		.post('v1/auth/register', {
 			json: request,
 			skipAuth: true,
+			retry: 0,
+		} as ApiClientOptions)
+		.json();
+};
+
+export const sendRegistrationCode = async (
+	request: SendCodeRequest
+): Promise<void> => {
+	await apiClient
+		.post('v1/auth/register/send-code', {
+			json: request,
+			skipAuth: true,
+			retry: 0,
 		} as ApiClientOptions)
 		.json();
 };
