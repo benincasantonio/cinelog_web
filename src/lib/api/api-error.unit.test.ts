@@ -88,6 +88,38 @@ describe('resolveApiFieldError', () => {
 		});
 	});
 
+	it.each([
+		['EMAIL_ALREADY_EXISTS', 'email', 'ApiError.emailAlreadyExists'],
+		['HANDLE_ALREADY_TAKEN', 'handle', 'ApiError.handleAlreadyTaken'],
+		[
+			'EMAIL_VERIFICATION_CODE_REQUIRED',
+			'verificationCode',
+			'ApiError.emailVerificationCodeRequired',
+		],
+		[
+			'EMAIL_VERIFICATION_CODE_EXPIRED',
+			'verificationCode',
+			'ApiError.emailVerificationCodeExpired',
+		],
+		[
+			'INVALID_EMAIL_VERIFICATION_CODE',
+			'verificationCode',
+			'ApiError.invalidEmailVerificationCode',
+		],
+		[
+			'EMAIL_VERIFICATION_CODE_ATTEMPTS_EXCEEDED',
+			'verificationCode',
+			'ApiError.emailVerificationCodeAttemptsExceeded',
+		],
+	])('maps %s to %s', (errorCode, field, i18nKey) => {
+		const t = ((key: string) => key) as never;
+
+		expect(resolveApiFieldError(errorCode, t)).toEqual({
+			field,
+			message: i18nKey,
+		});
+	});
+
 	it('should use override key when translation exists', () => {
 		const translations: Record<string, string> = {
 			'ChangePasswordForm.ApiError.samePassword': 'Custom override',

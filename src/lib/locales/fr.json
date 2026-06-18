@@ -151,11 +151,31 @@
 		"dateOfBirth": "Date de naissance",
 		"bio": "Biographie",
 		"bioPlaceholder": "Parlez-nous de vous",
-		"submit": "S'inscrire",
-		"submitting": "Inscription en cours...",
+		"createAccount": "Créer le compte",
+		"submitting": "Création du compte...",
 		"error": "Une erreur s'est produite lors de l'inscription",
+		"code": "Code de vérification",
+		"codePlaceholder": "Saisissez le code à 6 caractères",
+		"sendCode": "Envoyer le code",
+		"resendCode": "Renvoyer le code",
+		"resendIn": "Renvoyer dans {{seconds}}s",
+		"codeSent": "Nous avons envoyé un code à {{email}}",
+		"sendCodeError": "Impossible d'envoyer le code. Veuillez réessayer.",
 		"validation": {
-			"dobPast": "La date de naissance doit être dans le passé"
+			"dobPast": "La date de naissance doit être dans le passé",
+			"firstNameRequired": "Le prénom est obligatoire",
+			"lastNameRequired": "Le nom est obligatoire",
+			"nameMaxLength": "Les noms doivent contenir au maximum 50 caractères",
+			"nameFormat": "Utilisez uniquement des lettres, espaces, apostrophes ou traits d'union",
+			"email": "Saisissez une adresse e-mail valide",
+			"passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+			"passwordMaxLength": "Le mot de passe doit contenir au maximum 128 caractères",
+			"handleMinLength": "L'identifiant doit contenir au moins 3 caractères",
+			"handleMaxLength": "L'identifiant doit contenir au maximum 20 caractères",
+			"handleFormat": "L'identifiant doit commencer par une lettre ou un tiret bas et contenir uniquement des lettres, chiffres ou tirets bas",
+			"bioMaxLength": "La biographie doit contenir au maximum 500 caractères",
+			"codeLength": "Saisissez le code à 6 caractères",
+			"codeFormat": "Le code peut contenir uniquement les lettres A à F et des chiffres"
 		}
 	},
 	"AuthTabs": {
@@ -297,9 +317,16 @@
 		"passwordsMismatch": "Les mots de passe ne correspondent pas"
 	},
 	"ApiError": {
+		"emailAlreadyExists": "Un compte utilise déjà cette adresse e-mail",
+		"handleAlreadyTaken": "Cet identifiant est déjà utilisé",
 		"invalidCurrentPassword": "Le mot de passe actuel est incorrect",
 		"samePassword": "Le nouveau mot de passe doit être différent du mot de passe actuel",
-		"profileNotPublic": "Ce profil n'est pas public"
+		"profileNotPublic": "Ce profil n'est pas public",
+		"rateLimitExceeded": "Trop de requêtes. Veuillez attendre avant de réessayer",
+		"emailVerificationCodeRequired": "Un code de vérification est requis pour créer votre compte",
+		"emailVerificationCodeExpired": "Le code de vérification a expiré. Demandez-en un nouveau",
+		"invalidEmailVerificationCode": "Le code de vérification est incorrect",
+		"emailVerificationCodeAttemptsExceeded": "Trop de tentatives incorrectes. Demandez un nouveau code"
 	},
 	"ProfilePage": {
 		"privateProfile": "Ce profil est privé"

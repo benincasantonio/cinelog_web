@@ -4,8 +4,10 @@ import {
 	login,
 	logout,
 	register,
+	sendRegistrationCode,
 } from '@/features/auth/repositories/auth-repository';
 import type { RegisterRequest } from '../models/register-request';
+import type { SendCodeRequest } from '../models/send-code-request';
 import type { UserResponse } from '../models/user-response';
 import { getUserInfo } from '../repositories/user-repository';
 
@@ -20,6 +22,7 @@ export const useAuthStore = create<{
 	login: (email: string, password: string) => Promise<void>;
 	logout: () => Promise<void>;
 	register: (request: RegisterRequest) => Promise<void>;
+	sendRegistrationCode: (request: SendCodeRequest) => Promise<void>;
 	fetchUserInfo: () => Promise<void>;
 	updateUserInfo: (userInfo: UserResponse) => void;
 }>((set, get) => ({
@@ -53,6 +56,14 @@ export const useAuthStore = create<{
 	register: async (request: RegisterRequest) => {
 		try {
 			await register(request);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	},
+	sendRegistrationCode: async (request: SendCodeRequest) => {
+		try {
+			await sendRegistrationCode(request);
 		} catch (error) {
 			console.error(error);
 			throw error;

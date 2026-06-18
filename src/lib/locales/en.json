@@ -151,11 +151,31 @@
 		"dateOfBirth": "Date of Birth",
 		"bio": "Bio",
 		"bioPlaceholder": "Tell us about yourself",
-		"submit": "Register",
-		"submitting": "Registering...",
+		"createAccount": "Create account",
+		"submitting": "Creating account...",
 		"error": "An error occurred during registration",
+		"code": "Verification code",
+		"codePlaceholder": "Enter the 6-character code",
+		"sendCode": "Send code",
+		"resendCode": "Resend code",
+		"resendIn": "Resend in {{seconds}}s",
+		"codeSent": "We sent a code to {{email}}",
+		"sendCodeError": "Couldn't send the code. Please try again.",
 		"validation": {
-			"dobPast": "Date of birth must be in the past"
+			"dobPast": "Date of birth must be in the past",
+			"firstNameRequired": "First name is required",
+			"lastNameRequired": "Last name is required",
+			"nameMaxLength": "Names must contain at most 50 characters",
+			"nameFormat": "Use letters, spaces, apostrophes, or hyphens only",
+			"email": "Enter a valid email address",
+			"passwordMinLength": "Password must contain at least 8 characters",
+			"passwordMaxLength": "Password must contain at most 128 characters",
+			"handleMinLength": "Handle must contain at least 3 characters",
+			"handleMaxLength": "Handle must contain at most 20 characters",
+			"handleFormat": "Handle must start with a letter or underscore and contain only letters, numbers, or underscores",
+			"bioMaxLength": "Bio must contain at most 500 characters",
+			"codeLength": "Enter the 6-character code",
+			"codeFormat": "The code can contain only letters A-F and numbers"
 		}
 	},
 	"AuthTabs": {
@@ -301,9 +321,16 @@
 		"passwordsMismatch": "Passwords do not match"
 	},
 	"ApiError": {
+		"emailAlreadyExists": "An account already uses this email",
+		"handleAlreadyTaken": "This handle is already taken",
 		"invalidCurrentPassword": "Current password is incorrect",
 		"samePassword": "New password must be different from the current password",
-		"profileNotPublic": "This profile is not public"
+		"profileNotPublic": "This profile is not public",
+		"rateLimitExceeded": "Too many requests. Please wait before trying again",
+		"emailVerificationCodeRequired": "A verification code is required to create your account",
+		"emailVerificationCodeExpired": "The verification code has expired. Request a new one",
+		"invalidEmailVerificationCode": "The verification code is incorrect",
+		"emailVerificationCodeAttemptsExceeded": "Too many incorrect attempts. Request a new code"
 	},
 	"ProfilePage": {
 		"privateProfile": "This profile is private"
