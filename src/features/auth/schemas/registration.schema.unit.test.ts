@@ -25,10 +25,9 @@ describe('createRegistrationSchema', () => {
 	});
 
 	it('rejects the legacy visibility value', () => {
-		const legacyVisibility = ['friends', 'only'].join('_');
 		const result = createRegistrationSchema(t).safeParse({
 			...validRegistration,
-			profileVisibility: legacyVisibility,
+			profileVisibility: 'friends_only',
 		});
 
 		expect(result.success).toBe(false);

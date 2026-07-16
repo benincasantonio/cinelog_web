@@ -28,10 +28,9 @@ describe('updateProfileSchema', () => {
 	});
 
 	it('rejects the legacy visibility value', () => {
-		const legacyVisibility = ['friends', 'only'].join('_');
 		const result = schema.safeParse({
 			...validProfile,
-			profileVisibility: legacyVisibility,
+			profileVisibility: 'friends_only',
 		});
 
 		expect(result.success).toBe(false);
