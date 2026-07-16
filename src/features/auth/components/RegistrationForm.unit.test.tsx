@@ -382,11 +382,14 @@ describe('RegistrationForm', () => {
 			await act(async () => resolveRegistration!());
 		});
 
-		it('submits followers-only visibility unchanged', async () => {
+		it.each([
+			['public', 'select-public'],
+			['followers_only', 'select-followers-only'],
+		])('submits %s visibility unchanged', async (visibility, selectTestId) => {
 			mockRegister.mockResolvedValueOnce(undefined);
 			render(<RegistrationForm />);
 			fillDetails();
-			fireEvent.click(screen.getByTestId('select-followers-only'));
+			fireEvent.click(screen.getByTestId(selectTestId));
 			fireEvent.change(
 				screen.getByPlaceholderText('RegistrationForm.codePlaceholder'),
 				{ target: { value: 'ABC123' } }
@@ -399,7 +402,7 @@ describe('RegistrationForm', () => {
 
 			await waitFor(() => {
 				expect(mockRegister).toHaveBeenCalledWith(
-					expect.objectContaining({ profileVisibility: 'followers_only' })
+					expect.objectContaining({ profileVisibility: visibility })
 				);
 			});
 		});

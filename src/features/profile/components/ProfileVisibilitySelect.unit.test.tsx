@@ -93,7 +93,7 @@ describe('ProfileVisibilitySelect', () => {
 		expect(screen.getAllByTestId(/^select-item-/)).toHaveLength(3);
 	});
 
-	it('should describe the selected visibility below the selector', () => {
+	it('should associate the selected visibility description with the trigger', () => {
 		render(<ProfileVisibilitySelect value="private" onChange={mockOnChange} />);
 
 		const description = screen.getByText(

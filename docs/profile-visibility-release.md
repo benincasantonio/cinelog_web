@@ -52,15 +52,10 @@ Use rollback only when roll-forward is not viable.
 
 1. Enable maintenance mode for registration and profile settings.
 2. While the new backend image that contains revision
-   `005_rename_profile_visibility` is still deployed, downgrade the database:
-
-   ```bash
-   docker compose -f docker-compose.prod.yml run --rm --no-deps db-migrate alembic downgrade 004_create_logs_table
-   docker compose -f docker-compose.prod.yml run --rm --no-deps db-migrate alembic current
-   ```
-
-3. Confirm revision `004_create_logs_table`, the reverse data conversion, and
-   the restored database constraint.
+   `005_rename_profile_visibility` is still deployed, follow the authoritative
+   backend rollback guide to downgrade the database to
+   `004_create_logs_table` and verify the current revision.
+3. Confirm the reverse data conversion and the restored database constraint.
 4. Deploy the old backend and old frontend together.
 5. Smoke-test registration and profile settings against the restored contract,
    then disable maintenance mode.
