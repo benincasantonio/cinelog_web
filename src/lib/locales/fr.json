@@ -187,7 +187,11 @@
 		"titleUpdate": "Modifier le journal",
 		"description": "Ajoutez les détails de ce que vous avez regardé.",
 		"close": "Fermer",
-		"submit": "Enregistrer"
+		"submit": "Enregistrer",
+		"submitCreate": "Enregistrer le film",
+		"submittingCreate": "Enregistrement en cours...",
+		"submitUpdate": "Mettre à jour le journal",
+		"submittingUpdate": "Mise à jour en cours..."
 	},
 	"CreateMovieLogButton": {
 		"logMovie": "Enregistrer un film"
