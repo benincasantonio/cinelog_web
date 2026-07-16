@@ -187,7 +187,11 @@
 		"titleUpdate": "Modifica Log Film",
 		"description": "Aggiungi i dettagli di ciò che hai visto.",
 		"close": "Chiudi",
-		"submit": "Registra"
+		"submit": "Registra",
+		"submitCreate": "Registra film",
+		"submittingCreate": "Registrazione in corso...",
+		"submitUpdate": "Aggiorna log",
+		"submittingUpdate": "Aggiornamento in corso..."
 	},
 	"CreateMovieLogButton": {
 		"logMovie": "Registra Film"
