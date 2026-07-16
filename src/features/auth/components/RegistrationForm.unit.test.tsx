@@ -54,6 +54,13 @@ vi.mock('@/features/profile/components/ProfileVisibilitySelect', () => ({
 			>
 				public
 			</button>
+			<button
+				type="button"
+				data-testid="select-followers-only"
+				onClick={() => onChange('followers_only')}
+			>
+				followers_only
+			</button>
 		</div>
 	),
 }));
@@ -375,11 +382,11 @@ describe('RegistrationForm', () => {
 			await act(async () => resolveRegistration!());
 		});
 
-		it('submits the selected profile visibility', async () => {
+		it('submits followers-only visibility unchanged', async () => {
 			mockRegister.mockResolvedValueOnce(undefined);
 			render(<RegistrationForm />);
 			fillDetails();
-			fireEvent.click(screen.getByTestId('select-public'));
+			fireEvent.click(screen.getByTestId('select-followers-only'));
 			fireEvent.change(
 				screen.getByPlaceholderText('RegistrationForm.codePlaceholder'),
 				{ target: { value: 'ABC123' } }
@@ -392,7 +399,7 @@ describe('RegistrationForm', () => {
 
 			await waitFor(() => {
 				expect(mockRegister).toHaveBeenCalledWith(
-					expect.objectContaining({ profileVisibility: 'public' })
+					expect.objectContaining({ profileVisibility: 'followers_only' })
 				);
 			});
 		});

@@ -91,6 +91,10 @@ bun run test:unit
 bun run test:integration
 ```
 
+## Release Runbooks
+
+- [Followers-only profile visibility](docs/profile-visibility-release.md) — coordinated frontend/backend deployment, smoke checks, and rollback
+
 ## Related Repository
 
 - Backend: [cinelog_server](https://github.com/benincasantonio/cinelog_server)

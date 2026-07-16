@@ -339,6 +339,12 @@
 	"ProfileVisibilitySelect": {
 		"label": "Visibilità del profilo",
 		"public": "Pubblico",
-		"private": "Privato"
+		"followers_only": "Solo follower",
+		"private": "Privato",
+		"descriptions": {
+			"public": "Chiunque può vedere il tuo profilo completo e i film che hai registrato.",
+			"followers_only": "Solo i follower che accetti possono vedere il tuo profilo completo e i film che hai registrato.",
+			"private": "Solo tu puoi vedere il tuo profilo completo e i film che hai registrato."
+		}
 	}
 }
