@@ -67,6 +67,11 @@ vi.mock('./ProfileVisibilitySelect', () => ({
 				data-testid="visibility-private"
 				onClick={() => onChange('private')}
 			/>
+			<button
+				type="button"
+				data-testid="visibility-followers-only"
+				onClick={() => onChange('followers_only')}
+			/>
 		</div>
 	),
 }));
@@ -370,22 +375,22 @@ describe('UpdateProfileForm', () => {
 			);
 		});
 
-		it('should send profileVisibility in payload when changed', async () => {
+		it('should send followers-only visibility unchanged when selected', async () => {
 			const updatedUser = {
 				...mockUserInfo,
-				profileVisibility: 'public' as const,
+				profileVisibility: 'followers_only' as const,
 			};
 			mockUpdateProfile.mockResolvedValueOnce(updatedUser);
 			render(<UpdateProfileForm />);
 
-			fireEvent.click(screen.getByTestId('visibility-public'));
+			fireEvent.click(screen.getByTestId('visibility-followers-only'));
 			fireEvent.click(
 				screen.getByRole('button', { name: 'UpdateProfileForm.submit' })
 			);
 
 			await waitFor(() => {
 				expect(mockUpdateProfile).toHaveBeenCalledWith({
-					profileVisibility: 'public',
+					profileVisibility: 'followers_only',
 				});
 			});
 		});
@@ -412,15 +417,15 @@ describe('UpdateProfileForm', () => {
 			).toBeEnabled();
 		});
 
-		it('should reset form with updated visibility after save', async () => {
+		it('should retain followers-only visibility after save', async () => {
 			const updatedUser = {
 				...mockUserInfo,
-				profileVisibility: 'public' as const,
+				profileVisibility: 'followers_only' as const,
 			};
 			mockUpdateProfile.mockResolvedValueOnce(updatedUser);
 			render(<UpdateProfileForm />);
 
-			fireEvent.click(screen.getByTestId('visibility-public'));
+			fireEvent.click(screen.getByTestId('visibility-followers-only'));
 			fireEvent.click(
 				screen.getByRole('button', { name: 'UpdateProfileForm.submit' })
 			);
@@ -428,7 +433,7 @@ describe('UpdateProfileForm', () => {
 			await waitFor(() => {
 				expect(screen.getByTestId('profile-visibility-select')).toHaveAttribute(
 					'data-value',
-					'public'
+					'followers_only'
 				);
 			});
 

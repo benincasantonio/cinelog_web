@@ -35,16 +35,21 @@ vi.mock('@antoniobenincasa/ui', () => ({
 			</button>
 			<button
 				type="button"
-				data-testid="select-friends-only"
-				onClick={() => onValueChange('friends_only')}
+				data-testid="select-followers-only"
+				onClick={() => onValueChange('followers_only')}
 			>
-				friends_only
+				followers_only
 			</button>
 			{children}
 		</div>
 	),
-	SelectTrigger: ({ children }: { children: React.ReactNode }) => (
-		<div>{children}</div>
+	SelectTrigger: ({
+		children,
+		...props
+	}: React.HTMLAttributes<HTMLDivElement>) => (
+		<div data-testid="select-trigger" {...props}>
+			{children}
+		</div>
 	),
 	SelectValue: () => <span />,
 	SelectContent: ({ children }: { children: React.ReactNode }) => (
@@ -77,19 +82,27 @@ describe('ProfileVisibilitySelect', () => {
 		);
 	});
 
-	it('should render public and private options', () => {
+	it('should render every supported visibility option', () => {
 		render(<ProfileVisibilitySelect value="private" onChange={mockOnChange} />);
 
 		expect(screen.getByTestId('select-item-public')).toBeInTheDocument();
+		expect(
+			screen.getByTestId('select-item-followers_only')
+		).toBeInTheDocument();
 		expect(screen.getByTestId('select-item-private')).toBeInTheDocument();
+		expect(screen.getAllByTestId(/^select-item-/)).toHaveLength(3);
 	});
 
-	it('should not render friends_only option', () => {
+	it('should describe the selected visibility below the selector', () => {
 		render(<ProfileVisibilitySelect value="private" onChange={mockOnChange} />);
 
-		expect(
-			screen.queryByTestId('select-item-friends_only')
-		).not.toBeInTheDocument();
+		const description = screen.getByText(
+			'ProfileVisibilitySelect.descriptions.private'
+		);
+		expect(screen.getByTestId('select-trigger')).toHaveAttribute(
+			'aria-describedby',
+			description.id
+		);
 	});
 
 	it('should call onChange with public when public is selected', async () => {
@@ -108,5 +121,14 @@ describe('ProfileVisibilitySelect', () => {
 		await user.click(screen.getByTestId('select-private'));
 
 		expect(mockOnChange).toHaveBeenCalledWith('private');
+	});
+
+	it('should call onChange with followers_only when followers only is selected', async () => {
+		const user = userEvent.setup();
+		render(<ProfileVisibilitySelect value="private" onChange={mockOnChange} />);
+
+		await user.click(screen.getByTestId('select-followers-only'));
+
+		expect(mockOnChange).toHaveBeenCalledWith('followers_only');
 	});
 });

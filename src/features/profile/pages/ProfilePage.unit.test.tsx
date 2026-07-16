@@ -156,6 +156,36 @@ describe('ProfilePage', () => {
 		);
 	});
 
+	it('keeps another user followers-only profile restricted', async () => {
+		const followersOnlyProfile = {
+			firstName: 'Oracle',
+			lastName: 'Guide',
+			handle: 'oracle',
+			dateOfBirth: '',
+			profileVisibility: 'followers_only',
+		};
+
+		mockUseAuthStore.mockReturnValue({
+			userInfo: ownUserInfo,
+			isUserInfoLoading: false,
+		});
+		mockGetProfile.mockResolvedValueOnce(followersOnlyProfile);
+
+		renderWithRouter('oracle');
+
+		await waitFor(() =>
+			expect(screen.getByTestId('profile')).toBeInTheDocument()
+		);
+
+		expect(screen.getByTestId('profile')).toHaveTextContent(
+			JSON.stringify({
+				userInfo: followersOnlyProfile,
+				isOwnProfile: false,
+				isPrivate: true,
+			})
+		);
+	});
+
 	it('renders nothing when profile fetch fails with non-USER_NOT_FOUND error', async () => {
 		mockUseAuthStore.mockReturnValue({
 			userInfo: ownUserInfo,

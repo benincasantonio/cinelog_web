@@ -343,6 +343,12 @@
 	"ProfileVisibilitySelect": {
 		"label": "Profile Visibility",
 		"public": "Public",
-		"private": "Private"
+		"followers_only": "Followers only",
+		"private": "Private",
+		"descriptions": {
+			"public": "Anyone can view your full profile and movie logs.",
+			"followers_only": "Only followers you accept can view your full profile and movie logs.",
+			"private": "Only you can view your full profile and movie logs."
+		}
 	}
 }

@@ -1,6 +1,6 @@
 export const PROFILE_VISIBILITY_VALUES = [
 	'public',
-	'friends_only',
+	'followers_only',
 	'private',
 ] as const;
 
