@@ -16,6 +16,14 @@ export const getProfile = async (
 		.json();
 };
 
+export const followUser = async (handle: string): Promise<void> => {
+	await apiClient.put(`v1/users/${encodeURIComponent(handle)}/follow`);
+};
+
+export const unfollowUser = async (handle: string): Promise<void> => {
+	await apiClient.delete(`v1/users/${encodeURIComponent(handle)}/follow`);
+};
+
 export const updateProfile = async (
 	data: UpdateProfileRequest
 ): Promise<UserResponse> => {

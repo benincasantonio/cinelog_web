@@ -9,6 +9,18 @@ vi.mock('react-i18next', () => ({
 	}),
 }));
 
+vi.mock('@antoniobenincasa/ui', () => ({
+	Button: ({
+		children,
+		...props
+	}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+		<button type="button" {...props}>
+			{children}
+		</button>
+	),
+	useNotification: () => ({ notify: vi.fn() }),
+}));
+
 describe('Profile', () => {
 	const baseUserInfo = {
 		firstName: 'Neo',
@@ -16,7 +28,11 @@ describe('Profile', () => {
 		handle: 'neo',
 		dateOfBirth: '1990-01-01',
 		profileVisibility: 'public' as const,
+		followerCount: 4,
+		followingCount: 3,
+		isFollowing: false,
 	};
+	const onFollowStatusChange = vi.fn();
 
 	it('renders header, menu and outlet when user has handle', () => {
 		render(
@@ -25,6 +41,7 @@ describe('Profile', () => {
 					userInfo={baseUserInfo}
 					isOwnProfile={true}
 					isPrivate={false}
+					onFollowStatusChange={onFollowStatusChange}
 				/>
 			</MemoryRouter>
 		);
@@ -44,6 +61,7 @@ describe('Profile', () => {
 					}}
 					isOwnProfile={true}
 					isPrivate={false}
+					onFollowStatusChange={onFollowStatusChange}
 				/>
 			</MemoryRouter>
 		);
@@ -62,6 +80,7 @@ describe('Profile', () => {
 					}}
 					isOwnProfile={false}
 					isPrivate={true}
+					onFollowStatusChange={onFollowStatusChange}
 				/>
 			</MemoryRouter>
 		);
@@ -79,6 +98,7 @@ describe('Profile', () => {
 					}}
 					isOwnProfile={true}
 					isPrivate={false}
+					onFollowStatusChange={onFollowStatusChange}
 				/>
 			</MemoryRouter>
 		);

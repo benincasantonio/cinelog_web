@@ -1,13 +1,66 @@
+import { Button, useNotification } from '@antoniobenincasa/ui';
 import { User } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { UserProfileResponse } from '@/features/auth/models/user-profile-response';
+import {
+	followUser,
+	unfollowUser,
+} from '@/features/auth/repositories/user-repository';
+import { extractApiError } from '@/lib/api/api-error';
 
 interface ProfileHeaderProps {
 	userInfo: UserProfileResponse | null;
+	isOwnProfile: boolean;
+	onFollowStatusChange: (isFollowing: boolean) => void;
 }
 
-export const ProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
+const FOLLOW_ERROR_KEYS: Record<string, string> = {
+	PROFILE_NOT_PUBLIC: 'ApiError.profileNotPublic',
+	RATE_LIMIT_EXCEEDED: 'ApiError.rateLimitExceeded',
+};
+
+export const ProfileHeader = ({
+	userInfo,
+	isOwnProfile,
+	onFollowStatusChange,
+}: ProfileHeaderProps) => {
 	const { t } = useTranslation();
+	const { notify } = useNotification();
+	const [isFollowPending, setIsFollowPending] = useState(false);
+
+	const showFollowControl =
+		userInfo !== null &&
+		!isOwnProfile &&
+		(userInfo.profileVisibility === 'public' || userInfo.isFollowing);
+
+	const handleFollowToggle = async () => {
+		if (!userInfo || isFollowPending) return;
+
+		setIsFollowPending(true);
+
+		try {
+			const nextIsFollowing = !userInfo.isFollowing;
+			if (nextIsFollowing) {
+				await followUser(userInfo.handle);
+			} else {
+				await unfollowUser(userInfo.handle);
+			}
+			onFollowStatusChange(nextIsFollowing);
+		} catch (error) {
+			const apiError = await extractApiError(error);
+			const messageKey =
+				(apiError?.error_code_name &&
+					FOLLOW_ERROR_KEYS[apiError.error_code_name]) ||
+				'ProfileHeader.followError';
+			notify({
+				variant: 'danger',
+				message: t(messageKey),
+			});
+		} finally {
+			setIsFollowPending(false);
+		}
+	};
 
 	return (
 		<div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
@@ -33,6 +86,44 @@ export const ProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
 					<p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">
 						@{userInfo.handle}
 					</p>
+				)}
+
+				{userInfo && (
+					<dl className="flex items-center justify-center gap-8 mt-4">
+						<div className="flex flex-col-reverse">
+							<dt className="text-xs text-gray-500 dark:text-gray-400">
+								{t('ProfileHeader.followers')}
+							</dt>
+							<dd className="text-base font-semibold text-gray-900 dark:text-white">
+								{userInfo.followerCount}
+							</dd>
+						</div>
+						<div className="flex flex-col-reverse">
+							<dt className="text-xs text-gray-500 dark:text-gray-400">
+								{t('ProfileHeader.following')}
+							</dt>
+							<dd className="text-base font-semibold text-gray-900 dark:text-white">
+								{userInfo.followingCount}
+							</dd>
+						</div>
+					</dl>
+				)}
+
+				{showFollowControl && (
+					<Button
+						type="button"
+						variant={userInfo.isFollowing ? 'outline' : 'default'}
+						className="w-full mt-4"
+						disabled={isFollowPending}
+						aria-busy={isFollowPending}
+						onClick={handleFollowToggle}
+					>
+						{t(
+							userInfo.isFollowing
+								? 'ProfileHeader.unfollow'
+								: 'ProfileHeader.follow'
+						)}
+					</Button>
 				)}
 
 				{/* Divider with subtle styling */}
