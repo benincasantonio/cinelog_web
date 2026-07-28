@@ -7,4 +7,7 @@ export type UserProfileResponse = {
 	bio?: string;
 	profileVisibility: ProfileVisibility;
 	dateOfBirth: string;
+	followerCount: number;
+	followingCount: number;
+	isFollowing: boolean;
 };

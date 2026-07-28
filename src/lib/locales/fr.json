@@ -47,7 +47,12 @@
 	},
 	"ProfileHeader": {
 		"about": "À propos",
-		"noBio": "Aucune bio disponible."
+		"noBio": "Aucune bio disponible.",
+		"followers": "Abonnés",
+		"following": "Abonnements",
+		"follow": "Suivre",
+		"unfollow": "Ne plus suivre",
+		"followError": "Impossible de mettre à jour cet abonnement. Veuillez réessayer."
 	},
 	"ProfileMenu": {
 		"overview": "Aperçu",

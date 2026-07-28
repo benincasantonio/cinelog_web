@@ -8,12 +8,14 @@ interface ProfileProps {
 	userInfo: UserProfileResponse | null;
 	isOwnProfile: boolean;
 	isPrivate: boolean;
+	onFollowStatusChange: (isFollowing: boolean) => void;
 }
 
 export const Profile = ({
 	userInfo,
 	isOwnProfile,
 	isPrivate,
+	onFollowStatusChange,
 }: ProfileProps) => {
 	const { t } = useTranslation();
 
@@ -21,7 +23,11 @@ export const Profile = ({
 		<ProfileLayout
 			sidebar={
 				<>
-					<ProfileHeader userInfo={userInfo} />
+					<ProfileHeader
+						userInfo={userInfo}
+						isOwnProfile={isOwnProfile}
+						onFollowStatusChange={onFollowStatusChange}
+					/>
 					{userInfo?.handle && !isPrivate && (
 						<ProfileMenu handle={userInfo.handle} isOwnProfile={isOwnProfile} />
 					)}

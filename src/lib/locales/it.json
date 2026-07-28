@@ -47,7 +47,12 @@
 	},
 	"ProfileHeader": {
 		"about": "Informazioni",
-		"noBio": "Nessuna biografia disponibile."
+		"noBio": "Nessuna biografia disponibile.",
+		"followers": "Follower",
+		"following": "Seguiti",
+		"follow": "Segui",
+		"unfollow": "Non seguire più",
+		"followError": "Impossibile aggiornare questo follow. Riprova."
 	},
 	"ProfileMenu": {
 		"overview": "Panoramica",
