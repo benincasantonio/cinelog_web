@@ -1,4 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ProfilePage from './ProfilePage';
@@ -24,14 +30,27 @@ vi.mock('../components', () => ({
 		userInfo,
 		isOwnProfile,
 		isPrivate,
+		onFollowStatusChange,
 	}: {
-		userInfo: unknown;
+		userInfo: {
+			followerCount: number;
+			isFollowing: boolean;
+		} | null;
 		isOwnProfile: boolean;
 		isPrivate: boolean;
+		onFollowStatusChange: (isFollowing: boolean) => void;
 	}) => (
-		<div data-testid="profile">
-			{JSON.stringify({ userInfo, isOwnProfile, isPrivate })}
-		</div>
+		<>
+			<div data-testid="profile">
+				{JSON.stringify({ userInfo, isOwnProfile, isPrivate })}
+			</div>
+			<button type="button" onClick={() => onFollowStatusChange(true)}>
+				mark-following
+			</button>
+			<button type="button" onClick={() => onFollowStatusChange(false)}>
+				mark-not-following
+			</button>
+		</>
 	),
 	ProfileLoading: () => <div data-testid="profile-loading">Loading</div>,
 }));
@@ -75,20 +94,33 @@ describe('ProfilePage', () => {
 		expect(screen.queryByTestId('profile')).not.toBeInTheDocument();
 	});
 
-	it('renders own profile using auth store data', async () => {
+	it('fetches and renders the own profile response with relationship counts', async () => {
+		const ownProfile = {
+			firstName: 'Neo',
+			lastName: 'Anderson',
+			handle: 'neo',
+			dateOfBirth: '1990-01-01',
+			profileVisibility: 'private' as const,
+			followerCount: 7,
+			followingCount: 5,
+			isFollowing: false,
+		};
 		mockUseAuthStore.mockReturnValue({
 			userInfo: ownUserInfo,
 			isUserInfoLoading: false,
 		});
+		mockGetProfile.mockResolvedValueOnce(ownProfile);
 
-		await act(() => {
-			renderWithRouter('neo');
-		});
+		renderWithRouter('neo');
 
-		expect(screen.getByTestId('profile')).toBeInTheDocument();
+		await waitFor(() =>
+			expect(screen.getByTestId('profile')).toBeInTheDocument()
+		);
+
+		expect(mockGetProfile).toHaveBeenCalledWith('neo');
 		expect(screen.getByTestId('profile')).toHaveTextContent(
 			JSON.stringify({
-				userInfo: ownUserInfo,
+				userInfo: ownProfile,
 				isOwnProfile: true,
 				isPrivate: false,
 			})
@@ -102,6 +134,9 @@ describe('ProfilePage', () => {
 			handle: 'morpheus',
 			dateOfBirth: '',
 			profileVisibility: 'public',
+			followerCount: 2,
+			followingCount: 4,
+			isFollowing: false,
 		};
 
 		mockUseAuthStore.mockReturnValue({
@@ -133,6 +168,9 @@ describe('ProfilePage', () => {
 			handle: 'trinity',
 			dateOfBirth: '1988-08-08',
 			profileVisibility: 'private',
+			followerCount: 3,
+			followingCount: 1,
+			isFollowing: false,
 		};
 
 		mockUseAuthStore.mockReturnValue({
@@ -163,6 +201,9 @@ describe('ProfilePage', () => {
 			handle: 'oracle',
 			dateOfBirth: '',
 			profileVisibility: 'followers_only',
+			followerCount: 8,
+			followingCount: 6,
+			isFollowing: true,
 		};
 
 		mockUseAuthStore.mockReturnValue({
@@ -183,6 +224,54 @@ describe('ProfilePage', () => {
 				isOwnProfile: false,
 				isPrivate: true,
 			})
+		);
+	});
+
+	it('updates follower state and count exactly once per status transition', async () => {
+		const otherProfile = {
+			firstName: 'Morpheus',
+			lastName: 'Leader',
+			handle: 'morpheus',
+			dateOfBirth: '',
+			profileVisibility: 'public',
+			followerCount: 2,
+			followingCount: 4,
+			isFollowing: false,
+		};
+		mockUseAuthStore.mockReturnValue({
+			userInfo: ownUserInfo,
+			isUserInfoLoading: false,
+		});
+		mockGetProfile.mockResolvedValueOnce(otherProfile);
+
+		renderWithRouter('morpheus');
+
+		await waitFor(() =>
+			expect(screen.getByTestId('profile')).toHaveTextContent(
+				'"followerCount":2'
+			)
+		);
+
+		fireEvent.click(screen.getByRole('button', { name: 'mark-following' }));
+
+		expect(screen.getByTestId('profile')).toHaveTextContent(
+			'"followerCount":3'
+		);
+		expect(screen.getByTestId('profile')).toHaveTextContent(
+			'"isFollowing":true'
+		);
+
+		fireEvent.click(screen.getByRole('button', { name: 'mark-following' }));
+		expect(screen.getByTestId('profile')).toHaveTextContent(
+			'"followerCount":3'
+		);
+
+		fireEvent.click(screen.getByRole('button', { name: 'mark-not-following' }));
+		expect(screen.getByTestId('profile')).toHaveTextContent(
+			'"followerCount":2'
+		);
+		expect(screen.getByTestId('profile')).toHaveTextContent(
+			'"isFollowing":false'
 		);
 	});
 

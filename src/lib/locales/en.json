@@ -47,7 +47,12 @@
 	},
 	"ProfileHeader": {
 		"about": "About",
-		"noBio": "No bio available."
+		"noBio": "No bio available.",
+		"followers": "Followers",
+		"following": "Following",
+		"follow": "Follow",
+		"unfollow": "Unfollow",
+		"followError": "Unable to update this follow. Please try again."
 	},
 	"ProfileMenu": {
 		"overview": "Overview",
