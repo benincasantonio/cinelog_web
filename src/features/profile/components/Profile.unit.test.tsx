@@ -9,6 +9,11 @@ vi.mock('react-i18next', () => ({
 	}),
 }));
 
+vi.mock('@/lib/locales/i18n', () => ({
+	changeActiveLocale: vi.fn(),
+	getActiveLocale: () => 'en-US',
+}));
+
 vi.mock('@antoniobenincasa/ui', () => ({
 	Button: ({
 		children,

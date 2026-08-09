@@ -7,6 +7,7 @@ import ky, {
 import type { RefreshResponse } from '@/features/auth/models/auth-responses';
 import { refreshToken } from '@/features/auth/repositories/auth-repository';
 import { useAuthStore } from '@/features/auth/stores';
+import { getActiveLocale } from '@/lib/locales/i18n';
 import type { ApiClientOptions } from '@/lib/models/api-client-options';
 
 let refreshPromise: Promise<RefreshResponse> | null = null;
@@ -21,6 +22,8 @@ export const beforeRequestInterceptor = async (
 	request: KyRequest,
 	options: ApiClientOptions
 ) => {
+	request.headers.set('Accept-Language', getActiveLocale());
+
 	if (options.skipAuth) {
 		return;
 	}

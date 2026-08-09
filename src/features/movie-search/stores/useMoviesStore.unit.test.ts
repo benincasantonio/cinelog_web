@@ -78,6 +78,38 @@ describe('useMoviesStore', () => {
 			);
 			consoleSpy.mockRestore();
 		});
+
+		it('ignores an older response that finishes after a newer search', async () => {
+			let resolveFirst: (value: unknown) => void;
+			let resolveSecond: (value: unknown) => void;
+			mockSearch
+				.mockReturnValueOnce(
+					new Promise((resolve) => {
+						resolveFirst = resolve;
+					})
+				)
+				.mockReturnValueOnce(
+					new Promise((resolve) => {
+						resolveSecond = resolve;
+					})
+				);
+
+			const firstRequest = useMoviesStore
+				.getState()
+				.loadMovieSearchResults('old');
+			const secondRequest = useMoviesStore
+				.getState()
+				.loadMovieSearchResults('new');
+
+			resolveSecond!({ results: [{ id: 2, title: 'New locale' }] });
+			await secondRequest;
+			resolveFirst!({ results: [{ id: 1, title: 'Old locale' }] });
+			await firstRequest;
+
+			expect(useMoviesStore.getState().movieSearchResult).toEqual({
+				results: [{ id: 2, title: 'New locale' }],
+			});
+		});
 	});
 
 	describe('resetMovieSearchResults', () => {

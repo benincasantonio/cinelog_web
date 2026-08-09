@@ -14,7 +14,8 @@ import { useMovieDetailsStore } from '../stores/useMovieDetailsStore';
 import { useMovieRatingStore } from '../stores/useMovieRatingStore';
 
 const MovieDetailsPage = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const activeLocale = i18n.resolvedLanguage ?? i18n.language;
 	const { tmdbId } = useParams<{ tmdbId: string }>();
 	const navigate = useNavigate();
 	const movieDetails = useMovieDetailsStore((state) => state.movieDetails);
@@ -37,14 +38,22 @@ const MovieDetailsPage = () => {
 	const openLogDialog = useMovieLogDialogStore((state) => state.open);
 
 	useEffect(() => {
-		if (tmdbId) {
+		if (tmdbId && activeLocale) {
 			loadMovieDetails(Number(tmdbId));
+		}
+	}, [tmdbId, activeLocale, loadMovieDetails]);
+
+	useEffect(() => {
+		if (tmdbId) {
 			loadMovieRating(Number(tmdbId));
 		}
+	}, [tmdbId, loadMovieRating]);
+
+	useEffect(() => {
 		return () => {
 			resetMovieDetails();
 		};
-	}, [tmdbId, loadMovieDetails, loadMovieRating, resetMovieDetails]);
+	}, [resetMovieDetails]);
 
 	const onRateMovieUpdated = (movieRating: MovieRatingResponse) => {
 		if (tmdbId) {

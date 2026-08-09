@@ -14,6 +14,9 @@ const {
 	mockSendRegistrationCode,
 	mockFetchCsrfToken,
 	mockGetUserInfo,
+	mockUpdateLocale,
+	mockChangeLanguage,
+	mockGetActiveLocale,
 } = vi.hoisted(() => ({
 	mockLogin: vi.fn(),
 	mockLogout: vi.fn(),
@@ -21,6 +24,9 @@ const {
 	mockSendRegistrationCode: vi.fn(),
 	mockFetchCsrfToken: vi.fn(),
 	mockGetUserInfo: vi.fn(),
+	mockUpdateLocale: vi.fn(),
+	mockChangeLanguage: vi.fn(),
+	mockGetActiveLocale: vi.fn(),
 }));
 
 vi.mock('@/features/auth/repositories/auth-repository', () => ({
@@ -33,6 +39,12 @@ vi.mock('@/features/auth/repositories/auth-repository', () => ({
 
 vi.mock('../repositories/user-repository', () => ({
 	getUserInfo: mockGetUserInfo,
+	updateLocale: mockUpdateLocale,
+}));
+
+vi.mock('@/lib/locales/i18n', () => ({
+	changeActiveLocale: mockChangeLanguage,
+	getActiveLocale: mockGetActiveLocale,
 }));
 
 // ---------------------------------------------------------------------------
@@ -53,6 +65,7 @@ const mockUser = {
 	handle: 'johndoe',
 	dateOfBirth: '1990-01-01',
 	bio: 'A test user',
+	locale: 'en-US' as const,
 };
 
 const mockLoginResponse = {
@@ -62,6 +75,7 @@ const mockLoginResponse = {
 	lastName: 'Doe',
 	handle: 'johndoe',
 	bio: null,
+	locale: 'en-US' as const,
 	csrfToken: 'login-csrf-token',
 };
 
@@ -74,6 +88,7 @@ const mockRegisterRequest = {
 	password: 'secret',
 	handle: 'janedoe',
 	dateOfBirth: '1992-05-15',
+	locale: 'fr-FR' as const,
 };
 
 // ---------------------------------------------------------------------------
@@ -90,6 +105,7 @@ function resetStore() {
 		csrfToken: null,
 		userInfo: null,
 		isUserInfoLoading: false,
+		isLocaleUpdating: false,
 		authenticatedStatus: null,
 	});
 }
@@ -107,6 +123,8 @@ describe('useAuthStore', () => {
 			.mockImplementation(() => undefined);
 		vi.clearAllMocks();
 		resetStore();
+		mockChangeLanguage.mockResolvedValue(undefined);
+		mockGetActiveLocale.mockReturnValue('en-US');
 	});
 
 	afterEach(() => {
@@ -125,6 +143,7 @@ describe('useAuthStore', () => {
 			expect(state.csrfToken).toBeNull();
 			expect(state.userInfo).toBeNull();
 			expect(state.isUserInfoLoading).toBe(false);
+			expect(state.isLocaleUpdating).toBe(false);
 			expect(state.authenticatedStatus).toBeNull();
 		});
 	});
@@ -523,6 +542,9 @@ describe('useAuthStore', () => {
 				callOrder.push('getUserInfo');
 				return mockUser;
 			});
+			mockChangeLanguage.mockImplementationOnce(async () => {
+				callOrder.push('changeLanguage');
+			});
 			mockFetchCsrfToken.mockImplementationOnce(async () => {
 				callOrder.push('fetchCsrfToken');
 				return mockCsrfResponse;
@@ -530,7 +552,135 @@ describe('useAuthStore', () => {
 
 			await useAuthStore.getState().fetchUserInfo();
 
-			expect(callOrder).toEqual(['getUserInfo', 'fetchCsrfToken']);
+			expect(callOrder).toEqual([
+				'getUserInfo',
+				'changeLanguage',
+				'fetchCsrfToken',
+			]);
+			expect(mockChangeLanguage).toHaveBeenCalledWith('en-US');
+		});
+
+		it('waits for the account locale before completing initialization', async () => {
+			let resolveLanguage: (() => void) | undefined;
+			mockGetUserInfo.mockResolvedValueOnce({
+				...mockUser,
+				locale: 'fr-FR',
+			});
+			mockChangeLanguage.mockReturnValueOnce(
+				new Promise<void>((resolve) => {
+					resolveLanguage = resolve;
+				})
+			);
+			mockFetchCsrfToken.mockResolvedValueOnce(mockCsrfResponse);
+
+			const fetchPromise = useAuthStore.getState().fetchUserInfo();
+			await vi.waitFor(() =>
+				expect(mockChangeLanguage).toHaveBeenCalledWith('fr-FR')
+			);
+
+			expect(useAuthStore.getState().isInitialized).toBe(false);
+
+			resolveLanguage?.();
+			await fetchPromise;
+
+			expect(useAuthStore.getState().isInitialized).toBe(true);
+			expect(useAuthStore.getState().userInfo?.locale).toBe('fr-FR');
+		});
+
+		it('keeps the session and detector fallback for an invalid account locale', async () => {
+			mockGetActiveLocale.mockReturnValueOnce('it-IT');
+			mockGetUserInfo.mockResolvedValueOnce({
+				...mockUser,
+				locale: 'de-DE',
+			});
+			mockFetchCsrfToken.mockResolvedValueOnce(mockCsrfResponse);
+
+			await useAuthStore.getState().fetchUserInfo();
+
+			expect(mockChangeLanguage).toHaveBeenCalledWith('it-IT');
+			expect(useAuthStore.getState().authenticatedStatus).toBe(true);
+			expect(useAuthStore.getState().userInfo?.locale).toBe('it-IT');
+			expect(consoleErrorSpy).toHaveBeenCalled();
+		});
+	});
+
+	describe('updateLocale', () => {
+		it('persists before changing i18n and account state', async () => {
+			const callOrder: string[] = [];
+			useAuthStore.setState({ userInfo: mockUser });
+			mockUpdateLocale.mockImplementationOnce(async () => {
+				callOrder.push('updateLocale');
+				return { locale: 'fr-FR' };
+			});
+			mockChangeLanguage.mockImplementationOnce(async () => {
+				callOrder.push('changeLanguage');
+			});
+
+			await useAuthStore.getState().updateLocale('fr-FR');
+
+			expect(callOrder).toEqual(['updateLocale', 'changeLanguage']);
+			expect(mockUpdateLocale).toHaveBeenCalledWith('fr-FR');
+			expect(useAuthStore.getState().userInfo).toEqual({
+				...mockUser,
+				locale: 'fr-FR',
+			});
+			expect(useAuthStore.getState().isLocaleUpdating).toBe(false);
+		});
+
+		it('exposes pending state until locale synchronization completes', async () => {
+			let resolveUpdate: ((response: { locale: 'it-IT' }) => void) | undefined;
+			useAuthStore.setState({ userInfo: mockUser });
+			mockUpdateLocale.mockReturnValueOnce(
+				new Promise((resolve) => {
+					resolveUpdate = resolve;
+				})
+			);
+
+			const updatePromise = useAuthStore.getState().updateLocale('it-IT');
+
+			expect(useAuthStore.getState().isLocaleUpdating).toBe(true);
+
+			resolveUpdate?.({ locale: 'it-IT' });
+			await updatePromise;
+
+			expect(useAuthStore.getState().isLocaleUpdating).toBe(false);
+		});
+
+		it('leaves account and UI state unchanged when persistence fails', async () => {
+			useAuthStore.setState({ userInfo: mockUser });
+			mockUpdateLocale.mockRejectedValueOnce(new Error('network'));
+
+			await expect(
+				useAuthStore.getState().updateLocale('fr-FR')
+			).rejects.toThrow('network');
+
+			expect(mockChangeLanguage).not.toHaveBeenCalled();
+			expect(useAuthStore.getState().userInfo).toEqual(mockUser);
+			expect(useAuthStore.getState().isLocaleUpdating).toBe(false);
+		});
+
+		it('applies the requested locale when the update response is malformed', async () => {
+			useAuthStore.setState({ userInfo: mockUser });
+			mockUpdateLocale.mockResolvedValueOnce({ locale: 'de-DE' });
+
+			await useAuthStore.getState().updateLocale('fr-FR');
+
+			expect(mockChangeLanguage).toHaveBeenCalledWith('fr-FR');
+			expect(useAuthStore.getState().userInfo).toEqual({
+				...mockUser,
+				locale: 'fr-FR',
+			});
+			expect(useAuthStore.getState().isLocaleUpdating).toBe(false);
+			expect(consoleErrorSpy).toHaveBeenCalled();
+		});
+
+		it('does not persist the already-active account locale', async () => {
+			useAuthStore.setState({ userInfo: mockUser });
+
+			await useAuthStore.getState().updateLocale('en-US');
+
+			expect(mockUpdateLocale).not.toHaveBeenCalled();
+			expect(mockChangeLanguage).not.toHaveBeenCalled();
 		});
 	});
 

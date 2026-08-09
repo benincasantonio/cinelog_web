@@ -171,6 +171,10 @@ describe('date-utils', () => {
 		});
 
 		describe('with Italian locale', () => {
+			it('supports the canonical Italian locale tag', () => {
+				expect(humanizeMinutes(90, 'it-IT')).toBe('1o 30min');
+			});
+
 			it('should return "0min" for 0 minutes', () => {
 				expect(humanizeMinutes(0, 'it')).toBe('0min');
 			});
@@ -189,6 +193,10 @@ describe('date-utils', () => {
 		});
 
 		describe('with French locale', () => {
+			it('supports the canonical French locale tag', () => {
+				expect(humanizeMinutes(90, 'fr-FR')).toBe('1h 30min');
+			});
+
 			it('should return "0min" for 0 minutes', () => {
 				expect(humanizeMinutes(0, 'fr')).toBe('0min');
 			});

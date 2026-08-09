@@ -3,32 +3,48 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
+	useNotification,
 } from '@antoniobenincasa/ui';
 import { Languages, LogOut, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores';
+import type { Locale } from '@/lib/models';
 import { ThemeDropdown } from './ThemeDropdown';
 
 export const ProfileDropdownMenu = () => {
 	const navigate = useNavigate();
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
+	const { notify } = useNotification();
 
 	const logout = useAuthStore((state) => state.logout);
 	const userInfo = useAuthStore((state) => state.userInfo);
+	const updateLocale = useAuthStore((state) => state.updateLocale);
+	const isLocaleUpdating = useAuthStore((state) => state.isLocaleUpdating);
 
 	const handleLogout = async () => {
 		await logout();
 		navigate('/');
 	};
 
-	const changeLanguage = (lng: string) => {
-		i18n.changeLanguage(lng);
+	const changeLanguage = async (locale: Locale) => {
+		if (isLocaleUpdating || userInfo?.locale === locale) return;
+
+		try {
+			await updateLocale(locale);
+		} catch {
+			notify({
+				variant: 'danger',
+				message: t('ProfileDropdownMenu.localeUpdateError'),
+			});
+		}
 	};
 
 	const goToProfilePage = () => {
@@ -60,15 +76,29 @@ export const ProfileDropdownMenu = () => {
 						{t('ProfileDropdownMenu.language')}
 					</DropdownMenuSubTrigger>
 					<DropdownMenuSubContent>
-						<DropdownMenuItem onClick={() => changeLanguage('en')}>
-							{t('ProfileDropdownMenu.languages.en')}
-						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => changeLanguage('fr')}>
-							{t('ProfileDropdownMenu.languages.fr')}
-						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => changeLanguage('it')}>
-							{t('ProfileDropdownMenu.languages.it')}
-						</DropdownMenuItem>
+						<DropdownMenuRadioGroup value={userInfo?.locale}>
+							<DropdownMenuRadioItem
+								value="en-US"
+								disabled={isLocaleUpdating}
+								onClick={() => void changeLanguage('en-US')}
+							>
+								{t('ProfileDropdownMenu.languages.en')}
+							</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem
+								value="fr-FR"
+								disabled={isLocaleUpdating}
+								onClick={() => void changeLanguage('fr-FR')}
+							>
+								{t('ProfileDropdownMenu.languages.fr')}
+							</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem
+								value="it-IT"
+								disabled={isLocaleUpdating}
+								onClick={() => void changeLanguage('it-IT')}
+							>
+								{t('ProfileDropdownMenu.languages.it')}
+							</DropdownMenuRadioItem>
+						</DropdownMenuRadioGroup>
 					</DropdownMenuSubContent>
 				</DropdownMenuSub>
 				<ThemeDropdown context="submenu" />

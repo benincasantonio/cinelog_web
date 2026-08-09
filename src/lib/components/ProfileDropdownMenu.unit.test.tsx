@@ -4,11 +4,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockNavigate = vi.fn();
 const mockLogout = vi.fn();
-const mockChangeLanguage = vi.fn();
+const mockUpdateLocale = vi.fn();
+const mockNotify = vi.fn();
 const mockSetTheme = vi.fn();
 
 const authState = {
-	userInfo: { handle: 'neo' } as { handle: string } | null,
+	userInfo: { handle: 'neo', locale: 'en-US' } as {
+		handle: string;
+		locale: 'en-US' | 'fr-FR' | 'it-IT';
+	} | null,
+	isLocaleUpdating: false,
 	theme: 'system' as 'dark' | 'light' | 'system',
 };
 
@@ -23,7 +28,6 @@ vi.mock('react-router-dom', async () => {
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
 		t: (key: string) => key,
-		i18n: { changeLanguage: mockChangeLanguage },
 	}),
 }));
 
@@ -31,9 +35,20 @@ vi.mock('@/features/auth/stores', () => ({
 	useAuthStore: (
 		selector: (state: {
 			logout: () => Promise<void>;
-			userInfo: { handle: string } | null;
+			userInfo: {
+				handle: string;
+				locale: 'en-US' | 'fr-FR' | 'it-IT';
+			} | null;
+			isLocaleUpdating: boolean;
+			updateLocale: (locale: string) => Promise<void>;
 		}) => unknown
-	) => selector({ logout: mockLogout, userInfo: authState.userInfo }),
+	) =>
+		selector({
+			logout: mockLogout,
+			userInfo: authState.userInfo,
+			isLocaleUpdating: authState.isLocaleUpdating,
+			updateLocale: mockUpdateLocale,
+		}),
 }));
 
 vi.mock('@/lib/hooks/useTheme', () => ({
@@ -69,14 +84,21 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	}) => <div data-value={value}>{children}</div>,
 	DropdownMenuRadioItem: ({
 		children,
+		disabled,
 		onClick,
 		value,
 	}: {
 		children?: ReactNode;
+		disabled?: boolean;
 		onClick?: () => void;
 		value?: string;
 	}) => (
-		<button type="button" data-value={value} onClick={onClick}>
+		<button
+			type="button"
+			data-value={value}
+			disabled={disabled}
+			onClick={onClick}
+		>
 			{children}
 		</button>
 	),
@@ -92,6 +114,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 			{children}
 		</button>
 	),
+	useNotification: () => ({ notify: mockNotify }),
 }));
 
 vi.mock('lucide-react', () => ({
@@ -106,9 +129,11 @@ import { ProfileDropdownMenu } from './ProfileDropdownMenu';
 describe('ProfileDropdownMenu', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		authState.userInfo = { handle: 'neo' };
+		authState.userInfo = { handle: 'neo', locale: 'en-US' };
+		authState.isLocaleUpdating = false;
 		authState.theme = 'system';
 		mockLogout.mockResolvedValue(undefined);
+		mockUpdateLocale.mockResolvedValue(undefined);
 	});
 
 	it('navigates to profile when profile item is clicked', () => {
@@ -124,15 +149,58 @@ describe('ProfileDropdownMenu', () => {
 		expect(mockNavigate).not.toHaveBeenCalledWith('/profile/neo');
 	});
 
-	it('changes language from language menu items', () => {
+	it('persists full locale tags from language menu items', () => {
 		render(<ProfileDropdownMenu />);
-		fireEvent.click(screen.getByText('ProfileDropdownMenu.languages.en'));
 		fireEvent.click(screen.getByText('ProfileDropdownMenu.languages.fr'));
 		fireEvent.click(screen.getByText('ProfileDropdownMenu.languages.it'));
 
-		expect(mockChangeLanguage).toHaveBeenCalledWith('en');
-		expect(mockChangeLanguage).toHaveBeenCalledWith('fr');
-		expect(mockChangeLanguage).toHaveBeenCalledWith('it');
+		expect(mockUpdateLocale).toHaveBeenCalledWith('fr-FR');
+		expect(mockUpdateLocale).toHaveBeenCalledWith('it-IT');
+	});
+
+	it('marks the active locale and ignores its radio item', () => {
+		render(<ProfileDropdownMenu />);
+
+		expect(
+			screen.getByText('ProfileDropdownMenu.languages.en').parentElement
+		).toHaveAttribute('data-value', 'en-US');
+
+		fireEvent.click(screen.getByText('ProfileDropdownMenu.languages.en'));
+		expect(mockUpdateLocale).not.toHaveBeenCalled();
+	});
+
+	it('disables every locale while an update is pending', () => {
+		authState.isLocaleUpdating = true;
+
+		render(<ProfileDropdownMenu />);
+
+		expect(screen.getByText('ProfileDropdownMenu.languages.en')).toBeDisabled();
+		expect(screen.getByText('ProfileDropdownMenu.languages.fr')).toBeDisabled();
+		expect(screen.getByText('ProfileDropdownMenu.languages.it')).toBeDisabled();
+	});
+
+	it('shows only a danger notification when locale persistence fails', async () => {
+		mockUpdateLocale.mockRejectedValueOnce(new Error('network'));
+
+		render(<ProfileDropdownMenu />);
+		fireEvent.click(screen.getByText('ProfileDropdownMenu.languages.fr'));
+
+		await vi.waitFor(() =>
+			expect(mockNotify).toHaveBeenCalledWith({
+				variant: 'danger',
+				message: 'ProfileDropdownMenu.localeUpdateError',
+			})
+		);
+	});
+
+	it('does not show a success notification after persistence', async () => {
+		render(<ProfileDropdownMenu />);
+		fireEvent.click(screen.getByText('ProfileDropdownMenu.languages.fr'));
+
+		await vi.waitFor(() =>
+			expect(mockUpdateLocale).toHaveBeenCalledWith('fr-FR')
+		);
+		expect(mockNotify).not.toHaveBeenCalled();
 	});
 
 	it('changes theme from theme menu items', () => {

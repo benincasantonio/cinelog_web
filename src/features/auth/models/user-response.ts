@@ -1,4 +1,4 @@
-import type { ProfileVisibility } from '@/lib/models';
+import type { Locale, ProfileVisibility } from '@/lib/models';
 
 export type UserResponse = {
 	id: string;
@@ -8,5 +8,6 @@ export type UserResponse = {
 	handle: string;
 	dateOfBirth: string;
 	bio?: string;
+	locale: Locale;
 	profileVisibility: ProfileVisibility;
 };

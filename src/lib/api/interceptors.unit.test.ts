@@ -11,6 +11,10 @@ vi.mock('@/features/auth/repositories/auth-repository', () => ({
 	refreshToken: vi.fn(),
 }));
 
+vi.mock('@/lib/locales/i18n', () => ({
+	getActiveLocale: () => 'fr-FR',
+}));
+
 import { refreshToken } from '@/features/auth/repositories/auth-repository';
 import { useAuthStore } from '@/features/auth/stores';
 
@@ -86,6 +90,10 @@ describe('interceptors', () => {
 			await beforeRequestInterceptor(mockRequest, mockOptions);
 
 			expect(mockRequest.headers.set).toHaveBeenCalledWith(
+				'Accept-Language',
+				'fr-FR'
+			);
+			expect(mockRequest.headers.set).toHaveBeenCalledWith(
 				'X-CSRF-Token',
 				'test-csrf-token'
 			);
@@ -141,7 +149,14 @@ describe('interceptors', () => {
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
 
-			expect(mockRequest.headers.set).not.toHaveBeenCalled();
+			expect(mockRequest.headers.set).toHaveBeenCalledWith(
+				'Accept-Language',
+				'fr-FR'
+			);
+			expect(mockRequest.headers.set).not.toHaveBeenCalledWith(
+				'X-CSRF-Token',
+				expect.anything()
+			);
 		});
 
 		it('should handle lowercase method names', async () => {
@@ -166,7 +181,14 @@ describe('interceptors', () => {
 
 			await beforeRequestInterceptor(mockRequest, mockOptions);
 
-			expect(mockRequest.headers.set).not.toHaveBeenCalled();
+			expect(mockRequest.headers.set).toHaveBeenCalledWith(
+				'Accept-Language',
+				'fr-FR'
+			);
+			expect(mockRequest.headers.set).not.toHaveBeenCalledWith(
+				'X-CSRF-Token',
+				expect.anything()
+			);
 		});
 
 		it('should skip auth header logic when skipAuth is true', async () => {
@@ -177,7 +199,14 @@ describe('interceptors', () => {
 
 			await beforeRequestInterceptor(mockRequest, { skipAuth: true });
 
-			expect(mockRequest.headers.set).not.toHaveBeenCalled();
+			expect(mockRequest.headers.set).toHaveBeenCalledWith(
+				'Accept-Language',
+				'fr-FR'
+			);
+			expect(mockRequest.headers.set).not.toHaveBeenCalledWith(
+				'X-CSRF-Token',
+				expect.anything()
+			);
 		});
 	});
 

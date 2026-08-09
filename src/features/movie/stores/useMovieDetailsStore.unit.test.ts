@@ -53,6 +53,35 @@ describe('useMovieDetailsStore', () => {
 		consoleSpy.mockRestore();
 	});
 
+	it('ignores older localized details that resolve after a newer request', async () => {
+		let resolveFirst: (value: unknown) => void;
+		let resolveSecond: (value: unknown) => void;
+		mockGetDetails
+			.mockReturnValueOnce(
+				new Promise((resolve) => {
+					resolveFirst = resolve;
+				})
+			)
+			.mockReturnValueOnce(
+				new Promise((resolve) => {
+					resolveSecond = resolve;
+				})
+			);
+
+		const firstRequest = useMovieDetailsStore.getState().loadMovieDetails(1);
+		const secondRequest = useMovieDetailsStore.getState().loadMovieDetails(1);
+
+		resolveSecond!({ id: 1, title: 'Titolo nuovo' });
+		await secondRequest;
+		resolveFirst!({ id: 1, title: 'Old title' });
+		await firstRequest;
+
+		expect(useMovieDetailsStore.getState().movieDetails).toEqual({
+			id: 1,
+			title: 'Titolo nuovo',
+		});
+	});
+
 	it('sets and resets movie rating state', () => {
 		const movieRating = { rating: 8, comment: 'great' };
 		useMovieDetailsStore.getState().setMovieRating(movieRating as never);

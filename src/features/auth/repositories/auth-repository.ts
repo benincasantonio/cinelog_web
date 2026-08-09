@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api/client';
+import { getActiveLocale } from '@/lib/locales/i18n';
 import type { ApiClientOptions } from '@/lib/models/api-client-options';
 import type {
 	CsrfTokenResponse,
@@ -18,6 +19,7 @@ import type { SendCodeRequest } from '../models/send-code-request';
 export const fetchCsrfToken = async (): Promise<CsrfTokenResponse> => {
 	const response = await fetch(`${import.meta.env.VITE_API_URL}v1/auth/csrf`, {
 		credentials: 'include',
+		headers: { 'Accept-Language': getActiveLocale() },
 	});
 	if (!response.ok) {
 		throw new Error(
@@ -54,6 +56,7 @@ export const refreshToken = async (): Promise<RefreshResponse> => {
 		{
 			method: 'POST',
 			credentials: 'include',
+			headers: { 'Accept-Language': getActiveLocale() },
 		}
 	);
 

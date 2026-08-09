@@ -3,8 +3,8 @@
  *
  * Resets the user's password using the code received via email.
  */
-export interface ResetPasswordRequest {
+export type ResetPasswordRequest = {
 	email: string;
 	code: string;
 	new_password: string;
-}
+};

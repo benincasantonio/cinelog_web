@@ -1,4 +1,4 @@
-import type { ProfileVisibility } from '@/lib/models';
+import type { Locale, ProfileVisibility } from '@/lib/models';
 
 export type RegisterRequest = {
 	firstName: string;
@@ -8,6 +8,7 @@ export type RegisterRequest = {
 	handle: string;
 	dateOfBirth: string;
 	bio?: string;
+	locale: Locale;
 	profileVisibility: ProfileVisibility;
 	verificationCode: string;
 };

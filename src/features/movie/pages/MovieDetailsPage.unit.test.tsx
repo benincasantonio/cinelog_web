@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockNavigate = vi.fn();
 const mockUseParams = vi.fn();
+let activeLocale = 'en-US';
 
 const movieDetailsState = {
 	movieDetails: undefined as
@@ -43,6 +44,7 @@ vi.mock('react-router-dom', () => ({
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
 		t: (key: string) => key,
+		i18n: { resolvedLanguage: activeLocale },
 	}),
 }));
 
@@ -129,6 +131,7 @@ import MovieDetailsPage from './MovieDetailsPage';
 describe('MovieDetailsPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		activeLocale = 'en-US';
 		mockUseParams.mockReturnValue({ tmdbId: '10' });
 		movieDetailsState.movieDetails = undefined;
 		movieDetailsState.movieRating = undefined;
@@ -253,5 +256,16 @@ describe('MovieDetailsPage', () => {
 		render(<MovieDetailsPage />);
 
 		expect(screen.getByTestId('movie-vote-user')).toHaveTextContent('0');
+	});
+
+	it('refetches localized details without refetching the user rating', () => {
+		const { rerender } = render(<MovieDetailsPage />);
+		vi.clearAllMocks();
+
+		activeLocale = 'it-IT';
+		rerender(<MovieDetailsPage />);
+
+		expect(movieDetailsState.loadMovieDetails).toHaveBeenCalledWith(10);
+		expect(movieDetailsState.loadMovieRating).not.toHaveBeenCalled();
 	});
 });

@@ -1,22 +1,8 @@
-export const locales = [
-	{
-		code: 'en',
-		name: 'English',
-		iso: 'en-US',
-	},
-	{
-		code: 'fr',
-		name: 'French',
-		iso: 'fr-FR',
-	},
-	{
-		code: 'it',
-		name: 'Italian',
-		iso: 'it-IT',
-	},
-];
+export const LOCALE_VALUES = ['en-US', 'fr-FR', 'it-IT'] as const;
 
-export type localeCodes = (typeof locales)[number]['code'];
+export type Locale = (typeof LOCALE_VALUES)[number];
+
+export const DEFAULT_LOCALE: Locale = 'en-US';
 
 export type TimeUnit = {
 	singular: string;
@@ -24,8 +10,8 @@ export type TimeUnit = {
 	short: string;
 };
 
-export const timeUnits: {
-	[localeCode: localeCodes]: {
+export const TIME_UNITS: {
+	[locale in Locale]: {
 		year: TimeUnit;
 		month: TimeUnit;
 		day: TimeUnit;
@@ -35,7 +21,7 @@ export const timeUnits: {
 		millisecond: TimeUnit;
 	};
 } = {
-	en: {
+	'en-US': {
 		year: {
 			singular: 'year',
 			plural: 'years',
@@ -72,7 +58,7 @@ export const timeUnits: {
 			short: 'ms',
 		},
 	},
-	fr: {
+	'fr-FR': {
 		year: {
 			singular: 'année',
 			plural: 'années',
@@ -109,7 +95,7 @@ export const timeUnits: {
 			short: 'ms',
 		},
 	},
-	it: {
+	'it-IT': {
 		year: {
 			singular: 'anno',
 			plural: 'anni',

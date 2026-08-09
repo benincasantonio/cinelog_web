@@ -8,6 +8,7 @@ This repository contains the web frontend for Cinelog. The project already lets 
 
 - Authentication flows: login, registration, forgot password, and reset password
 - Movie search and movie details
+- Account-backed English, French, and Italian localization
 - Watched movie logging
 - Tracking where a movie was watched
 - Profile pages
