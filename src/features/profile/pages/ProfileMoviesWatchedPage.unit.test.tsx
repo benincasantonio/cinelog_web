@@ -8,6 +8,11 @@ vi.mock('react-i18next', () => ({
 	}),
 }));
 
+vi.mock('@/lib/locales/i18n', () => ({
+	changeActiveLocale: vi.fn(),
+	getActiveLocale: () => 'en-US',
+}));
+
 vi.mock('@/features/movie/components/MoviesWatched', () => ({
 	MoviesWatched: ({ handle }: { handle: string }) => (
 		<div data-testid="movies-watched">{handle}</div>

@@ -20,6 +20,11 @@ vi.mock('react-i18next', () => ({
 	}),
 }));
 
+vi.mock('@/lib/locales/i18n', () => ({
+	changeActiveLocale: vi.fn(),
+	getActiveLocale: () => 'en-US',
+}));
+
 describe('MovieLogItem Integration Tests', () => {
 	describe('T4.1.1: Navigation Integration with React Router', () => {
 		it('should render component with BrowserRouter without errors', () => {

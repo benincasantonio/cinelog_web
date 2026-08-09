@@ -3,6 +3,6 @@
  *
  * Triggers sending a password reset code to the specified email address.
  */
-export interface ForgotPasswordRequest {
+export type ForgotPasswordRequest = {
 	email: string;
-}
+};

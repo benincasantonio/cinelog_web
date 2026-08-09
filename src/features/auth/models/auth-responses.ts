@@ -1,18 +1,21 @@
-export interface LoginResponse {
+import type { Locale } from '@/lib/models';
+
+export type LoginResponse = {
 	userId: string;
 	email: string;
 	firstName: string;
 	lastName: string;
 	handle: string;
 	bio: string | null;
+	locale: Locale;
 	csrfToken: string;
-}
+};
 
-export interface RefreshResponse {
+export type RefreshResponse = {
 	message: string;
 	csrfToken: string;
-}
+};
 
-export interface CsrfTokenResponse {
+export type CsrfTokenResponse = {
 	csrfToken: string;
-}
+};

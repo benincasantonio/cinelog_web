@@ -13,6 +13,10 @@ vi.mock('react-i18next', () => ({
 	}),
 }));
 
+vi.mock('@/lib/locales/i18n', () => ({
+	getActiveLocale: () => 'fr-FR',
+}));
+
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
 	useNavigate: () => mockNavigate,
@@ -353,6 +357,7 @@ describe('RegistrationForm', () => {
 						email: 'john@example.com',
 						password: 'password123',
 						handle: 'johndoe',
+						locale: 'fr-FR',
 						profileVisibility: 'private',
 						verificationCode: 'A1B2C3',
 					})

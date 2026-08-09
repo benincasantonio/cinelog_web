@@ -1,9 +1,12 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+let activeLocale = 'en-US';
+
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
 		t: (key: string) => key,
+		i18n: { resolvedLanguage: activeLocale },
 	}),
 }));
 
@@ -27,6 +30,7 @@ describe('MovieSearchPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.useFakeTimers();
+		activeLocale = 'en-US';
 	});
 
 	afterEach(() => {
@@ -121,5 +125,44 @@ describe('MovieSearchPage', () => {
 		// Should only have searched for the final value
 		expect(mockLoadMovieSearchResults).toHaveBeenCalledTimes(1);
 		expect(mockLoadMovieSearchResults).toHaveBeenCalledWith('Inception');
+	});
+
+	it('refetches the active query when the locale changes', () => {
+		const { rerender } = render(<MovieSearchPage />);
+		const input = screen.getByPlaceholderText(
+			'MovieSearchPage.searchPlaceholder'
+		);
+		fireEvent.change(input, { target: { value: 'Inception' } });
+		act(() => {
+			vi.advanceTimersByTime(500);
+		});
+		mockLoadMovieSearchResults.mockClear();
+
+		activeLocale = 'fr-FR';
+		rerender(<MovieSearchPage />);
+		act(() => {
+			vi.advanceTimersByTime(500);
+		});
+
+		expect(mockLoadMovieSearchResults).toHaveBeenCalledOnce();
+		expect(mockLoadMovieSearchResults).toHaveBeenCalledWith('Inception');
+	});
+
+	it('invalidates the current search immediately when the locale changes', () => {
+		const { rerender } = render(<MovieSearchPage />);
+		const input = screen.getByPlaceholderText(
+			'MovieSearchPage.searchPlaceholder'
+		);
+		fireEvent.change(input, { target: { value: 'Inception' } });
+		act(() => {
+			vi.advanceTimersByTime(500);
+		});
+		mockResetMovieSearchResults.mockClear();
+
+		activeLocale = 'fr-FR';
+		rerender(<MovieSearchPage />);
+
+		expect(mockResetMovieSearchResults).toHaveBeenCalledOnce();
+		expect(mockLoadMovieSearchResults).toHaveBeenCalledOnce();
 	});
 });

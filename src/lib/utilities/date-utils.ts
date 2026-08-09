@@ -1,4 +1,5 @@
-import { timeUnits } from '../models/locale.model';
+import { TIME_UNITS } from '../models/locale.model';
+import { normalizeLocale } from './locale-utils';
 
 const MINS_PER_HOUR = 60;
 const MINS_PER_DAY = 1440;
@@ -12,15 +13,13 @@ function getTimeUnitsShort(locale: string): {
 	hour: string;
 	minute: string;
 } {
-	const validLocale = (
-		Object.hasOwn(timeUnits, locale) ? locale : 'en'
-	) as keyof typeof timeUnits;
+	const validLocale = normalizeLocale(locale);
 
-	const yearLocale = timeUnits[validLocale].year.short;
-	const monthLocale = timeUnits[validLocale].month.short;
-	const dayLocale = timeUnits[validLocale].day.short;
-	const hourLocale = timeUnits[validLocale].hour.short;
-	const minuteLocale = timeUnits[validLocale].minute.short;
+	const yearLocale = TIME_UNITS[validLocale].year.short;
+	const monthLocale = TIME_UNITS[validLocale].month.short;
+	const dayLocale = TIME_UNITS[validLocale].day.short;
+	const hourLocale = TIME_UNITS[validLocale].hour.short;
+	const minuteLocale = TIME_UNITS[validLocale].minute.short;
 
 	return {
 		year: yearLocale,

@@ -5,7 +5,8 @@ import { MovieSearchList } from '../components';
 import { useMoviesStore } from '../stores';
 
 const MoviesPage = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const activeLocale = i18n.resolvedLanguage ?? i18n.language;
 	const [query, setQuery] = useState('');
 	const loadMovieSearchResults = useMoviesStore(
 		(state) => state.loadMovieSearchResults
@@ -15,7 +16,13 @@ const MoviesPage = () => {
 	);
 
 	useEffect(() => {
-		if (!query || query.length < 3) {
+		if (activeLocale) {
+			resetMovieSearchResults();
+		}
+	}, [activeLocale, resetMovieSearchResults]);
+
+	useEffect(() => {
+		if (!activeLocale || !query || query.length < 3) {
 			resetMovieSearchResults();
 			return;
 		}
@@ -25,7 +32,7 @@ const MoviesPage = () => {
 		}, 500);
 
 		return () => clearTimeout(timer);
-	}, [query]);
+	}, [query, activeLocale, loadMovieSearchResults, resetMovieSearchResults]);
 
 	return (
 		<>

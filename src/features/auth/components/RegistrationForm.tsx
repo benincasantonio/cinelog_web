@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProfileVisibilitySelect } from '@/features/profile/components/ProfileVisibilitySelect';
 import { extractApiError, resolveApiFieldError } from '@/lib/api/api-error';
+import { getActiveLocale } from '@/lib/locales/i18n';
 import type { ProfileVisibility } from '@/lib/models';
 import {
 	CODE_LENGTH,
@@ -116,6 +117,7 @@ export const RegistrationForm = () => {
 				handle: data.handle,
 				dateOfBirth: data.dateOfBirth.toISOString().split('T')[0],
 				bio: data.bio,
+				locale: getActiveLocale(),
 				profileVisibility: data.profileVisibility,
 				verificationCode: data.verificationCode,
 			});
