@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { convertMinutesToTime, humanizeMinutes } from './date-utils';
+import {
+	convertMinutesToTime,
+	formatRelativeTime,
+	humanizeMinutes,
+} from './date-utils';
 
 describe('date-utils', () => {
 	describe('convertMinutesToTime', () => {
@@ -222,6 +226,65 @@ describe('date-utils', () => {
 			it('should fall back to English for undefined locale', () => {
 				expect(humanizeMinutes(60, 'de')).toBe('1h');
 			});
+		});
+	});
+
+	describe('formatRelativeTime', () => {
+		const now = Date.parse('2026-07-18T10:30:00Z');
+		const relative = (
+			locale: string,
+			value: number,
+			unit: Intl.RelativeTimeFormatUnit
+		) =>
+			new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(
+				value,
+				unit
+			);
+
+		it('returns the original value when the timestamp is invalid', () => {
+			expect(formatRelativeTime('not-a-date', 'en-US', now)).toBe('not-a-date');
+		});
+
+		it('formats a difference under a minute in seconds', () => {
+			expect(formatRelativeTime('2026-07-18T10:29:30Z', 'en-US', now)).toBe(
+				relative('en-US', -30, 'second')
+			);
+		});
+
+		it('formats a difference under an hour in minutes', () => {
+			expect(formatRelativeTime('2026-07-18T10:28:00Z', 'en-US', now)).toBe(
+				relative('en-US', -2, 'minute')
+			);
+		});
+
+		it('formats a difference under a day in hours', () => {
+			expect(formatRelativeTime('2026-07-18T07:30:00Z', 'en-US', now)).toBe(
+				relative('en-US', -3, 'hour')
+			);
+		});
+
+		it('formats a difference under a month in days', () => {
+			expect(formatRelativeTime('2026-07-16T10:30:00Z', 'en-US', now)).toBe(
+				relative('en-US', -2, 'day')
+			);
+		});
+
+		it('formats a difference under a year in months', () => {
+			expect(formatRelativeTime('2026-05-18T10:30:00Z', 'en-US', now)).toBe(
+				relative('en-US', -2, 'month')
+			);
+		});
+
+		it('formats a difference of a year or more in years', () => {
+			expect(formatRelativeTime('2024-07-18T10:30:00Z', 'en-US', now)).toBe(
+				relative('en-US', -2, 'year')
+			);
+		});
+
+		it('uses the provided locale', () => {
+			expect(formatRelativeTime('2026-07-18T10:28:00Z', 'it-IT', now)).toBe(
+				relative('it-IT', -2, 'minute')
+			);
 		});
 	});
 });

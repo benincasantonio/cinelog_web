@@ -44,8 +44,9 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	Button: ({
 		children,
 		onClick,
+		asChild: _asChild,
 		...props
-	}: { children?: ReactNode; onClick?: () => void } & Record<
+	}: { children?: ReactNode; onClick?: () => void; asChild?: boolean } & Record<
 		string,
 		unknown
 	>) => (
@@ -94,6 +95,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 }));
 
 vi.mock('lucide-react', () => ({
+	Bell: () => <span>bell</span>,
 	Menu: ({ onClick }: { onClick?: () => void }) => (
 		<button type="button" data-testid="menu-icon" onClick={onClick}>
 			menu
@@ -174,6 +176,9 @@ describe('Navbar', () => {
 			'Navbar.register'
 		);
 		expect(screen.queryByTestId('create-log-button')).not.toBeInTheDocument();
+		expect(
+			screen.queryByLabelText('Navbar.notifications')
+		).not.toBeInTheDocument();
 
 		fireEvent.click(screen.getByText('Navbar.login'));
 		fireEvent.click(screen.getByTestId('mobile-login-button'));
@@ -238,6 +243,14 @@ describe('Navbar', () => {
 		expect(screen.getByTestId('create-log-dialog')).toBeInTheDocument();
 		expect(screen.getByTestId('profile-dropdown')).toBeInTheDocument();
 		expect(screen.getByText('Navbar.search')).toBeInTheDocument();
+		const notificationsLink = screen.getByLabelText('Navbar.notifications');
+		expect(notificationsLink).toBeInTheDocument();
+		expect(notificationsLink).toHaveAttribute('href', '/notifications');
+		expect(notificationsLink).toHaveTextContent('bell');
+		expect(screen.queryByTestId('notifications-badge')).not.toBeInTheDocument();
+		expect(screen.getByTestId('mobile-navbar-items')).not.toHaveTextContent(
+			'Navbar.notifications'
+		);
 		expect(screen.getByTestId('mobile-navbar')).toHaveTextContent('closed');
 		expect(screen.getByTestId('mobile-navbar-items')).toHaveTextContent(
 			'Navbar.home,Navbar.search'
