@@ -35,6 +35,9 @@ const ProfileSettingsPage = lazy(
 const ProfileStatsPage = lazy(
 	() => import('@/features/profile/pages/ProfileStatsPage')
 );
+const NotificationsPage = lazy(
+	() => import('@/features/notifications/pages/NotificationsPage')
+);
 
 export const AppRoutes = () => {
 	const authenticatedStatus = useAuthStore(
@@ -73,6 +76,11 @@ export const AppRoutes = () => {
 							path="/movies/:tmdbId"
 							id="movie-details"
 							element={<MovieDetailsPage />}
+						/>
+						<Route
+							path="/notifications"
+							id="notifications"
+							element={<NotificationsPage />}
 						/>
 						<Route path="/profile/:handle" element={<ProfilePage />}>
 							<Route index element={<ProfileOverviewPage />} />

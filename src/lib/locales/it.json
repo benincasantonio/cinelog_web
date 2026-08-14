@@ -242,7 +242,8 @@
 		"search": "Cerca",
 		"theme": "Tema",
 		"login": "Accedi",
-		"register": "Registrati"
+		"register": "Registrati",
+		"notifications": "Notifiche"
 	},
 	"HomePage": {
 		"pageTitle": "Cinelog - Home",
@@ -356,5 +357,16 @@
 			"followers_only": "Solo i follower che accetti possono vedere il tuo profilo completo e i film che hai registrato.",
 			"private": "Solo tu puoi vedere il tuo profilo completo e i film che hai registrato."
 		}
+	},
+	"NotificationsPage": {
+		"pageTitle": "Cinelog - Notifiche",
+		"title": "Notifiche",
+		"unreadOnly": "Solo non lette",
+		"loading": "Caricamento delle notifiche...",
+		"empty": "Nessuna notifica",
+		"emptyUnread": "Nessuna notifica non letta",
+		"error": "Impossibile caricare le notifiche",
+		"retry": "Riprova",
+		"loadMore": "Carica altri"
 	}
 }

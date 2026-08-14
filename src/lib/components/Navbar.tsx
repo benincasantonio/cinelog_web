@@ -7,7 +7,7 @@ import {
 	NavigationMenuLink,
 	NavigationMenuList,
 } from '@antoniobenincasa/ui';
-import { Menu, User } from 'lucide-react';
+import { Bell, Menu, User } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
@@ -87,7 +87,19 @@ export const Navbar = () => {
 
 				{/* Right side - Auth buttons or User menu */}
 				<div className="flex items-center gap-4">
-					{authenticatedStatus === true && <CreateMovieLogButton />}
+					{authenticatedStatus === true && (
+						<>
+							<Button asChild variant="ghost" size="icon">
+								<Link
+									to="/notifications"
+									aria-label={t('Navbar.notifications')}
+								>
+									<Bell className="w-5 h-5" />
+								</Link>
+							</Button>
+							<CreateMovieLogButton />
+						</>
+					)}
 
 					{authenticatedStatus === false ? (
 						<>

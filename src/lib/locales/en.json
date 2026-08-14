@@ -242,7 +242,8 @@
 		"search": "Search",
 		"theme": "Theme",
 		"login": "Login",
-		"register": "Register"
+		"register": "Register",
+		"notifications": "Notifications"
 	},
 	"HomePage": {
 		"pageTitle": "Cinelog - Home",
@@ -356,5 +357,16 @@
 			"followers_only": "Only followers you accept can view your full profile and movie logs.",
 			"private": "Only you can view your full profile and movie logs."
 		}
+	},
+	"NotificationsPage": {
+		"pageTitle": "Cinelog - Notifications",
+		"title": "Notifications",
+		"unreadOnly": "Unread only",
+		"loading": "Loading notifications...",
+		"empty": "No notifications yet",
+		"emptyUnread": "No unread notifications",
+		"error": "Failed to load notifications",
+		"retry": "Try again",
+		"loadMore": "Load more"
 	}
 }

@@ -117,3 +117,56 @@ export const humanizeMinutes = (minutes: number, locale: string): string => {
 
 	return humanizedValue.trim();
 };
+
+const RELATIVE_TIME_IN_SECONDS = {
+	minute: 60,
+	hour: 60 * 60,
+	day: 60 * 60 * 24,
+	month: 60 * 60 * 24 * 30,
+	year: 60 * 60 * 24 * 365,
+} as const;
+
+export const formatRelativeTime = (
+	iso: string,
+	locale: string,
+	now: number = Date.now()
+): string => {
+	const then = new Date(iso).getTime();
+	if (Number.isNaN(then)) return iso;
+
+	const diffSeconds = Math.round((then - now) / 1000);
+	const abs = Math.abs(diffSeconds);
+	const formatter = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+
+	if (abs < RELATIVE_TIME_IN_SECONDS.minute) {
+		return formatter.format(diffSeconds, 'second');
+	}
+	if (abs < RELATIVE_TIME_IN_SECONDS.hour) {
+		return formatter.format(
+			Math.round(diffSeconds / RELATIVE_TIME_IN_SECONDS.minute),
+			'minute'
+		);
+	}
+	if (abs < RELATIVE_TIME_IN_SECONDS.day) {
+		return formatter.format(
+			Math.round(diffSeconds / RELATIVE_TIME_IN_SECONDS.hour),
+			'hour'
+		);
+	}
+	if (abs < RELATIVE_TIME_IN_SECONDS.month) {
+		return formatter.format(
+			Math.round(diffSeconds / RELATIVE_TIME_IN_SECONDS.day),
+			'day'
+		);
+	}
+	if (abs < RELATIVE_TIME_IN_SECONDS.year) {
+		return formatter.format(
+			Math.round(diffSeconds / RELATIVE_TIME_IN_SECONDS.month),
+			'month'
+		);
+	}
+	return formatter.format(
+		Math.round(diffSeconds / RELATIVE_TIME_IN_SECONDS.year),
+		'year'
+	);
+};

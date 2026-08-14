@@ -58,6 +58,9 @@ vi.mock('@/features/profile/pages/ProfileSettingsPage', () => ({
 vi.mock('@/features/profile/pages/ProfileStatsPage', () => ({
 	default: () => <div data-testid="profile-stats-page" />,
 }));
+vi.mock('@/features/notifications/pages/NotificationsPage', () => ({
+	default: () => <div data-testid="notifications-page" />,
+}));
 vi.mock('@antoniobenincasa/ui', () => ({
 	Spinner: () => <div data-testid="spinner" />,
 }));
@@ -84,6 +87,7 @@ describe('AppRoutes', () => {
 			import('@/features/profile/pages/ProfileMoviesWatchedPage'),
 			import('@/features/profile/pages/ProfileSettingsPage'),
 			import('@/features/profile/pages/ProfileStatsPage'),
+			import('@/features/notifications/pages/NotificationsPage'),
 		]);
 	});
 
@@ -175,6 +179,7 @@ describe('AppRoutes', () => {
 			['/profile/neo', 'profile-overview-page'],
 			['/profile/neo/movie-watched', 'profile-movies-page'],
 			['/profile/neo/stats', 'profile-stats-page'],
+			['/notifications', 'notifications-page'],
 		];
 
 		const renders = cases.map(([entry]) =>
