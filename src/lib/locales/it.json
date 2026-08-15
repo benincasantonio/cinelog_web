@@ -368,5 +368,21 @@
 		"error": "Impossibile caricare le notifiche",
 		"retry": "Riprova",
 		"loadMore": "Carica altri"
+	},
+	"NotificationItem": {
+		"follow": {
+			"started": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> ha iniziato a seguirti",
+				"noActor": "Hai un nuovo follower"
+			},
+			"requested": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> ha chiesto di seguirti",
+				"noActor": "Hai una nuova richiesta di follow"
+			},
+			"accepted": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> ha accettato la tua richiesta di follow",
+				"noActor": "La tua richiesta di follow è stata accettata"
+			}
+		}
 	}
 }

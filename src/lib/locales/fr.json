@@ -368,5 +368,21 @@
 		"error": "Impossible de charger les notifications",
 		"retry": "Réessayer",
 		"loadMore": "Charger plus"
+	},
+	"NotificationItem": {
+		"follow": {
+			"started": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> a commencé à vous suivre",
+				"noActor": "Vous avez un nouvel abonné"
+			},
+			"requested": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> a demandé à vous suivre",
+				"noActor": "Vous avez une nouvelle demande d'abonnement"
+			},
+			"accepted": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> a accepté votre demande d'abonnement",
+				"noActor": "Votre demande d'abonnement a été acceptée"
+			}
+		}
 	}
 }
