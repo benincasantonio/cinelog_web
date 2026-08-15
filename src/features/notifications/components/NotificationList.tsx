@@ -1,7 +1,7 @@
 import { Button, Spinner } from '@antoniobenincasa/ui';
 import { useTranslation } from 'react-i18next';
 import { useNotificationsStore } from '../stores';
-import { NotificationItem } from './NotificationItem';
+import { NotificationListItem } from './NotificationListItem';
 import { NotificationsEmptyState } from './NotificationsEmptyState';
 
 export const NotificationList = () => {
@@ -49,7 +49,10 @@ export const NotificationList = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			{items.map((notification) => (
-				<NotificationItem key={notification.id} notification={notification} />
+				<NotificationListItem
+					key={notification.id}
+					notification={notification}
+				/>
 			))}
 
 			{error ? (

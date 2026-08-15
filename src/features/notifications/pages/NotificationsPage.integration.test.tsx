@@ -63,7 +63,7 @@ const secondItem = {
 const unreadItem = {
 	...firstItem,
 	id: 'n-unread',
-	title: 'Unread only item',
+	type: 'follow.requested' as const,
 };
 
 describe('NotificationsPage list flow', () => {
@@ -101,21 +101,31 @@ describe('NotificationsPage list flow', () => {
 
 		render(<NotificationsPage />);
 
-		expect(await screen.findByText('New follower')).toBeInTheDocument();
+		expect(
+			await screen.findByText('NotificationItem.follow.started.noActor')
+		).toBeInTheDocument();
 		expect(mockListNotifications).toHaveBeenCalledWith({ unreadOnly: false });
 
 		fireEvent.click(screen.getByText('NotificationsPage.unreadOnly'));
 
-		expect(await screen.findByText('Unread only item')).toBeInTheDocument();
-		expect(screen.queryByText('New follower')).not.toBeInTheDocument();
+		expect(
+			await screen.findByText('NotificationItem.follow.requested.noActor')
+		).toBeInTheDocument();
+		expect(
+			screen.queryByText('NotificationItem.follow.started.noActor')
+		).not.toBeInTheDocument();
 		expect(mockListNotifications).toHaveBeenCalledWith({ unreadOnly: true });
 
 		fireEvent.click(screen.getByText('NotificationsPage.loadMore'));
 
 		await waitFor(() => {
-			expect(screen.getByText('Follow accepted')).toBeInTheDocument();
+			expect(
+				screen.getByText('NotificationItem.follow.accepted.noActor')
+			).toBeInTheDocument();
 		});
-		expect(screen.getByText('Unread only item')).toBeInTheDocument();
+		expect(
+			screen.getByText('NotificationItem.follow.requested.noActor')
+		).toBeInTheDocument();
 		expect(mockListNotifications).toHaveBeenCalledWith({
 			unreadOnly: true,
 			cursor: 'unread-cursor',

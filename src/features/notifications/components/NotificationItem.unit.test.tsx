@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { NotificationBaseResponse } from '../models';
 import { NotificationItem } from './NotificationItem';
 
 vi.mock('react-i18next', () => ({
@@ -10,30 +9,19 @@ vi.mock('react-i18next', () => ({
 	}),
 }));
 
-const unreadNotification: NotificationBaseResponse = {
-	id: 'n-1',
-	type: 'follow.started',
-	title: 'New follower',
-	body: 'A user started following you.',
-	actor: {
-		handle: 'moviefan',
-		firstName: 'Movie',
-		lastName: 'Fan',
-	},
-	availableActions: [],
-	readAt: null,
-	createdAt: '2026-07-18T10:30:00Z',
-};
+const createdAt = '2026-07-18T10:30:00Z';
 
 describe('NotificationItem', () => {
-	it('renders title, body, and timestamp without links or buttons', () => {
-		render(<NotificationItem notification={unreadNotification} />);
+	it('renders the provided title and timestamp without inventing links or buttons', () => {
+		render(
+			<NotificationItem
+				unread
+				title="You have a new follower"
+				createdAt={createdAt}
+			/>
+		);
 
-		expect(screen.getByText('New follower')).toBeInTheDocument();
-		expect(
-			screen.getByText('A user started following you.')
-		).toBeInTheDocument();
-		expect(screen.queryByText('Movie Fan')).not.toBeInTheDocument();
+		expect(screen.getByText('You have a new follower')).toBeInTheDocument();
 		expect(
 			document.querySelector('time[datetime="2026-07-18T10:30:00Z"]')
 		).toBeInTheDocument();
@@ -42,23 +30,24 @@ describe('NotificationItem', () => {
 	});
 
 	it('marks unread items with a dot and stronger title', () => {
-		render(<NotificationItem notification={unreadNotification} />);
+		render(
+			<NotificationItem unread title="Unread title" createdAt={createdAt} />
+		);
 
 		expect(screen.getByTestId('unread-dot')).toBeInTheDocument();
-		expect(screen.getByText('New follower')).toHaveClass('font-semibold');
+		expect(screen.getByRole('heading')).toHaveClass('font-semibold');
 	});
 
 	it('renders read items without a dot and with a quieter title', () => {
 		render(
 			<NotificationItem
-				notification={{
-					...unreadNotification,
-					readAt: '2026-07-18T11:00:00Z',
-				}}
+				unread={false}
+				title="Read title"
+				createdAt={createdAt}
 			/>
 		);
 
 		expect(screen.queryByTestId('unread-dot')).not.toBeInTheDocument();
-		expect(screen.getByText('New follower')).not.toHaveClass('font-semibold');
+		expect(screen.getByRole('heading')).not.toHaveClass('font-semibold');
 	});
 });

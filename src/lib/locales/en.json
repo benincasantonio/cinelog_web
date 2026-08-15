@@ -368,5 +368,21 @@
 		"error": "Failed to load notifications",
 		"retry": "Try again",
 		"loadMore": "Load more"
+	},
+	"NotificationItem": {
+		"follow": {
+			"started": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> started following you",
+				"noActor": "You have a new follower"
+			},
+			"requested": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> requested to follow you",
+				"noActor": "You have a new follow request"
+			},
+			"accepted": {
+				"withActor": "<actor>{{firstName}} {{lastName}}</actor> accepted your follow request",
+				"noActor": "Your follow request was accepted"
+			}
+		}
 	}
 }

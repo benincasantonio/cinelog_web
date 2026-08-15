@@ -130,7 +130,9 @@ describe('NotificationsPage', () => {
 
 		render(<NotificationsPage />);
 
-		expect(screen.getByText('New follower')).toBeInTheDocument();
+		expect(
+			screen.getByText('NotificationItem.follow.started.noActor')
+		).toBeInTheDocument();
 		fireEvent.click(screen.getByText('NotificationsPage.loadMore'));
 		expect(mockLoadMore).toHaveBeenCalledOnce();
 	});
