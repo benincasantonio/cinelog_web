@@ -6,12 +6,14 @@ type NotificationItemProps = {
 	unread: boolean;
 	createdAt: string;
 	title: ReactNode;
+	action?: ReactNode;
 };
 
 export const NotificationItem = ({
 	unread,
 	createdAt,
 	title,
+	action,
 }: NotificationItemProps) => {
 	const { i18n } = useTranslation();
 	const locale = i18n.resolvedLanguage ?? i18n.language;
@@ -48,6 +50,7 @@ export const NotificationItem = ({
 					{formatRelativeTime(createdAt, locale)}
 				</time>
 			</div>
+			{action}
 		</article>
 	);
 };

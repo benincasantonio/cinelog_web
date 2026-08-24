@@ -2,12 +2,24 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { mockListNotifications } = vi.hoisted(() => ({
+const {
+	mockListNotifications,
+	mockMarkNotificationRead,
+	mockMarkAllNotificationsRead,
+	mockNotify,
+} = vi.hoisted(() => ({
 	mockListNotifications: vi.fn(),
+	mockMarkNotificationRead: vi.fn(),
+	mockMarkAllNotificationsRead: vi.fn(),
+	mockNotify: vi.fn(),
 }));
 
 vi.mock('../repositories/notifications-repository', () => ({
 	listNotifications: (...args: unknown[]) => mockListNotifications(...args),
+	markNotificationRead: (...args: unknown[]) =>
+		mockMarkNotificationRead(...args),
+	markAllNotificationsRead: (...args: unknown[]) =>
+		mockMarkAllNotificationsRead(...args),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -33,6 +45,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		</button>
 	),
 	Spinner: () => <div data-testid="spinner" />,
+	useNotification: () => ({ notify: mockNotify }),
 }));
 
 import { useNotificationsStore } from '../stores';
@@ -76,6 +89,8 @@ describe('NotificationsPage list flow', () => {
 			unreadOnly: false,
 			isLoading: false,
 			isLoadingMore: false,
+			pendingReadId: null,
+			isMarkingAllRead: false,
 			error: null,
 			hasLoaded: false,
 		});
@@ -133,5 +148,134 @@ describe('NotificationsPage list flow', () => {
 		expect(
 			screen.queryByText('NotificationsPage.loadMore')
 		).not.toBeInTheDocument();
+	});
+
+	it('marks one notification read using the exact server response', async () => {
+		const readAt = '2026-07-18T12:34:56Z';
+		mockListNotifications.mockResolvedValueOnce({
+			items: [firstItem],
+			nextCursor: null,
+			unreadCount: 1,
+		});
+		mockMarkNotificationRead.mockResolvedValueOnce({ ...firstItem, readAt });
+
+		render(<NotificationsPage />);
+
+		fireEvent.click(
+			await screen.findByRole('button', {
+				name: 'NotificationItem.markAsRead',
+			})
+		);
+
+		await waitFor(() => {
+			expect(
+				screen.queryByRole('button', {
+					name: 'NotificationItem.markAsRead',
+				})
+			).not.toBeInTheDocument();
+		});
+		expect(mockMarkNotificationRead).toHaveBeenCalledWith('n-1');
+		expect(useNotificationsStore.getState().items[0].readAt).toBe(readAt);
+		expect(useNotificationsStore.getState().unreadCount).toBe(0);
+		expect(mockNotify).not.toHaveBeenCalled();
+	});
+
+	it('removes an individually read notification from the unread-only view', async () => {
+		mockListNotifications
+			.mockResolvedValueOnce({
+				items: [firstItem],
+				nextCursor: null,
+				unreadCount: 1,
+			})
+			.mockResolvedValueOnce({
+				items: [firstItem],
+				nextCursor: null,
+				unreadCount: 1,
+			});
+		mockMarkNotificationRead.mockResolvedValueOnce({
+			...firstItem,
+			readAt: '2026-07-18T12:34:56Z',
+		});
+
+		render(<NotificationsPage />);
+		await screen.findByText('NotificationItem.follow.started.noActor');
+		fireEvent.click(screen.getByText('NotificationsPage.unreadOnly'));
+		await waitFor(() => expect(mockListNotifications).toHaveBeenCalledTimes(2));
+
+		fireEvent.click(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		);
+
+		expect(
+			await screen.findByText('NotificationsPage.emptyUnread')
+		).toBeInTheDocument();
+	});
+
+	it('marks all notifications read and reloads the first page', async () => {
+		const readItems = [firstItem, unreadItem].map((item) => ({
+			...item,
+			readAt: '2026-07-18T12:34:56Z',
+		}));
+		mockListNotifications
+			.mockResolvedValueOnce({
+				items: [firstItem, unreadItem],
+				nextCursor: 'cursor-1',
+				unreadCount: 2,
+			})
+			.mockResolvedValueOnce({
+				items: readItems,
+				nextCursor: null,
+				unreadCount: 0,
+			});
+		mockMarkAllNotificationsRead.mockResolvedValueOnce({
+			updatedCount: 2,
+			unreadCount: 0,
+		});
+
+		render(<NotificationsPage />);
+		fireEvent.click(
+			await screen.findByRole('button', {
+				name: 'NotificationsPage.markAllAsRead',
+			})
+		);
+
+		await waitFor(() => expect(mockListNotifications).toHaveBeenCalledTimes(2));
+		expect(mockMarkAllNotificationsRead).toHaveBeenCalledOnce();
+		expect(useNotificationsStore.getState()).toMatchObject({
+			items: readItems,
+			nextCursor: null,
+			unreadCount: 0,
+		});
+		expect(
+			screen.queryByRole('button', {
+				name: 'NotificationsPage.markAllAsRead',
+			})
+		).not.toBeInTheDocument();
+	});
+
+	it('shows retryable danger feedback when an individual read fails', async () => {
+		mockListNotifications.mockResolvedValueOnce({
+			items: [firstItem],
+			nextCursor: null,
+			unreadCount: 1,
+		});
+		mockMarkNotificationRead.mockRejectedValueOnce(new Error('Read failed'));
+
+		render(<NotificationsPage />);
+		fireEvent.click(
+			await screen.findByRole('button', {
+				name: 'NotificationItem.markAsRead',
+			})
+		);
+
+		await waitFor(() => {
+			expect(mockNotify).toHaveBeenCalledWith({
+				variant: 'danger',
+				message: 'NotificationItem.markAsReadError',
+			});
+		});
+		expect(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		).toBeEnabled();
 	});
 });

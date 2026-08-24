@@ -5,3 +5,7 @@ export {
 	notificationListEnvelopeSchema,
 	parseNotificationListResponse,
 } from './notification-list.schema';
+export {
+	markAllNotificationsReadResponseSchema,
+	parseMarkAllNotificationsReadResponse,
+} from './notification-read.schema';
