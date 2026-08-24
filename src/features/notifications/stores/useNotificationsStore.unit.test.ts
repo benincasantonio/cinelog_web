@@ -1,11 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { mockListNotifications } = vi.hoisted(() => ({
+const {
+	mockListNotifications,
+	mockMarkNotificationRead,
+	mockMarkAllNotificationsRead,
+} = vi.hoisted(() => ({
 	mockListNotifications: vi.fn(),
+	mockMarkNotificationRead: vi.fn(),
+	mockMarkAllNotificationsRead: vi.fn(),
 }));
 
 vi.mock('../repositories/notifications-repository', () => ({
 	listNotifications: (...args: unknown[]) => mockListNotifications(...args),
+	markNotificationRead: (...args: unknown[]) =>
+		mockMarkNotificationRead(...args),
+	markAllNotificationsRead: (...args: unknown[]) =>
+		mockMarkAllNotificationsRead(...args),
 }));
 
 import { useNotificationsStore } from './useNotificationsStore';
@@ -50,6 +60,17 @@ const unreadPage = {
 	unreadCount: 1,
 };
 
+const readItem = {
+	...firstPage.items[0],
+	readAt: '2026-07-18T12:34:56Z',
+};
+
+const readPage = {
+	items: [readItem],
+	nextCursor: null,
+	unreadCount: 0,
+};
+
 const initialState = {
 	items: [],
 	nextCursor: null,
@@ -57,6 +78,8 @@ const initialState = {
 	unreadOnly: false,
 	isLoading: false,
 	isLoadingMore: false,
+	pendingReadId: null,
+	isMarkingAllRead: false,
 	error: null,
 	hasLoaded: false,
 };
@@ -67,7 +90,7 @@ describe('useNotificationsStore', () => {
 		useNotificationsStore.setState(initialState);
 	});
 
-	it('has the expected initial values and no read-mutation actions', () => {
+	it('has the expected initial values and read-mutation actions', () => {
 		const state = useNotificationsStore.getState();
 
 		expect(state.items).toEqual([]);
@@ -76,10 +99,12 @@ describe('useNotificationsStore', () => {
 		expect(state.unreadOnly).toBe(false);
 		expect(state.isLoading).toBe(false);
 		expect(state.isLoadingMore).toBe(false);
+		expect(state.pendingReadId).toBeNull();
+		expect(state.isMarkingAllRead).toBe(false);
 		expect(state.error).toBeNull();
 		expect(state.hasLoaded).toBe(false);
-		expect(state).not.toHaveProperty('markAsRead');
-		expect(state).not.toHaveProperty('markAllAsRead');
+		expect(state.markAsRead).toBeTypeOf('function');
+		expect(state.markAllAsRead).toBeTypeOf('function');
 	});
 
 	it('loads the first page and replaces items', async () => {
@@ -201,6 +226,153 @@ describe('useNotificationsStore', () => {
 		expect(useNotificationsStore.getState().unreadOnly).toBe(true);
 	});
 
+	it('stores the exact individual response and serializes repeated reads', async () => {
+		let resolveRead: (value: typeof readItem) => void;
+		mockMarkNotificationRead.mockReturnValueOnce(
+			new Promise((resolve) => {
+				resolveRead = resolve;
+			})
+		);
+		useNotificationsStore.setState({
+			...firstPage,
+			hasLoaded: true,
+		});
+
+		const firstRead = useNotificationsStore.getState().markAsRead('n-1');
+		const repeatedRead = useNotificationsStore.getState().markAsRead('n-1');
+
+		expect(useNotificationsStore.getState().pendingReadId).toBe('n-1');
+		expect(mockMarkNotificationRead).toHaveBeenCalledOnce();
+
+		resolveRead!(readItem);
+		await Promise.all([firstRead, repeatedRead]);
+
+		expect(useNotificationsStore.getState().items).toEqual([readItem]);
+		expect(useNotificationsStore.getState().items[0].readAt).toBe(
+			'2026-07-18T12:34:56Z'
+		);
+		expect(useNotificationsStore.getState().unreadCount).toBe(1);
+		expect(useNotificationsStore.getState().pendingReadId).toBeNull();
+	});
+
+	it('removes an individually read item from the unread-only view', async () => {
+		mockMarkNotificationRead.mockResolvedValueOnce(readItem);
+		useNotificationsStore.setState({
+			...unreadPage,
+			unreadOnly: true,
+			hasLoaded: true,
+		});
+
+		await useNotificationsStore.getState().markAsRead('n-1');
+
+		expect(useNotificationsStore.getState().items).toEqual([]);
+		expect(useNotificationsStore.getState().unreadCount).toBe(0);
+	});
+
+	it('does not request an individual read for missing or already-read items', async () => {
+		useNotificationsStore.setState({
+			items: secondPage.items,
+			hasLoaded: true,
+		});
+
+		await useNotificationsStore.getState().markAsRead('missing');
+		await useNotificationsStore.getState().markAsRead('n-2');
+
+		expect(mockMarkNotificationRead).not.toHaveBeenCalled();
+	});
+
+	it('restores individual read controls and rethrows on failure', async () => {
+		mockMarkNotificationRead.mockRejectedValueOnce(new Error('Read failed'));
+		useNotificationsStore.setState({
+			...firstPage,
+			hasLoaded: true,
+		});
+
+		await expect(
+			useNotificationsStore.getState().markAsRead('n-1')
+		).rejects.toThrow('Read failed');
+
+		expect(useNotificationsStore.getState().pendingReadId).toBeNull();
+		expect(useNotificationsStore.getState().items).toEqual(firstPage.items);
+	});
+
+	it('applies bulk counts, resets pagination, and reloads the first page', async () => {
+		mockMarkAllNotificationsRead.mockResolvedValueOnce({
+			updatedCount: 2,
+			unreadCount: 0,
+		});
+		mockListNotifications.mockResolvedValueOnce(readPage);
+		useNotificationsStore.setState({
+			...firstPage,
+			hasLoaded: true,
+		});
+
+		const pending = useNotificationsStore.getState().markAllAsRead();
+		const repeated = useNotificationsStore.getState().markAllAsRead();
+		const overlappingIndividual = useNotificationsStore
+			.getState()
+			.markAsRead('n-1');
+		expect(useNotificationsStore.getState().isMarkingAllRead).toBe(true);
+
+		await Promise.all([pending, repeated, overlappingIndividual]);
+
+		expect(mockMarkAllNotificationsRead).toHaveBeenCalledOnce();
+		expect(mockMarkNotificationRead).not.toHaveBeenCalled();
+		expect(mockListNotifications).toHaveBeenCalledWith({ unreadOnly: false });
+		expect(useNotificationsStore.getState()).toMatchObject({
+			items: readPage.items,
+			nextCursor: null,
+			unreadCount: 0,
+			isMarkingAllRead: false,
+		});
+	});
+
+	it('uses the standard list error state when the post-bulk refresh fails', async () => {
+		const consoleSpy = vi
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockMarkAllNotificationsRead.mockResolvedValueOnce({
+			updatedCount: 2,
+			unreadCount: 0,
+		});
+		mockListNotifications.mockRejectedValueOnce(new Error('Refresh failed'));
+		useNotificationsStore.setState({
+			...firstPage,
+			hasLoaded: true,
+		});
+
+		await expect(
+			useNotificationsStore.getState().markAllAsRead()
+		).resolves.toBeUndefined();
+
+		expect(useNotificationsStore.getState()).toMatchObject({
+			items: [],
+			unreadCount: 0,
+			isMarkingAllRead: false,
+			error: 'Refresh failed',
+			hasLoaded: true,
+		});
+		consoleSpy.mockRestore();
+	});
+
+	it('restores bulk controls and rethrows when the mutation fails', async () => {
+		mockMarkAllNotificationsRead.mockRejectedValueOnce(
+			new Error('Bulk failed')
+		);
+		useNotificationsStore.setState({
+			...firstPage,
+			hasLoaded: true,
+		});
+
+		await expect(
+			useNotificationsStore.getState().markAllAsRead()
+		).rejects.toThrow('Bulk failed');
+
+		expect(useNotificationsStore.getState().isMarkingAllRead).toBe(false);
+		expect(useNotificationsStore.getState().items).toEqual(firstPage.items);
+		expect(mockListNotifications).not.toHaveBeenCalled();
+	});
+
 	it('resets store state', () => {
 		useNotificationsStore.setState({
 			items: firstPage.items,
@@ -210,6 +382,8 @@ describe('useNotificationsStore', () => {
 			isLoading: true,
 			error: 'boom',
 			hasLoaded: true,
+			pendingReadId: 'n-1',
+			isMarkingAllRead: true,
 		});
 
 		useNotificationsStore.getState().reset();

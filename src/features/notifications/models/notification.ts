@@ -24,6 +24,11 @@ export type NotificationListResponse = {
 	unreadCount: number;
 };
 
+export type MarkAllNotificationsReadResponse = {
+	updatedCount: number;
+	unreadCount: number;
+};
+
 export type NotificationListRequest = {
 	unreadOnly?: boolean;
 	limit?: number;

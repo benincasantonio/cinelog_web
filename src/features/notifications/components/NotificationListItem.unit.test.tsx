@@ -1,9 +1,49 @@
-import { render, screen } from '@testing-library/react';
-import { cloneElement, type ReactElement } from 'react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cloneElement, type ReactElement, type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { NotificationBaseResponse } from '../models';
 import { NotificationListItem } from './NotificationListItem';
+
+const { mockMarkAsRead, mockNotify, notificationStoreState } = vi.hoisted(
+	() => ({
+		mockMarkAsRead: vi.fn(),
+		mockNotify: vi.fn(),
+		notificationStoreState: {
+			pendingReadId: null as string | null,
+			isMarkingAllRead: false,
+			markAsRead: vi.fn(),
+		},
+	})
+);
+
+notificationStoreState.markAsRead = mockMarkAsRead;
+
+vi.mock('../stores', () => ({
+	useNotificationsStore: (
+		selector: (state: typeof notificationStoreState) => unknown
+	) => selector(notificationStoreState),
+}));
+
+vi.mock('@antoniobenincasa/ui', () => ({
+	Button: ({
+		children,
+		onClick,
+		disabled,
+		variant: _variant,
+		...props
+	}: {
+		children?: ReactNode;
+		onClick?: () => void;
+		disabled?: boolean;
+		variant?: string;
+	} & Record<string, unknown>) => (
+		<button type="button" onClick={onClick} disabled={disabled} {...props}>
+			{children}
+		</button>
+	),
+	useNotification: () => ({ notify: mockNotify }),
+}));
 
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
@@ -55,6 +95,13 @@ const renderItem = (notification: NotificationBaseResponse) =>
 	);
 
 describe('NotificationListItem', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		notificationStoreState.pendingReadId = null;
+		notificationStoreState.isMarkingAllRead = false;
+		mockMarkAsRead.mockResolvedValue(undefined);
+	});
+
 	it('renders localized copy with the actor name linked to the profile', () => {
 		renderItem(unreadNotification);
 
@@ -72,7 +119,9 @@ describe('NotificationListItem', () => {
 		expect(
 			document.querySelector('time[datetime="2026-07-18T10:30:00Z"]')
 		).toBeInTheDocument();
-		expect(screen.queryByRole('button')).not.toBeInTheDocument();
+		expect(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		).toBeInTheDocument();
 	});
 
 	it('renders type-only copy with no link when the actor is missing', () => {
@@ -83,5 +132,71 @@ describe('NotificationListItem', () => {
 		).toBeInTheDocument();
 		expect(screen.queryByRole('link')).not.toBeInTheDocument();
 		expect(screen.queryByText('Movie Fan')).not.toBeInTheDocument();
+	});
+
+	it('marks an unread notification read from an explicit text button', async () => {
+		renderItem(unreadNotification);
+
+		fireEvent.click(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		);
+
+		await waitFor(() => {
+			expect(mockMarkAsRead).toHaveBeenCalledWith('n-1');
+		});
+		expect(mockNotify).not.toHaveBeenCalled();
+	});
+
+	it('does not render a read control for an already-read notification', () => {
+		renderItem({
+			...unreadNotification,
+			readAt: '2026-07-18T11:00:00Z',
+		});
+
+		expect(
+			screen.queryByRole('button', { name: 'NotificationItem.markAsRead' })
+		).not.toBeInTheDocument();
+	});
+
+	it('disables and exposes busy state while a read mutation is pending', () => {
+		notificationStoreState.pendingReadId = 'n-1';
+
+		renderItem(unreadNotification);
+
+		expect(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		).toBeDisabled();
+		expect(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		).toHaveAttribute('aria-busy', 'true');
+	});
+
+	it('disables individual reads during a bulk mutation', () => {
+		notificationStoreState.isMarkingAllRead = true;
+
+		renderItem(unreadNotification);
+
+		expect(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		).toBeDisabled();
+	});
+
+	it('shows localized danger feedback and permits retry after failure', async () => {
+		mockMarkAsRead.mockRejectedValueOnce(new Error('Read failed'));
+		renderItem(unreadNotification);
+
+		fireEvent.click(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		);
+
+		await waitFor(() => {
+			expect(mockNotify).toHaveBeenCalledWith({
+				variant: 'danger',
+				message: 'NotificationItem.markAsReadError',
+			});
+		});
+		expect(
+			screen.getByRole('button', { name: 'NotificationItem.markAsRead' })
+		).toBeEnabled();
 	});
 });

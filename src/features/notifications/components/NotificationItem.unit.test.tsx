@@ -50,4 +50,19 @@ describe('NotificationItem', () => {
 		expect(screen.queryByTestId('unread-dot')).not.toBeInTheDocument();
 		expect(screen.getByRole('heading')).not.toHaveClass('font-semibold');
 	});
+
+	it('renders an optional explicit action', () => {
+		render(
+			<NotificationItem
+				unread
+				title="Unread title"
+				createdAt={createdAt}
+				action={<button type="button">Mark as read</button>}
+			/>
+		);
+
+		expect(
+			screen.getByRole('button', { name: 'Mark as read' })
+		).toBeInTheDocument();
+	});
 });

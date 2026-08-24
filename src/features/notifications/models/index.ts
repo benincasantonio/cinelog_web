@@ -1,4 +1,5 @@
 export type {
+	MarkAllNotificationsReadResponse,
 	NotificationActor,
 	NotificationBaseResponse,
 	NotificationListRequest,

@@ -361,6 +361,8 @@
 	"NotificationsPage": {
 		"pageTitle": "Cinelog - Notifications",
 		"title": "Notifications",
+		"markAllAsRead": "Mark all as read",
+		"markAllAsReadError": "Could not mark all notifications as read",
 		"unreadOnly": "Unread only",
 		"loading": "Loading notifications...",
 		"empty": "No notifications yet",
@@ -370,6 +372,8 @@
 		"loadMore": "Load more"
 	},
 	"NotificationItem": {
+		"markAsRead": "Mark as read",
+		"markAsReadError": "Could not mark this notification as read",
 		"follow": {
 			"started": {
 				"withActor": "<actor>{{firstName}} {{lastName}}</actor> started following you",

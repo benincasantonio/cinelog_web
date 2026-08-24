@@ -361,6 +361,8 @@
 	"NotificationsPage": {
 		"pageTitle": "Cinelog - Notifiche",
 		"title": "Notifiche",
+		"markAllAsRead": "Segna tutte come lette",
+		"markAllAsReadError": "Impossibile segnare tutte le notifiche come lette",
 		"unreadOnly": "Solo non lette",
 		"loading": "Caricamento delle notifiche...",
 		"empty": "Nessuna notifica",
@@ -370,6 +372,8 @@
 		"loadMore": "Carica altri"
 	},
 	"NotificationItem": {
+		"markAsRead": "Segna come letta",
+		"markAsReadError": "Impossibile segnare la notifica come letta",
 		"follow": {
 			"started": {
 				"withActor": "<actor>{{firstName}} {{lastName}}</actor> ha iniziato a seguirti",
