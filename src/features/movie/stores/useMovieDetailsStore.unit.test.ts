@@ -129,3 +129,51 @@ describe('useMovieDetailsStore', () => {
 		expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(false);
 	});
 });
+
+describe('rating request ordering', () => {
+	it('ignores old results and preserves the active loading state', async () => {
+		let resolveOld!: (rating: unknown) => void;
+		let resolveNew!: (rating: unknown) => void;
+		mockGetMovieRating
+			.mockReturnValueOnce(
+				new Promise((resolve) => {
+					resolveOld = resolve;
+				})
+			)
+			.mockReturnValueOnce(
+				new Promise((resolve) => {
+					resolveNew = resolve;
+				})
+			);
+		const oldRequest = useMovieDetailsStore.getState().loadMovieRating(1);
+		const newRequest = useMovieDetailsStore.getState().loadMovieRating(2);
+		resolveOld({ rating: 8 });
+		await oldRequest;
+		expect(useMovieDetailsStore.getState().movieRating).toBeUndefined();
+		expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(true);
+		resolveNew(undefined);
+		await newRequest;
+		expect(useMovieDetailsStore.getState().movieRating).toBeUndefined();
+		expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(false);
+	});
+	it('ignores results arriving after reset or an explicit rating update', async () => {
+		for (const reset of [true, false]) {
+			let resolve!: (rating: unknown) => void;
+			mockGetMovieRating.mockReturnValueOnce(
+				new Promise((done) => {
+					resolve = done;
+				})
+			);
+			const request = useMovieDetailsStore.getState().loadMovieRating(1);
+			if (reset) useMovieDetailsStore.getState().resetMovieDetails();
+			else
+				useMovieDetailsStore.getState().setMovieRating({ rating: 10 } as never);
+			resolve({ rating: 1 });
+			await request;
+			expect(useMovieDetailsStore.getState().movieRating).toEqual(
+				reset ? undefined : { rating: 10 }
+			);
+			expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(false);
+		}
+	});
+});

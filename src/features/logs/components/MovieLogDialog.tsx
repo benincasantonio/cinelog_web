@@ -42,7 +42,7 @@ export const CreateMovieLogDialog = () => {
 		<Dialog open={isOpen} onOpenChange={onOpenChange}>
 			<DialogContent
 				showCloseButton
-				className="w-full max-w-106.25 sm:max-w-lg"
+				className="w-full max-w-106.25 sm:max-w-lg max-[360px]:px-5 max-h-[calc(100dvh-2rem)] overflow-y-auto"
 			>
 				<DialogHeader>
 					<DialogTitle>

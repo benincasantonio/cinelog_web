@@ -18,6 +18,7 @@ interface MovieDetailsStore {
 
 export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
 	const detailsGuard = createLatestRequestGuard();
+	const ratingGuard = createLatestRequestGuard();
 
 	return {
 		movieDetails: undefined,
@@ -38,26 +39,33 @@ export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
 			}
 		},
 		setMovieRating: (movieRating: MovieRatingResponse) => {
-			set({ movieRating });
+			ratingGuard.invalidate();
+			set({ movieRating, isMovieRatingLoading: false });
 		},
 		resetMovieDetails: () => {
 			detailsGuard.invalidate();
-			set({ movieDetails: undefined, movieRating: undefined });
+			ratingGuard.invalidate();
+			set({
+				movieDetails: undefined,
+				movieRating: undefined,
+				isMovieRatingLoading: false,
+			});
 		},
 		loadMovieRating: async (tmdbId: number) => {
+			const requestId = ratingGuard.start();
 			set({ isMovieRatingLoading: true, movieRating: undefined });
 			try {
 				const rating = await getMovieRating(tmdbId);
 
-				if (!rating) {
-					return;
-				}
+				if (ratingGuard.isStale(requestId)) return;
 
 				set({ movieRating: rating });
 			} catch (error) {
+				if (ratingGuard.isStale(requestId)) return;
 				console.error('Error loading movie rating:', error);
 			} finally {
-				set({ isMovieRatingLoading: false });
+				if (!ratingGuard.isStale(requestId))
+					set({ isMovieRatingLoading: false });
 			}
 		},
 	};

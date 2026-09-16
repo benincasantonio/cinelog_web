@@ -42,6 +42,15 @@ vi.mock('../stores/movieLogStore', () => ({
 		selector(mockMovieLogStore.getState()),
 }));
 
+vi.mock('@/features/movie/repositories/movie-rating-repository', () => ({
+	getMovieRating: vi.fn(
+		() =>
+			new Promise(() => {
+				/* Keep the lookup pending for this test. */
+			})
+	),
+}));
+
 // Mock movie search repository
 vi.mock('@/features/movie-search/repositories', () => ({
 	search: mockSearch,
@@ -152,7 +161,10 @@ vi.mock('@antoniobenincasa/ui', () => ({
 	),
 	FormMessage: () => <span data-testid="form-message" />,
 	Input: (props: React.InputHTMLAttributes<HTMLInputElement>) => (
-		<input data-testid="date-input" {...props} />
+		<input
+			data-testid={props.readOnly ? 'readonly-movie' : 'date-input'}
+			{...props}
+		/>
 	),
 	Select: ({
 		children,
@@ -464,7 +476,7 @@ describe('MovieLogForm', () => {
 			watchedWhere: 'cinema',
 		};
 
-		it('should populate autocomplete with movie title when movieToEdit is set', async () => {
+		it('should show a read-only movie title when movieToEdit is set', async () => {
 			mockMovieLogDialogStore.setState({
 				prefilledMovie: null,
 				movieToEdit: mockMovieToEdit,
@@ -473,10 +485,12 @@ describe('MovieLogForm', () => {
 			render(<MovieLogForm />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByTestId('autocomplete-option-456')
-				).toBeInTheDocument();
-				expect(screen.getByText('Movie to Edit')).toBeInTheDocument();
+				expect(screen.getByTestId('readonly-movie')).toHaveValue(
+					'Movie to Edit'
+				);
+				expect(screen.getByTestId('readonly-movie')).toHaveAttribute(
+					'readonly'
+				);
 			});
 		});
 

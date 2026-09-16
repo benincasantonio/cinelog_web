@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 let mockIsMobile = false;
@@ -19,6 +21,8 @@ vi.mock('lucide-react', () => ({
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
 		t: (key: string, params?: Record<string, unknown>) => {
+			if (key === 'RateMovie.optionLabel')
+				return `Rate ${params?.value} star${params?.value === 1 ? '' : 's'}`;
 			if (key === 'RateMovie.ratingLabel') return `${params?.value} out of 10`;
 			return key;
 		},
@@ -166,5 +170,45 @@ describe('RateMovie', () => {
 		fireEvent.mouseEnter(fifthStarContainer);
 
 		expect(screen.getByText('5 out of 10')).toBeInTheDocument();
+	});
+});
+
+describe('rating keyboard and semantics', () => {
+	it('exposes the saved score as a checked, named radio', () => {
+		render(<RateMovie rating={8} onChangeRating={vi.fn()} />);
+		expect(screen.getAllByRole('radio')).toHaveLength(10);
+		expect(screen.getByRole('radio', { name: 'Rate 8 stars' })).toBeChecked();
+	});
+	it('supports native keyboard selection without submitting a surrounding form', async () => {
+		const submit = vi.fn((event) => event.preventDefault());
+		function Example() {
+			const [rating, setRating] = useState(8);
+			return (
+				<form onSubmit={submit}>
+					<RateMovie rating={rating} onChangeRating={setRating} />
+				</form>
+			);
+		}
+		render(<Example />);
+		const user = userEvent.setup();
+		await user.tab();
+		expect(screen.getByRole('radio', { name: 'Rate 8 stars' })).toHaveFocus();
+		await user.keyboard('[ArrowRight]');
+		expect(screen.getByRole('radio', { name: 'Rate 9 stars' })).toBeChecked();
+		expect(submit).not.toHaveBeenCalled();
+	});
+	it('keeps multiple rating groups independent', () => {
+		render(
+			<>
+				<RateMovie rating={8} onChangeRating={vi.fn()} />
+				<RateMovie rating={3} onChangeRating={vi.fn()} />
+			</>
+		);
+		const radios = screen.getAllByRole('radio');
+		expect(radios[0].getAttribute('name')).not.toBe(
+			radios[10].getAttribute('name')
+		);
+		expect(radios[7]).toBeChecked();
+		expect(radios[12]).toBeChecked();
 	});
 });

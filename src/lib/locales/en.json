@@ -85,6 +85,7 @@
 		"noImage": "No Image"
 	},
 	"RateMovie": {
+		"optionLabel": "Rate {{value}} out of 10",
 		"ratingLabel": "{{value}} out of 10"
 	},
 	"RateMovieModal": {
@@ -203,6 +204,12 @@
 		"logMovie": "Log a Movie"
 	},
 	"MovieLogForm": {
+		"ratingLabel": "Your rating for the movie",
+		"ratingHint": "This rating applies to the movie and all your viewings.",
+		"ratingLoading": "Loading your rating…",
+		"ratingLoadError": "Could not load your rating. You can save this viewing without changing it.",
+		"retryRating": "Retry",
+		"resetRating": "Undo rating change",
 		"movieLabel": "Movie",
 		"dateWatchedLabel": "Date Watched",
 		"watchedWhereLabel": "Watched Where (Optional)",

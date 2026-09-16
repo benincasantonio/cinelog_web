@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import type { MovieRatingResponse } from '../models';
 import { useMovieRatingStore } from '../stores/useMovieRatingStore';
-import { RateMovie } from './RateMovie';
+import { MovieRatingField } from './MovieRatingField';
 
 type RateMovieFormData = {
 	rating: number;
@@ -63,19 +63,19 @@ export const RateMovieForm = ({ onSuccess, onCancel }: RateMovieFormProps) => {
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
 			<div className="flex flex-col items-center gap-2">
-				<label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-					{t('RateMovieForm.yourRating')}
-				</label>
 				<Controller
 					name="rating"
 					control={control}
 					render={({ field }) => (
-						<RateMovie rating={field.value} onChangeRating={field.onChange} />
+						<MovieRatingField
+							value={field.value}
+							onChange={field.onChange}
+							label={t('RateMovieForm.yourRating')}
+							labelClassName="text-gray-700 dark:text-gray-300"
+							error={errors.rating?.message}
+						/>
 					)}
 				/>
-				{errors.rating && (
-					<span className="text-sm text-red-500">{errors.rating.message}</span>
-				)}
 			</div>
 
 			<div className="flex flex-col gap-2">

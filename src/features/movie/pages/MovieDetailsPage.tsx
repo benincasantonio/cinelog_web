@@ -36,6 +36,7 @@ const MovieDetailsPage = () => {
 	const setMovieRating = useMovieDetailsStore((state) => state.setMovieRating);
 	const openRateModal = useMovieRatingStore((state) => state.openModal);
 	const openLogDialog = useMovieLogDialogStore((state) => state.open);
+	const logRefreshCount = useMovieLogDialogStore((state) => state.triggerCount);
 
 	useEffect(() => {
 		if (tmdbId && activeLocale) {
@@ -43,11 +44,12 @@ const MovieDetailsPage = () => {
 		}
 	}, [tmdbId, activeLocale, loadMovieDetails]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Successful log writes invalidate the displayed movie rating.
 	useEffect(() => {
 		if (tmdbId) {
 			loadMovieRating(Number(tmdbId));
 		}
-	}, [tmdbId, loadMovieRating]);
+	}, [tmdbId, loadMovieRating, logRefreshCount]);
 
 	useEffect(() => {
 		return () => {

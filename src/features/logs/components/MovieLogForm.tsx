@@ -19,6 +19,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { MovieRatingField } from '@/features/movie/components/MovieRatingField';
+import { getMovieRating } from '@/features/movie/repositories/movie-rating-repository';
+import './MovieLogForm.css';
 import { search } from '@/features/movie-search/repositories';
 import { WATCHED_WHERE_VALUES } from '../models';
 import { type LogFormSchema, logFormSchema } from '../schemas';
@@ -58,6 +61,7 @@ export const MovieLogForm = ({
 			dateWatched: movieToEdit?.dateWatched ?? '',
 			viewingNotes: movieToEdit?.viewingNotes ?? undefined,
 			watchedWhere: movieToEdit?.watchedWhere ?? undefined,
+			rating: movieToEdit?.movieRating ?? null,
 		}),
 		[movieToEdit, prefilledMovie]
 	);
@@ -75,6 +79,55 @@ export const MovieLogForm = ({
 		values: formValue as LogFormSchema,
 		mode: 'onBlur',
 	});
+
+	const tmdbId = form.watch('tmdbId');
+	const selectedRating = form.watch('rating');
+	const { setValue } = form;
+	const [ratingRetry, setRatingRetry] = useState(0);
+	const [ratingLookup, setRatingLookup] = useState<{
+		tmdbId?: number;
+		rating: number | null;
+		status: 'loading' | 'ready' | 'error';
+	}>({ rating: null, status: 'loading' });
+	const ratingReady =
+		!!movieToEdit ||
+		(ratingLookup.tmdbId === tmdbId && ratingLookup.status === 'ready');
+	const ratingLoading =
+		!movieToEdit &&
+		!!tmdbId &&
+		(ratingLookup.tmdbId !== tmdbId || ratingLookup.status === 'loading');
+	const ratingFailed =
+		!movieToEdit &&
+		ratingLookup.tmdbId === tmdbId &&
+		ratingLookup.status === 'error';
+	const initialRating = movieToEdit
+		? (movieToEdit.movieRating ?? null)
+		: ratingLookup.rating;
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Retry explicitly starts a new lookup for the same movie.
+	useEffect(() => {
+		if (movieToEdit) return;
+		let active = true;
+		setValue('rating', null);
+		setRatingLookup({ tmdbId, rating: null, status: 'loading' });
+		if (tmdbId) {
+			getMovieRating(tmdbId).then(
+				(result) => {
+					if (!active) return;
+					const rating = result?.rating ?? null;
+					setValue('rating', rating);
+					setRatingLookup({ tmdbId, rating, status: 'ready' });
+				},
+				() => {
+					if (active)
+						setRatingLookup({ tmdbId, rating: null, status: 'error' });
+				}
+			);
+		}
+		return () => {
+			active = false;
+		};
+	}, [tmdbId, movieToEdit, ratingRetry, setValue]);
 
 	const [searchItems, setSearchItems] = useState<
 		Array<{ label: string; value: string }>
@@ -123,15 +176,21 @@ export const MovieLogForm = ({
 
 	const handleSubmit = async (data: LogFormSchema) => {
 		clearError();
+		const { rating, ...logData } = data;
+		const ratingChange =
+			ratingReady && rating != null && rating !== initialRating
+				? { rating }
+				: {};
 		try {
 			if (movieToEdit) {
 				await updateLog(movieToEdit.id, {
 					dateWatched: data.dateWatched,
 					watchedWhere: data.watchedWhere,
 					viewingNotes: data.viewingNotes,
+					...ratingChange,
 				});
 			} else {
-				await createLog(data);
+				await createLog({ ...logData, ...ratingChange });
 			}
 
 			form.reset();
@@ -158,12 +217,16 @@ export const MovieLogForm = ({
 						<FormItem>
 							<FormLabel>{t('MovieLogForm.movieLabel')}</FormLabel>
 							<FormControl>
-								<Autocomplete
-									value={field.value?.toString() ?? ''}
-									items={searchItems}
-									onFilterChange={onFilterChange}
-									onValueChange={onValueChange}
-								/>
+								{movieToEdit ? (
+									<Input readOnly value={movieToEdit.movie?.title ?? ''} />
+								) : (
+									<Autocomplete
+										value={field.value?.toString() ?? ''}
+										items={searchItems}
+										onFilterChange={onFilterChange}
+										onValueChange={onValueChange}
+									/>
+								)}
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -210,6 +273,69 @@ export const MovieLogForm = ({
 								</Select>
 							</FormControl>
 							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="rating"
+					render={({ field }) => (
+						<FormItem>
+							<div aria-busy={ratingLoading}>
+								<MovieRatingField
+									value={field.value}
+									onChange={field.onChange}
+									label={t('MovieLogForm.ratingLabel')}
+									description={t('MovieLogForm.ratingHint')}
+									error={form.formState.errors.rating?.message}
+									disabled={!tmdbId || !ratingReady || isLoading}
+								>
+									{ratingLoading && (
+										<div className="movie-log-rating-skeleton">
+											<div
+												className="movie-log-rating-skeleton-row"
+												aria-hidden="true"
+											>
+												{Array.from({ length: 10 }, (_, index) => (
+													<span
+														className="movie-log-rating-skeleton-star"
+														key={index}
+													/>
+												))}
+											</div>
+											<p role="status">{t('MovieLogForm.ratingLoading')}</p>
+										</div>
+									)}
+								</MovieRatingField>
+							</div>
+							{ratingFailed && (
+								<div>
+									<p role="alert" className="text-sm text-destructive">
+										{t('MovieLogForm.ratingLoadError')}
+									</p>
+									<Button
+										type="button"
+										variant="ghost"
+										disabled={isLoading}
+										onClick={() => setRatingRetry((value) => value + 1)}
+									>
+										{t('MovieLogForm.retryRating')}
+									</Button>
+								</div>
+							)}
+							{ratingReady &&
+								selectedRating != null &&
+								selectedRating !== initialRating && (
+									<Button
+										type="button"
+										variant="ghost"
+										disabled={isLoading}
+										onClick={() => field.onChange(initialRating)}
+									>
+										{t('MovieLogForm.resetRating')}
+									</Button>
+								)}
 						</FormItem>
 					)}
 				/>

@@ -33,6 +33,7 @@ const movieRatingState = {
 };
 
 const movieLogDialogState = {
+	triggerCount: 0,
 	open: vi.fn(),
 };
 
@@ -268,4 +269,12 @@ describe('MovieDetailsPage', () => {
 		expect(movieDetailsState.loadMovieDetails).toHaveBeenCalledWith(10);
 		expect(movieDetailsState.loadMovieRating).not.toHaveBeenCalled();
 	});
+});
+
+it('reloads the movie rating after a successful log write', () => {
+	const { rerender } = render(<MovieDetailsPage />);
+	movieDetailsState.loadMovieRating.mockClear();
+	movieLogDialogState.triggerCount++;
+	rerender(<MovieDetailsPage />);
+	expect(movieDetailsState.loadMovieRating).toHaveBeenCalledWith(10);
 });
