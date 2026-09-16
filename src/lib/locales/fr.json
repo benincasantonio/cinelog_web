@@ -85,6 +85,7 @@
 		"noImage": "Pas d'Image"
 	},
 	"RateMovie": {
+		"optionLabel": "Noter {{value}} sur 10",
 		"ratingLabel": "{{value}} sur 10"
 	},
 	"RateMovieModal": {
@@ -203,6 +204,12 @@
 		"logMovie": "Enregistrer un film"
 	},
 	"MovieLogForm": {
+		"ratingLabel": "Votre note du film",
+		"ratingHint": "Cette note concerne le film et tous vos visionnages.",
+		"ratingLoading": "Chargement de votre note…",
+		"ratingLoadError": "Impossible de charger votre note. Vous pouvez enregistrer ce visionnage sans la modifier.",
+		"retryRating": "Réessayer",
+		"resetRating": "Annuler la modification de la note",
 		"movieLabel": "Film",
 		"dateWatchedLabel": "Date de visionnage",
 		"watchedWhereLabel": "Lieu de visionnage (Optionnel)",

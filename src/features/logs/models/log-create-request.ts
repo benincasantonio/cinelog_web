@@ -7,4 +7,5 @@ export type LogCreateRequest = {
 	viewingNotes?: string | null;
 	posterPath?: string | null;
 	watchedWhere?: WatchedWhere | null;
+	rating?: number | null;
 };

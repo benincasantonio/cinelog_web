@@ -6,4 +6,5 @@ export type LogCreateResponse = {
 	viewingNotes?: string;
 	posterPath?: string;
 	watchedWhere?: string;
+	movieRating?: number | null;
 };

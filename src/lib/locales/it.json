@@ -85,6 +85,7 @@
 		"noImage": "Nessuna immagine"
 	},
 	"RateMovie": {
+		"optionLabel": "Vota {{value}} su 10",
 		"ratingLabel": "{{value}} su 10"
 	},
 	"RateMovieModal": {
@@ -203,6 +204,12 @@
 		"logMovie": "Registra Film"
 	},
 	"MovieLogForm": {
+		"ratingLabel": "Il tuo voto al film",
+		"ratingHint": "Questo voto vale per il film e per tutte le tue visioni.",
+		"ratingLoading": "Caricamento del voto…",
+		"ratingLoadError": "Impossibile caricare il voto. Puoi salvare la visione senza modificarlo.",
+		"retryRating": "Riprova",
+		"resetRating": "Annulla modifica del voto",
 		"movieLabel": "Film",
 		"dateWatchedLabel": "Data di visione",
 		"watchedWhereLabel": "Dove lo hai visto (Opzionale)",
