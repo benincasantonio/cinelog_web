@@ -310,9 +310,17 @@ it('refreshes every viewing of the same movie after saving from the dialog', asy
 	});
 	const logs = [editLog, { ...editLog, id: 'log-2' }];
 	vi.mocked(getLogs)
-		.mockResolvedValueOnce({ logs })
+		.mockResolvedValueOnce({
+			logs,
+			totalWatches: 2,
+			uniqueTitles: 1,
+			totalRewatches: 1,
+		})
 		.mockResolvedValue({
 			logs: logs.map((log) => ({ ...log, movieRating: 9 })),
+			totalWatches: 2,
+			uniqueTitles: 1,
+			totalRewatches: 1,
 		});
 	render(
 		<MemoryRouter>

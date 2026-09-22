@@ -7,7 +7,7 @@ import {
 } from '@antoniobenincasa/ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { LogListItem } from '@/features/logs/models';
+import type { LogListResponse } from '@/features/logs/models';
 import { type GetLogsParams, getLogs } from '@/features/logs/repositories';
 import { useMovieLogDialogStore } from '@/features/logs/stores';
 import { extractApiError } from '@/lib/api/api-error';
@@ -24,7 +24,12 @@ export const MoviesWatched = ({
 	isDropdownMenuVisible,
 }: MoviesWatchedProps) => {
 	const { t } = useTranslation();
-	const [logs, setLogs] = useState<LogListItem[]>([]);
+	const [logList, setLogList] = useState<LogListResponse>({
+		logs: [],
+		totalWatches: 0,
+		uniqueTitles: 0,
+		totalRewatches: 0,
+	});
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedYear, setSelectedYear] = useState<string>(
@@ -49,7 +54,7 @@ export const MoviesWatched = ({
 				}
 
 				const response = await getLogs(handle, params);
-				setLogs(response.logs);
+				setLogList(response);
 			} catch (err) {
 				const apiError = await extractApiError(err);
 				if (apiError?.error_code_name === 'PROFILE_NOT_PUBLIC') {
@@ -102,7 +107,12 @@ export const MoviesWatched = ({
 				</div>
 			</div>
 
-			<MovieLogList logs={logs} isDropdownMenuVisible={isDropdownMenuVisible} />
+			<MovieLogList
+				logs={logList.logs}
+				uniqueTitles={logList.uniqueTitles}
+				totalRewatches={logList.totalRewatches}
+				isDropdownMenuVisible={isDropdownMenuVisible}
+			/>
 		</div>
 	);
 };

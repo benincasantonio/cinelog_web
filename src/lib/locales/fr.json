@@ -37,7 +37,9 @@
 		"movies": "Films",
 		"watched": "Regardés",
 		"watchedMovie_one": "{{count}} Film Regardé",
-		"watchedMovie_other": "{{count}} Films Regardés"
+		"watchedMovie_other": "{{count}} Films Regardés",
+		"rewatches_one": "{{count}} Revisionnage",
+		"rewatches_other": "{{count}} Revisionnages"
 	},
 	"MovieLogItem": {
 		"unknownTitle": "Titre Inconnu",
