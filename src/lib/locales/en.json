@@ -37,7 +37,9 @@
 		"movies": "Movies",
 		"watched": "Watched",
 		"watchedMovie_one": "{{count}} Movie Watched",
-		"watchedMovie_other": "{{count}} Movies Watched"
+		"watchedMovie_other": "{{count}} Movies Watched",
+		"rewatches_one": "{{count}} Rewatch",
+		"rewatches_other": "{{count}} Rewatches"
 	},
 	"MovieLogItem": {
 		"unknownTitle": "Unknown Title",
