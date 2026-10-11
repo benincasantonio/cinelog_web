@@ -5,7 +5,6 @@ export type LogCreateRequest = {
 	dateWatched: string;
 	movieId?: string | null;
 	viewingNotes?: string | null;
-	posterPath?: string | null;
 	watchedWhere?: WatchedWhere | null;
 	rating?: number | null;
 };
