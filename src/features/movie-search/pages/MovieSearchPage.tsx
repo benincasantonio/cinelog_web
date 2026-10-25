@@ -1,38 +1,41 @@
 import { Input } from '@antoniobenincasa/ui';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { normalizeLocale } from '@/lib/utilities/locale-utils';
 import { MovieSearchList } from '../components';
-import { useMoviesStore } from '../stores';
+import { movieSearchOptions } from '../queries/movie-search-options';
 
-const MoviesPage = () => {
+const MovieSearchPage = () => {
 	const { t, i18n } = useTranslation();
-	const activeLocale = i18n.resolvedLanguage ?? i18n.language;
+	const activeLocale = normalizeLocale(i18n.resolvedLanguage ?? i18n.language);
 	const [query, setQuery] = useState('');
-	const loadMovieSearchResults = useMoviesStore(
-		(state) => state.loadMovieSearchResults
-	);
-	const resetMovieSearchResults = useMoviesStore(
-		(state) => state.resetMovieSearchResults
-	);
+	const [debouncedSearch, setDebouncedSearch] = useState({
+		query: '',
+		locale: activeLocale,
+	});
+	const activeQuery =
+		query.length >= 3 && debouncedSearch.locale === activeLocale
+			? debouncedSearch.query
+			: '';
+	const search = useQuery(movieSearchOptions(activeQuery, activeLocale));
 
 	useEffect(() => {
-		if (activeLocale) {
-			resetMovieSearchResults();
-		}
-	}, [activeLocale, resetMovieSearchResults]);
+		setDebouncedSearch({ query: '', locale: activeLocale });
+	}, [activeLocale]);
 
 	useEffect(() => {
-		if (!activeLocale || !query || query.length < 3) {
-			resetMovieSearchResults();
+		if (query.length < 3) {
+			setDebouncedSearch({ query: '', locale: activeLocale });
 			return;
 		}
 
 		const timer = setTimeout(() => {
-			loadMovieSearchResults(query);
+			setDebouncedSearch({ query, locale: activeLocale });
 		}, 500);
 
 		return () => clearTimeout(timer);
-	}, [query, activeLocale, loadMovieSearchResults, resetMovieSearchResults]);
+	}, [query, activeLocale]);
 
 	return (
 		<>
@@ -49,10 +52,18 @@ const MoviesPage = () => {
 					onChange={(e) => setQuery(e.target.value)}
 				/>
 
-				<MovieSearchList />
+				<MovieSearchList
+					results={search.data?.results}
+					isLoading={search.isLoading}
+					isFetching={search.isFetching}
+					isError={search.isError}
+					onRetry={() => {
+						void search.refetch();
+					}}
+				/>
 			</div>
 		</>
 	);
 };
 
-export default MoviesPage;
+export default MovieSearchPage;

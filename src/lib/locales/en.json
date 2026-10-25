@@ -241,6 +241,8 @@
 		"title": "Movie Search"
 	},
 	"MovieSearchList": {
+		"error": "Unable to search movies. Please try again.",
+		"retry": "Retry",
 		"searching": "Searching for movies...",
 		"startTyping": "Start typing to search for movies.",
 		"noMoviesFound": "No movies found. Try searching for something!",

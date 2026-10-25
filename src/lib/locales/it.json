@@ -241,6 +241,8 @@
 		"title": "Ricerca Film"
 	},
 	"MovieSearchList": {
+		"error": "Impossibile cercare i film. Riprova.",
+		"retry": "Riprova",
 		"searching": "Ricerca di film...",
 		"startTyping": "Inizia a digitare per cercare film.",
 		"noMoviesFound": "Nessun film trovato. Prova a cercare qualcosa!",

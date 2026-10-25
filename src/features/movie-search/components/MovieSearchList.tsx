@@ -1,13 +1,38 @@
+import { Button } from '@antoniobenincasa/ui';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useMoviesStore } from '../stores/useMoviesStore';
+import type { TMDBMovieSearchResultItem } from '../models';
 
-export const MovieSearchList = () => {
+type MovieSearchListProps = {
+	results?: TMDBMovieSearchResultItem[];
+	isLoading: boolean;
+	isFetching: boolean;
+	isError: boolean;
+	onRetry: () => void;
+};
+
+export const MovieSearchList = ({
+	results,
+	isLoading,
+	isFetching,
+	isError,
+	onRetry,
+}: MovieSearchListProps) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const movieSearchResult = useMoviesStore((state) => state.movieSearchResult);
-	const isLoading = useMoviesStore((state) => state.isLoading);
-	const searched = useMoviesStore((state) => state.searched);
+	const error = isError ? (
+		<div role="alert" className="flex flex-col items-center gap-3 py-8">
+			<p>{t('MovieSearchList.error')}</p>
+			<Button
+				type="button"
+				variant="outline"
+				onClick={onRetry}
+				disabled={isFetching}
+			>
+				{t('MovieSearchList.retry')}
+			</Button>
+		</div>
+	) : null;
 
 	if (isLoading) {
 		return (
@@ -19,7 +44,8 @@ export const MovieSearchList = () => {
 		);
 	}
 
-	if (!searched) {
+	if (!results) {
+		if (isError) return error;
 		return (
 			<div className="flex justify-center items-center py-8">
 				<div className="text-lg text-gray-600">
@@ -29,59 +55,65 @@ export const MovieSearchList = () => {
 		);
 	}
 
-	if (!movieSearchResult || movieSearchResult.results.length === 0) {
+	if (results.length === 0) {
 		return (
-			<div className="flex justify-center items-center py-8">
-				<div className="text-lg text-gray-600">
-					{t('MovieSearchList.noMoviesFound')}
+			<>
+				{error}
+				<div className="flex justify-center items-center py-8">
+					<div className="text-lg text-gray-600">
+						{t('MovieSearchList.noMoviesFound')}
+					</div>
 				</div>
-			</div>
+			</>
 		);
 	}
 
 	return (
-		<div className="flex flex-col p-4 gap-2">
-			<h3 className="px-2 py-2 text-sm font-bold text-gray-700 dark:text-gray-500 uppercase tracking-wider mb-2">
-				{t('MovieSearchList.topResults')}
-			</h3>
-			{movieSearchResult.results.map((movie) => (
-				<div
-					key={movie.id}
-					onClick={() => navigate(`/movies/${movie.id}`)}
-					className="group flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-white/10"
-				>
+		<>
+			{error}
+			<div className="flex flex-col p-4 gap-2">
+				<h3 className="px-2 py-2 text-sm font-bold text-gray-700 dark:text-gray-500 uppercase tracking-wider mb-2">
+					{t('MovieSearchList.topResults')}
+				</h3>
+				{results.map((movie) => (
 					<div
-						className="w-[60px] h-[90px] shrink-0 rounded-lg bg-cover bg-center shadow-md group-hover:shadow-lg transition-shadow"
-						style={{
-							backgroundImage: movie.posterPath
-								? `url(https://image.tmdb.org/t/p/w200${movie.posterPath})`
-								: undefined,
-						}}
+						key={movie.id}
+						onClick={() => navigate(`/movies/${movie.id}`)}
+						className="group flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-white/10"
 					>
-						{!movie.posterPath && (
-							<div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-lg">
-								<span className="text-gray-400 dark:text-gray-600 text-xs">
-									{t('MovieLogItem.noImage')}
-								</span>
-							</div>
-						)}
-					</div>
-					<div className="flex flex-col flex-1 min-w-0">
-						<h4 className="text-lg text-left font-bold text-gray-900 dark:text-white truncate">
-							{movie.title}
-						</h4>
-						<div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
-							<span>{movie.releaseDate?.split('-')[0] || 'N/A'}</span>
-							{movie.voteAverage > 0 && (
-								<>
-									<span className="w-1 h-1 rounded-full bg-gray-600 dark:bg-gray-400"></span>
-									<span>★ {movie.voteAverage.toFixed(1)}</span>
-								</>
+						<div
+							className="w-[60px] h-[90px] shrink-0 rounded-lg bg-cover bg-center shadow-md group-hover:shadow-lg transition-shadow"
+							style={{
+								backgroundImage: movie.posterPath
+									? `url(https://image.tmdb.org/t/p/w200${movie.posterPath})`
+									: undefined,
+							}}
+						>
+							{!movie.posterPath && (
+								<div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-lg">
+									<span className="text-gray-400 dark:text-gray-600 text-xs">
+										{t('MovieLogItem.noImage')}
+									</span>
+								</div>
 							)}
 						</div>
+						<div className="flex flex-col flex-1 min-w-0">
+							<h4 className="text-lg text-left font-bold text-gray-900 dark:text-white truncate">
+								{movie.title}
+							</h4>
+							<div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
+								<span>{movie.releaseDate?.split('-')[0] || 'N/A'}</span>
+								{movie.voteAverage > 0 && (
+									<>
+										<span className="w-1 h-1 rounded-full bg-gray-600 dark:bg-gray-400"></span>
+										<span>★ {movie.voteAverage.toFixed(1)}</span>
+									</>
+								)}
+							</div>
+						</div>
 					</div>
-				</div>
-			))}
-		</div>
+				))}
+			</div>
+		</>
 	);
 };

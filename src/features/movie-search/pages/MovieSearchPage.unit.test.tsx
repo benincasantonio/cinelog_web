@@ -1,168 +1,105 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-let activeLocale = 'en-US';
-
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-		i18n: { resolvedLanguage: activeLocale },
-	}),
-}));
-
-const mockLoadMovieSearchResults = vi.fn();
-const mockResetMovieSearchResults = vi.fn();
-vi.mock('../stores', () => ({
-	useMoviesStore: (selector: (state: unknown) => unknown) =>
-		selector({
-			loadMovieSearchResults: mockLoadMovieSearchResults,
-			resetMovieSearchResults: mockResetMovieSearchResults,
-		}),
-}));
-
-vi.mock('../components', () => ({
-	MovieSearchList: () => <div data-testid="movie-search-list">Search List</div>,
-}));
-
+import { QueryClientProvider } from '@tanstack/react-query';
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import {
+	afterAll,
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from 'vitest';
+import { useAuthStore } from '@/features/auth/stores';
+import { createQueryClient } from '@/lib/api/query-client';
+import { changeActiveLocale } from '@/lib/locales/i18n';
 import MovieSearchPage from './MovieSearchPage';
 
+vi.hoisted(() => vi.stubEnv('VITE_API_URL', 'https://api.example.test/'));
+afterAll(() => vi.unstubAllEnvs());
+
 describe('MovieSearchPage', () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
+	let client: ReturnType<typeof createQueryClient>;
+	const fetchMock = vi.fn<typeof fetch>();
+
+	beforeEach(async () => {
+		await changeActiveLocale('en-US');
+		useAuthStore.setState({ authenticatedStatus: true });
+		client = createQueryClient();
 		vi.useFakeTimers();
-		activeLocale = 'en-US';
+		vi.stubGlobal('fetch', fetchMock);
+		fetchMock
+			.mockReset()
+			.mockImplementation(async () => Response.json({ results: [] }));
+		render(
+			<QueryClientProvider client={client}>
+				<MemoryRouter>
+					<MovieSearchPage />
+				</MemoryRouter>
+			</QueryClientProvider>
+		);
 	});
 
 	afterEach(() => {
+		cleanup();
+		client.clear();
 		vi.useRealTimers();
+		vi.unstubAllGlobals();
+		useAuthStore.setState(useAuthStore.getInitialState(), true);
 	});
 
-	it('should render the page title', () => {
-		render(<MovieSearchPage />);
+	const type = (value: string) =>
+		fireEvent.change(screen.getByRole('textbox'), { target: { value } });
+	const advance = (ms: number) =>
+		act(async () => {
+			await vi.advanceTimersByTimeAsync(ms);
+		});
 
-		const titleElement = document.querySelector('title');
-		expect(titleElement).toBeInTheDocument();
-		expect(titleElement?.textContent).toBe('MovieSearchPage.pageTitle');
-	});
-
-	it('should render the heading', () => {
-		render(<MovieSearchPage />);
-
-		expect(screen.getByText('MovieSearchPage.title')).toBeInTheDocument();
-	});
-
-	it('should render the search input', () => {
-		render(<MovieSearchPage />);
-
+	it('renders its heading, input and initial prompt without fetching', () => {
+		expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+		expect(document.title).toBe('Cinelog - Search');
 		expect(
-			screen.getByPlaceholderText('MovieSearchPage.searchPlaceholder')
+			screen.getByText('Start typing to search for movies.')
+		).toBeInTheDocument();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('waits 500 ms after the final input and never searches fewer than three characters', async () => {
+		type('ab');
+		await advance(500);
+		expect(fetchMock).not.toHaveBeenCalled();
+		type('Mat');
+		await advance(300);
+		type('Matrix');
+		await advance(499);
+		expect(fetchMock).not.toHaveBeenCalled();
+		await advance(1);
+		expect(fetchMock).toHaveBeenCalledOnce();
+		expect(
+			new URL((fetchMock.mock.calls[0][0] as Request).url).searchParams.get(
+				'query'
+			)
+		).toBe('Matrix');
+		await advance(1);
+		expect(
+			screen.getByText('No movies found. Try searching for something!')
+		).toBeInTheDocument();
+		type('a');
+		expect(
+			screen.getByText('Start typing to search for movies.')
 		).toBeInTheDocument();
 	});
 
-	it('should render the MovieSearchList', () => {
-		render(<MovieSearchPage />);
-
-		expect(screen.getByTestId('movie-search-list')).toBeInTheDocument();
-	});
-
-	it('should reset results on mount', () => {
-		render(<MovieSearchPage />);
-
-		expect(mockResetMovieSearchResults).toHaveBeenCalled();
-	});
-
-	it('should reset results when query is less than 3 characters', () => {
-		render(<MovieSearchPage />);
-		mockResetMovieSearchResults.mockClear();
-
-		const input = screen.getByPlaceholderText(
-			'MovieSearchPage.searchPlaceholder'
-		);
-		fireEvent.change(input, { target: { value: 'ab' } });
-
-		expect(mockResetMovieSearchResults).toHaveBeenCalled();
-		expect(mockLoadMovieSearchResults).not.toHaveBeenCalled();
-	});
-
-	it('should debounce and search when query is 3+ characters', () => {
-		render(<MovieSearchPage />);
-
-		const input = screen.getByPlaceholderText(
-			'MovieSearchPage.searchPlaceholder'
-		);
-		fireEvent.change(input, { target: { value: 'Inception' } });
-
-		// Should not search immediately
-		expect(mockLoadMovieSearchResults).not.toHaveBeenCalled();
-
-		act(() => {
-			vi.advanceTimersByTime(500);
-		});
-
-		expect(mockLoadMovieSearchResults).toHaveBeenCalledWith('Inception');
-	});
-
-	it('should clear previous timeout on new input', () => {
-		render(<MovieSearchPage />);
-
-		const input = screen.getByPlaceholderText(
-			'MovieSearchPage.searchPlaceholder'
-		);
-
-		fireEvent.change(input, { target: { value: 'Ince' } });
-
-		act(() => {
-			vi.advanceTimersByTime(300);
-		});
-
-		// Type more before debounce fires
-		fireEvent.change(input, { target: { value: 'Inception' } });
-
-		act(() => {
-			vi.advanceTimersByTime(500);
-		});
-
-		// Should only have searched for the final value
-		expect(mockLoadMovieSearchResults).toHaveBeenCalledTimes(1);
-		expect(mockLoadMovieSearchResults).toHaveBeenCalledWith('Inception');
-	});
-
-	it('refetches the active query when the locale changes', () => {
-		const { rerender } = render(<MovieSearchPage />);
-		const input = screen.getByPlaceholderText(
-			'MovieSearchPage.searchPlaceholder'
-		);
-		fireEvent.change(input, { target: { value: 'Inception' } });
-		act(() => {
-			vi.advanceTimersByTime(500);
-		});
-		mockLoadMovieSearchResults.mockClear();
-
-		activeLocale = 'fr-FR';
-		rerender(<MovieSearchPage />);
-		act(() => {
-			vi.advanceTimersByTime(500);
-		});
-
-		expect(mockLoadMovieSearchResults).toHaveBeenCalledOnce();
-		expect(mockLoadMovieSearchResults).toHaveBeenCalledWith('Inception');
-	});
-
-	it('invalidates the current search immediately when the locale changes', () => {
-		const { rerender } = render(<MovieSearchPage />);
-		const input = screen.getByPlaceholderText(
-			'MovieSearchPage.searchPlaceholder'
-		);
-		fireEvent.change(input, { target: { value: 'Inception' } });
-		act(() => {
-			vi.advanceTimersByTime(500);
-		});
-		mockResetMovieSearchResults.mockClear();
-
-		activeLocale = 'fr-FR';
-		rerender(<MovieSearchPage />);
-
-		expect(mockResetMovieSearchResults).toHaveBeenCalledOnce();
-		expect(mockLoadMovieSearchResults).toHaveBeenCalledOnce();
+	it('cancels a pending debounce when the page unmounts', async () => {
+		type('Matrix');
+		cleanup();
+		await advance(500);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
