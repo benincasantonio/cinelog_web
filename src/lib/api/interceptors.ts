@@ -22,7 +22,9 @@ export const beforeRequestInterceptor = async (
 	request: KyRequest,
 	options: ApiClientOptions
 ) => {
-	request.headers.set('Accept-Language', getActiveLocale());
+	if (!request.headers.has('Accept-Language')) {
+		request.headers.set('Accept-Language', getActiveLocale());
+	}
 
 	if (options.skipAuth) {
 		return;

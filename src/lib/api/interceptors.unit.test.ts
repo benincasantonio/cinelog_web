@@ -54,10 +54,19 @@ describe('interceptors', () => {
 	});
 
 	describe('beforeRequestInterceptor', () => {
+		it('preserves the explicit locale of a cached query', async () => {
+			const request = new Request('https://api.example.com/v1/movies/search', {
+				headers: { 'Accept-Language': 'it-IT' },
+			});
+			await beforeRequestInterceptor(request, { skipAuth: true });
+			expect(request.headers.get('Accept-Language')).toBe('it-IT');
+		});
+
 		const createMockRequest = (method: string): KyRequest => {
 			return {
 				method,
 				headers: {
+					has: vi.fn().mockReturnValue(false),
 					set: vi.fn(),
 				},
 			} as unknown as KyRequest;
