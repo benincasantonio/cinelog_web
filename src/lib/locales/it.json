@@ -102,7 +102,8 @@
 		"save": "Salva Voto",
 		"validation": {
 			"rating": "Seleziona un voto"
-		}
+		},
+		"saveError": "Impossibile salvare la valutazione. Riprova."
 	},
 	"LoginPage": {
 		"pageTitle": "Cinelog - Accedi",
@@ -408,6 +409,8 @@
 		"invalidCursor": "Questi risultati non sono più validi. Ripeti la ricerca.",
 		"unavailable": "Questo film non è più disponibile. Scegli un altro film.",
 		"retry": "Riprova",
-		"searchAgain": "Ripeti la ricerca"
+		"searchAgain": "Ripeti la ricerca",
+		"choose": "Scegli un film",
+		"clear": "Cancella selezione"
 	}
 }

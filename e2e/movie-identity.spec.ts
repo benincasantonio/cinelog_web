@@ -209,6 +209,45 @@ test('unknown UUID shows not found without resolving it', async ({ page }) => {
 	expect(calls.some((call) => call.path === 'movies/resolve')).toBe(false);
 });
 
+test('global log picker resolves its selected reference and submits without loading details', async ({
+	page,
+}) => {
+	const calls = await backend(page, true);
+	await page.goto('/');
+	await page
+		.getByRole('button', {
+			name: en.CreateMovieLogButton.logMovie,
+			exact: true,
+		})
+		.click();
+	const submit = page.getByRole('button', {
+		name: en.CreateMovieLogDialog.submitCreate,
+		exact: true,
+	});
+	await expect(submit).toBeDisabled();
+	await page.getByLabel(en.MovieLogForm.dateWatchedLabel).fill('2026-10-31');
+	await page
+		.getByRole('button', { name: en.MovieSelection.choose, exact: true })
+		.click();
+	await page
+		.getByPlaceholder(en.MovieSearchPage.searchPlaceholder)
+		.fill('Selected');
+	const option = page.getByRole('option', { name: 'Selected movie' });
+	await expect(option).toBeVisible();
+	expect(calls.some((call) => call.path === 'movies/resolve')).toBe(false);
+	await option.press('Enter');
+	await expect(submit).toBeEnabled();
+	await expect(option).not.toBeVisible();
+	await page.screenshot({ path: test.info().outputPath('log-selection.png') });
+	await submit.click();
+	await expect(
+		page.getByRole('dialog').filter({ has: page.locator('form') })
+	).not.toBeVisible();
+	expect(calls.filter((call) => call.path === 'movies/resolve')).toHaveLength(
+		1
+	);
+	expect(calls.some((call) => call.path === `movies/${movieId}`)).toBe(false);
+});
 test('Back clears search state and narrow search remains keyboard accessible', async ({
 	page,
 }) => {

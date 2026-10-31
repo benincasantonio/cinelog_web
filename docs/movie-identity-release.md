@@ -46,3 +46,21 @@ Run `bun run test:unit`, `bun run test:integration`, `bun run lint`, `bun run bu
 ### #97 base verification — 2026-10-31
 
 914 unit tests, 89 integration tests, and 4 Chromium scenarios passed. Build and locale validation passed. Lint passed against a clean export of the exact base snapshot, with the pre-existing `MoviesWatched` effect-dependency warning. The original workspace's unrelated untracked `fm-graphics-manager` JSON fails formatting; it was preserved.
+
+### Completed #97 + #98 verification — 2026-10-31
+
+930 unit tests, 93 integration tests, and 5 Chromium scenarios passed. Build, lint, and locale validation passed, with the same existing lint warning. Tests assert exact log/rating JSON, keyboard selection, scrolling, fresh search after Back, UUID reload, numeric rejection, error recovery, and stale-request behavior.
+
+Two live Chromium journeys passed against backend commit `0385036`: search-first and global-log-first, both continuing through history, rating, reload, and repeated catalog selection. They used the backend's disposable E2E PostgreSQL/Redis services, a test account, real authenticated HTTP routes and CSRF handling, and its fake upstream movie-provider fixture. The browser's test proxy forwarded requests to the backend HTTPS fixture. This verifies the client/backend contract, not live TMDB availability or production TLS/CORS configuration. Test services were removed afterward; backend source was unchanged.
+
+### Accessibility evidence and limits
+
+Scope: authenticated search → detail → log/rating → history in Chromium, light theme, desktop and 320 × 740 search viewport. Automated checks cover loaded, pending, failed, empty and disabled states. This is scoped evidence, not full WCAG conformance.
+
+| Status | Evidence |
+|---|---|
+| Pass | Changed search/history controls activate with Enter; rating radios and the log picker accept keyboard selection. The Load more and recovery actions are native buttons. See the browser suite and `MovieSearchList.integration.test.tsx`. Relevant requirement: [2.1.1 Keyboard, Level A](https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html). |
+| Pass | Pending/empty/error states expose status or alert roles, with pending search selection retaining focus in component coverage. This checks markup for [4.1.3 Status Messages, Level AA](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html); spoken announcements need manual testing. |
+| Fail (existing, outside these changes) | At `/search`, authenticated, light theme, 320 × 740, the unchanged Navbar extends beyond the right edge and clips the profile control. The changed search controls fit. Reproduce by setting that viewport and inspecting document width. `search-mobile-focus.png` from the browser test records it. Reduce Navbar gaps or reflow its actions, then assert document width does not exceed the viewport. Relevant requirement: [1.4.10 Reflow, Level AA](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html). |
+| Needs manual verification | Screen-reader announcements, all-theme contrast, text spacing, zoom across the whole process, and Firefox/WebKit behavior were not verified. |
+| Not applicable | Timed-media alternatives: these changed flows introduce no audio/video player. |

@@ -1,17 +1,16 @@
 import { Button, Spinner, Textarea } from '@antoniobenincasa/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
+import { createLatestRequestGuard } from '@/lib/utilities/latest-request-guard';
 import type { MovieRatingResponse } from '../models';
+import {
+	createRateMovieSchema,
+	type RateMovieFormData,
+} from '../schemas/rate-movie.schema';
 import { useMovieRatingStore } from '../stores/useMovieRatingStore';
 import { MovieRatingField } from './MovieRatingField';
-
-type RateMovieFormData = {
-	rating: number;
-	comment?: string;
-};
 
 type RateMovieFormProps = {
 	onSuccess?: (movieRating: MovieRatingResponse) => void;
@@ -24,10 +23,17 @@ export const RateMovieForm = ({ onSuccess, onCancel }: RateMovieFormProps) => {
 	const isLoading = useMovieRatingStore((state) => state.isLoading);
 	const movieRating = useMovieRatingStore((state) => state.movieRating);
 
-	const rateMovieSchema = z.object({
-		rating: z.number().min(1, t('RateMovieForm.validation.rating')),
-		comment: z.string().optional(),
-	});
+	const movieId = useMovieRatingStore((state) => state.movieId);
+	const error = useMovieRatingStore((state) => state.error);
+	const completionGuard = useRef(createLatestRequestGuard()).current;
+	// biome-ignore lint/correctness/useExhaustiveDependencies: A form belongs to one movie context.
+	useEffect(
+		() => () => completionGuard.invalidate(),
+		[completionGuard, movieId]
+	);
+	const rateMovieSchema = createRateMovieSchema(
+		t('RateMovieForm.validation.rating')
+	);
 
 	const {
 		control,
@@ -44,24 +50,33 @@ export const RateMovieForm = ({ onSuccess, onCancel }: RateMovieFormProps) => {
 		mode: 'onChange',
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Reset even when the next movie has no prior rating.
 	useEffect(() => {
-		if (movieRating) {
-			reset({
-				rating: movieRating.rating,
-				comment: movieRating.comment || undefined,
-			});
-		}
-	}, [movieRating, reset]);
+		reset({
+			rating: movieRating?.rating ?? 0,
+			comment: movieRating?.comment ?? '',
+		});
+	}, [movieId, movieRating, reset]);
 
 	const onSubmit = async (data: RateMovieFormData) => {
+		const requestId = completionGuard.start();
 		const movieRating = await submitRating(data.rating, data.comment);
-		if (movieRating) {
+		if (movieRating && !completionGuard.isStale(requestId)) {
 			onSuccess?.(movieRating);
 		}
 	};
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+			{error && (
+				<p role="alert">
+					{t(
+						error === 'unavailable'
+							? 'MovieSelection.unavailable'
+							: 'RateMovieForm.saveError'
+					)}
+				</p>
+			)}
 			<div className="flex flex-col items-center gap-2">
 				<Controller
 					name="rating"

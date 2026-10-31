@@ -39,6 +39,7 @@ const MovieDetailsPage = () => {
 	);
 	const setMovieRating = useMovieDetailsStore((state) => state.setMovieRating);
 	const openRateModal = useMovieRatingStore((state) => state.openModal);
+	const closeRateModal = useMovieRatingStore((state) => state.closeModal);
 	const openLogDialog = useMovieLogDialogStore((state) => state.open);
 	const logRefreshCount = useMovieLogDialogStore((state) => state.triggerCount);
 
@@ -59,8 +60,9 @@ const MovieDetailsPage = () => {
 	useEffect(() => {
 		return () => {
 			resetMovieDetails();
+			closeRateModal();
 		};
-	}, [resetMovieDetails, movieId]);
+	}, [resetMovieDetails, closeRateModal, movieId]);
 
 	const onRateMovieUpdated = (movieRating: MovieRatingResponse) => {
 		if (movieId) {

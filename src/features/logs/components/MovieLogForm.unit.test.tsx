@@ -1,3 +1,7 @@
+vi.mock('@/features/movie/repositories/movies-repository', () => ({
+	resolveMovie: vi.fn(),
+}));
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -13,6 +17,7 @@ const { mockMovieLogDialogStore, mockMovieLogStore, mockSearch } = vi.hoisted(
 			prefilledMovie: null,
 			movieToEdit: null,
 			clearPrefilledMovie: vi.fn(),
+			triggerUpdate: vi.fn(),
 		}));
 
 		const mockMovieLogStore = create(() => ({
@@ -123,7 +128,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 		<button
 			disabled={disabled}
 			type={type as 'button' | 'submit' | 'reset' | undefined}
-			data-testid="submit-button"
+			data-testid={type === 'submit' ? 'submit-button' : undefined}
 		>
 			{children}
 		</button>
@@ -232,6 +237,7 @@ describe('MovieLogForm', () => {
 			prefilledMovie: null,
 			movieToEdit: null,
 			clearPrefilledMovie: vi.fn(),
+			triggerUpdate: vi.fn(),
 		});
 		mockMovieLogStore.setState({
 			isLoading: false,
@@ -465,19 +471,22 @@ describe('MovieLogForm', () => {
 			});
 		});
 
-		it('should fallback to empty option label/value when prefilledMovie fields are missing', async () => {
+		it('leaves an invalid prefill unselected and blocks submission', async () => {
 			mockMovieLogDialogStore.setState({
 				prefilledMovie: {
 					movieId: undefined,
 					title: undefined,
-				} as unknown as { movieId: number; title: string },
+				} as unknown as { movieId: string; title: string },
 				movieToEdit: null,
 			});
 
 			render(<MovieLogForm />);
 
 			await waitFor(() => {
-				expect(screen.getByTestId('autocomplete-option-')).toBeInTheDocument();
+				expect(
+					screen.queryByTestId('autocomplete-option-')
+				).not.toBeInTheDocument();
+				expect(screen.getByTestId('submit-button')).toBeDisabled();
 			});
 		});
 	});
@@ -773,6 +782,7 @@ describe('MovieLogForm', () => {
 				},
 				movieToEdit: null,
 				clearPrefilledMovie: vi.fn(),
+				triggerUpdate: vi.fn(),
 			});
 
 			render(<MovieLogForm />);
@@ -853,6 +863,7 @@ describe('MovieLogForm', () => {
 				},
 				movieToEdit: null,
 				clearPrefilledMovie: vi.fn(),
+				triggerUpdate: vi.fn(),
 			});
 
 			render(<MovieLogForm onSuccess={onSuccess} />);
@@ -874,6 +885,7 @@ describe('MovieLogForm', () => {
 				},
 				movieToEdit: null,
 				clearPrefilledMovie: vi.fn(),
+				triggerUpdate: vi.fn(),
 			});
 
 			render(<MovieLogForm />);
