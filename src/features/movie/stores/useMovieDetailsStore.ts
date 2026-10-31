@@ -10,8 +10,8 @@ interface MovieDetailsStore {
 	isLoading: boolean;
 	movieRating: MovieRatingResponse | undefined;
 	isMovieRatingLoading: boolean;
-	loadMovieRating: (tmdbId: number) => Promise<void>;
-	loadMovieDetails: (tmdbId: number) => Promise<void>;
+	loadMovieRating: (movieId: string) => Promise<void>;
+	loadMovieDetails: (movieId: string) => Promise<void>;
 	resetMovieDetails: () => void;
 	setMovieRating: (movieRating: MovieRatingResponse) => void;
 }
@@ -25,11 +25,11 @@ export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
 		movieRating: undefined,
 		isLoading: false,
 		isMovieRatingLoading: false,
-		loadMovieDetails: async (tmdbId: number) => {
+		loadMovieDetails: async (movieId: string) => {
 			const requestId = detailsGuard.start();
 			set({ isLoading: true, movieDetails: undefined });
 			try {
-				const details = await getDetails(tmdbId);
+				const details = await getDetails(movieId);
 				if (detailsGuard.isStale(requestId)) return;
 				set({ movieDetails: details, isLoading: false });
 			} catch (error) {
@@ -47,15 +47,16 @@ export const useMovieDetailsStore = create<MovieDetailsStore>((set) => {
 			ratingGuard.invalidate();
 			set({
 				movieDetails: undefined,
+				isLoading: false,
 				movieRating: undefined,
 				isMovieRatingLoading: false,
 			});
 		},
-		loadMovieRating: async (tmdbId: number) => {
+		loadMovieRating: async (movieId: string) => {
 			const requestId = ratingGuard.start();
 			set({ isMovieRatingLoading: true, movieRating: undefined });
 			try {
-				const rating = await getMovieRating(tmdbId);
+				const rating = await getMovieRating(movieId);
 
 				if (ratingGuard.isStale(requestId)) return;
 

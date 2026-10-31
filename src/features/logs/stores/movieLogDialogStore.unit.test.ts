@@ -47,7 +47,10 @@ describe('useMovieLogDialogStore', () => {
 
 		it('should set prefilledMovie when open is called with prefilledMovie option', () => {
 			const { result } = renderHook(() => useMovieLogDialogStore());
-			const prefilledMovie = { tmdbId: 550, title: 'Fight Club' };
+			const prefilledMovie = {
+				movieId: 'a0000000-0000-4000-8000-000000000550',
+				title: 'Fight Club',
+			};
 
 			act(() => {
 				result.current.open({ prefilledMovie });
@@ -62,8 +65,7 @@ describe('useMovieLogDialogStore', () => {
 			const { result } = renderHook(() => useMovieLogDialogStore());
 			const movieToEdit: LogListItem = {
 				id: '1',
-				movieId: 'movie-1',
-				tmdbId: 550,
+				movieId: '9ae7de0a-bbaf-53e3-a9e3-bd4e86da7c40',
 				dateWatched: '2024-01-09',
 			};
 
@@ -78,11 +80,13 @@ describe('useMovieLogDialogStore', () => {
 
 		it('should throw error when both movieToEdit and prefilledMovie are provided', () => {
 			const { result } = renderHook(() => useMovieLogDialogStore());
-			const prefilledMovie = { tmdbId: 550, title: 'Fight Club' };
+			const prefilledMovie = {
+				movieId: 'a0000000-0000-4000-8000-000000000550',
+				title: 'Fight Club',
+			};
 			const movieToEdit: LogListItem = {
 				id: '1',
-				movieId: 'movie-1',
-				tmdbId: 550,
+				movieId: '9ae7de0a-bbaf-53e3-a9e3-bd4e86da7c40',
 				dateWatched: '2024-01-09',
 			};
 
@@ -111,7 +115,10 @@ describe('useMovieLogDialogStore', () => {
 
 		it('should clear prefilledMovie when close is called', () => {
 			const { result } = renderHook(() => useMovieLogDialogStore());
-			const prefilledMovie = { tmdbId: 550, title: 'Fight Club' };
+			const prefilledMovie = {
+				movieId: 'a0000000-0000-4000-8000-000000000550',
+				title: 'Fight Club',
+			};
 
 			act(() => {
 				result.current.open({ prefilledMovie });
@@ -128,8 +135,7 @@ describe('useMovieLogDialogStore', () => {
 			const { result } = renderHook(() => useMovieLogDialogStore());
 			const movieToEdit: LogListItem = {
 				id: '1',
-				movieId: 'movie-1',
-				tmdbId: 550,
+				movieId: '9ae7de0a-bbaf-53e3-a9e3-bd4e86da7c40',
 				dateWatched: '2024-01-09',
 			};
 
@@ -148,7 +154,10 @@ describe('useMovieLogDialogStore', () => {
 	describe('clearPrefilledMovie', () => {
 		it('should clear prefilledMovie without affecting other state', () => {
 			const { result } = renderHook(() => useMovieLogDialogStore());
-			const prefilledMovie = { tmdbId: 550, title: 'Fight Club' };
+			const prefilledMovie = {
+				movieId: 'a0000000-0000-4000-8000-000000000550',
+				title: 'Fight Club',
+			};
 
 			act(() => {
 				result.current.open({ prefilledMovie });

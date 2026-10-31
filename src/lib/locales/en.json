@@ -244,7 +244,10 @@
 		"searching": "Searching for movies...",
 		"startTyping": "Start typing to search for movies.",
 		"noMoviesFound": "No movies found. Try searching for something!",
-		"topResults": "Top Results"
+		"topResults": "Top Results",
+		"loadMore": "Load more",
+		"moreResults": "No matches on this page. More results are available.",
+		"loadError": "Could not load more movies. Please try again."
 	},
 	"Navbar": {
 		"home": "Home",
@@ -397,5 +400,14 @@
 				"noActor": "Your follow request was accepted"
 			}
 		}
+	},
+	"MovieSelection": {
+		"resolving": "Opening movie…",
+		"temporary": "Could not open this movie. Please try again.",
+		"invalidReference": "This search result is no longer valid. Search again to select the movie.",
+		"invalidCursor": "These search results are no longer valid. Start the search again.",
+		"unavailable": "This movie is no longer available. Choose another movie.",
+		"retry": "Retry",
+		"searchAgain": "Search again"
 	}
 }

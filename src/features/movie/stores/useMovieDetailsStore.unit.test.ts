@@ -30,9 +30,13 @@ describe('useMovieDetailsStore', () => {
 		const details = { id: 1, title: 'Inception' };
 		mockGetDetails.mockResolvedValueOnce(details);
 
-		await useMovieDetailsStore.getState().loadMovieDetails(1);
+		await useMovieDetailsStore
+			.getState()
+			.loadMovieDetails('a0000000-0000-4000-8000-000000000001');
 
-		expect(mockGetDetails).toHaveBeenCalledWith(1);
+		expect(mockGetDetails).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000001'
+		);
 		expect(useMovieDetailsStore.getState().movieDetails).toEqual(details);
 		expect(useMovieDetailsStore.getState().isLoading).toBe(false);
 	});
@@ -43,7 +47,9 @@ describe('useMovieDetailsStore', () => {
 			.mockImplementation(() => undefined);
 		mockGetDetails.mockRejectedValueOnce(new Error('boom'));
 
-		await useMovieDetailsStore.getState().loadMovieDetails(1);
+		await useMovieDetailsStore
+			.getState()
+			.loadMovieDetails('a0000000-0000-4000-8000-000000000001');
 
 		expect(useMovieDetailsStore.getState().isLoading).toBe(false);
 		expect(consoleSpy).toHaveBeenCalledWith(
@@ -68,8 +74,12 @@ describe('useMovieDetailsStore', () => {
 				})
 			);
 
-		const firstRequest = useMovieDetailsStore.getState().loadMovieDetails(1);
-		const secondRequest = useMovieDetailsStore.getState().loadMovieDetails(1);
+		const firstRequest = useMovieDetailsStore
+			.getState()
+			.loadMovieDetails('a0000000-0000-4000-8000-000000000001');
+		const secondRequest = useMovieDetailsStore
+			.getState()
+			.loadMovieDetails('a0000000-0000-4000-8000-000000000001');
 
 		resolveSecond!({ id: 1, title: 'Titolo nuovo' });
 		await secondRequest;
@@ -96,9 +106,13 @@ describe('useMovieDetailsStore', () => {
 		const rating = { rating: 9, comment: 'top' };
 		mockGetMovieRating.mockResolvedValueOnce(rating);
 
-		await useMovieDetailsStore.getState().loadMovieRating(10);
+		await useMovieDetailsStore
+			.getState()
+			.loadMovieRating('a0000000-0000-4000-8000-000000000010');
 
-		expect(mockGetMovieRating).toHaveBeenCalledWith(10);
+		expect(mockGetMovieRating).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000010'
+		);
 		expect(useMovieDetailsStore.getState().movieRating).toEqual(rating);
 		expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(false);
 	});
@@ -109,7 +123,9 @@ describe('useMovieDetailsStore', () => {
 			.mockImplementation(() => undefined);
 		mockGetMovieRating.mockRejectedValueOnce(new Error('boom'));
 
-		await useMovieDetailsStore.getState().loadMovieRating(10);
+		await useMovieDetailsStore
+			.getState()
+			.loadMovieRating('a0000000-0000-4000-8000-000000000010');
 
 		expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(false);
 		expect(consoleSpy).toHaveBeenCalledWith(
@@ -122,9 +138,13 @@ describe('useMovieDetailsStore', () => {
 	it('handles movie rating with no content', async () => {
 		mockGetMovieRating.mockResolvedValueOnce(undefined);
 
-		await useMovieDetailsStore.getState().loadMovieRating(10);
+		await useMovieDetailsStore
+			.getState()
+			.loadMovieRating('a0000000-0000-4000-8000-000000000010');
 
-		expect(mockGetMovieRating).toHaveBeenCalledWith(10);
+		expect(mockGetMovieRating).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000010'
+		);
 		expect(useMovieDetailsStore.getState().movieRating).toBeUndefined();
 		expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(false);
 	});
@@ -145,8 +165,12 @@ describe('rating request ordering', () => {
 					resolveNew = resolve;
 				})
 			);
-		const oldRequest = useMovieDetailsStore.getState().loadMovieRating(1);
-		const newRequest = useMovieDetailsStore.getState().loadMovieRating(2);
+		const oldRequest = useMovieDetailsStore
+			.getState()
+			.loadMovieRating('a0000000-0000-4000-8000-000000000001');
+		const newRequest = useMovieDetailsStore
+			.getState()
+			.loadMovieRating('a0000000-0000-4000-8000-000000000002');
 		resolveOld({ rating: 8 });
 		await oldRequest;
 		expect(useMovieDetailsStore.getState().movieRating).toBeUndefined();
@@ -164,7 +188,9 @@ describe('rating request ordering', () => {
 					resolve = done;
 				})
 			);
-			const request = useMovieDetailsStore.getState().loadMovieRating(1);
+			const request = useMovieDetailsStore
+				.getState()
+				.loadMovieRating('a0000000-0000-4000-8000-000000000001');
 			if (reset) useMovieDetailsStore.getState().resetMovieDetails();
 			else
 				useMovieDetailsStore.getState().setMovieRating({ rating: 10 } as never);

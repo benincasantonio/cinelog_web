@@ -1,7 +1,6 @@
-export interface MovieResponse {
+export type MovieResponse = {
 	id: string;
 	title: string;
-	tmdbId: number;
 	posterPath?: string | null;
 	releaseDate?: string | null;
 	overview?: string | null;
@@ -10,4 +9,4 @@ export interface MovieResponse {
 	originalLanguage?: string | null;
 	createdAt?: string | null;
 	updatedAt?: string | null;
-}
+};

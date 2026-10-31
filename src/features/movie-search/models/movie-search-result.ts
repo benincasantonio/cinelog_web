@@ -1,5 +1,4 @@
-export interface TMDBMovieSearchResultItem {
-	id: number;
+export type MovieSearchResultItem = {
 	title: string;
 	overview: string;
 	releaseDate: string;
@@ -9,11 +8,9 @@ export interface TMDBMovieSearchResultItem {
 	genreIds: number[];
 	originalLanguage: string;
 	originalTitle: string;
-}
+} & ({ id: string; movieRef: null } | { id: null; movieRef: string });
 
-export interface TMDBMovieSearchResult {
-	page: number;
-	totalResults: number;
-	totalPages: number;
-	results: TMDBMovieSearchResultItem[];
-}
+export type MovieSearchResult = {
+	results: MovieSearchResultItem[];
+	nextCursor: string | null;
+};

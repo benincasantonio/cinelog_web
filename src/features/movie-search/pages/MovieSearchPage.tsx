@@ -16,10 +16,9 @@ const MoviesPage = () => {
 	);
 
 	useEffect(() => {
-		if (activeLocale) {
-			resetMovieSearchResults();
-		}
+		if (activeLocale) resetMovieSearchResults();
 	}, [activeLocale, resetMovieSearchResults]);
+	useEffect(() => resetMovieSearchResults, [resetMovieSearchResults]);
 
 	useEffect(() => {
 		if (!activeLocale || !query || query.length < 3) {
@@ -42,11 +41,15 @@ const MoviesPage = () => {
 					{t('MovieSearchPage.title')}
 				</h1>
 				<Input
+					aria-label={t('MovieSearchPage.searchPlaceholder')}
 					placeholder={t('MovieSearchPage.searchPlaceholder')}
 					className="mb-4"
 					value={query}
 					autoFocus
-					onChange={(e) => setQuery(e.target.value)}
+					onChange={(e) => {
+						resetMovieSearchResults();
+						setQuery(e.target.value);
+					}}
 				/>
 
 				<MovieSearchList />

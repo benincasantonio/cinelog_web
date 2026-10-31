@@ -1,28 +1,28 @@
-export interface TMDBGenre {
+export type TMDBGenre = {
 	id: number;
 	name: string;
-}
+};
 
-export interface TMDBProductionCompany {
+export type TMDBProductionCompany = {
 	id: number;
 	name: string;
 	logoPath: string | null;
 	originCountry: string;
-}
+};
 
-export interface TMDBProductionCountry {
+export type TMDBProductionCountry = {
 	iso31661: string;
 	name: string;
-}
+};
 
-export interface TMDBSpokenLanguage {
+export type TMDBSpokenLanguage = {
 	iso6391: string;
 	name: string;
 	englishName: string;
-}
+};
 
-export interface TMDBMovieDetails {
-	id: number;
+export type TMDBMovieDetails = {
+	id: string;
 	title: string;
 	originalTitle: string;
 	overview: string;
@@ -45,4 +45,4 @@ export interface TMDBMovieDetails {
 	productionCompanies: TMDBProductionCompany[];
 	productionCountries: TMDBProductionCountry[];
 	spokenLanguages: TMDBSpokenLanguage[];
-}
+};

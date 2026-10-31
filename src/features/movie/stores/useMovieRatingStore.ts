@@ -5,9 +5,12 @@ import { createOrUpdateRating } from '../repositories/movie-rating-repository';
 interface MovieRatingState {
 	isOpen: boolean;
 	isLoading: boolean;
-	tmdbId: string | null;
+	movieId: string | null;
 	movieRating: MovieRatingResponse | null;
-	openModal: (tmdbId: string, movieRating?: MovieRatingResponse | null) => void;
+	openModal: (
+		movieId: string,
+		movieRating?: MovieRatingResponse | null
+	) => void;
 	closeModal: () => void;
 	setIsOpen: (isOpen: boolean) => void;
 	submitRating: (
@@ -19,20 +22,20 @@ interface MovieRatingState {
 export const useMovieRatingStore = create<MovieRatingState>((set, get) => ({
 	isOpen: false,
 	isLoading: false,
-	tmdbId: null,
+	movieId: null,
 	movieRating: null,
-	openModal: (tmdbId, movieRating = null) =>
-		set({ isOpen: true, tmdbId, movieRating }),
-	closeModal: () => set({ isOpen: false, tmdbId: null, movieRating: null }),
+	openModal: (movieId, movieRating = null) =>
+		set({ isOpen: true, movieId, movieRating }),
+	closeModal: () => set({ isOpen: false, movieId: null, movieRating: null }),
 	setIsOpen: (isOpen) => set({ isOpen }),
 	submitRating: async (rating, comment) => {
-		const { tmdbId } = get();
-		if (!tmdbId) return;
+		const { movieId } = get();
+		if (!movieId) return;
 
 		set({ isLoading: true });
 		try {
 			const movieRating = await createOrUpdateRating({
-				tmdbId,
+				movieId,
 				rating,
 				comment: comment?.trim() || null,
 			});

@@ -52,8 +52,8 @@ vi.mock('@antoniobenincasa/ui', async (importOriginal) => ({
 			onChange={(event) => onValueChange(event.target.value)}
 		>
 			<option value="">Choose</option>
-			<option value="550">Fight Club</option>
-			<option value="13">Forrest Gump</option>
+			<option value="a0000000-0000-4000-8000-000000000550">Fight Club</option>
+			<option value="a0000000-0000-4000-8000-000000000013">Forrest Gump</option>
 		</select>
 	),
 }));
@@ -61,7 +61,7 @@ vi.mock('@antoniobenincasa/ui', async (importOriginal) => ({
 const savedRating = (rating: number) => ({ rating }) as MovieRatingResponse;
 const editLog = {
 	id: 'log-1',
-	tmdbId: 550,
+	movieId: 'a0000000-0000-4000-8000-000000000550',
 	dateWatched: '2026-09-13',
 	movieRating: 8,
 	movie: { title: 'Fight Club' },
@@ -78,20 +78,22 @@ beforeEach(() => {
 	useMovieLogDialogStore.setState({
 		isOpen: true,
 		movieToEdit: null,
-		prefilledMovie: { tmdbId: 550, title: 'Fight Club' },
+		prefilledMovie: {
+			movieId: 'a0000000-0000-4000-8000-000000000550',
+			title: 'Fight Club',
+		},
 	});
 	useMovieLogStore.setState({ isLoading: false, error: null });
 	vi.mocked(getMovieRating).mockResolvedValue(savedRating(8));
 	vi.mocked(createLog).mockResolvedValue({
 		id: 'new-log',
-		tmdbId: 550,
-		movieId: 'movie',
+		movieId: '976c53bd-3419-51a1-a11d-f98c7a9e5e28',
 		dateWatched: '2026-09-13',
 		movieRating: null,
 	});
 	vi.mocked(updateLog).mockResolvedValue({
 		...editLog,
-		movieId: 'movie',
+		movieId: '976c53bd-3419-51a1-a11d-f98c7a9e5e28',
 		movieRating: null,
 	});
 });
@@ -100,7 +102,9 @@ describe('movie-level rating in the log form', () => {
 	it('prefills the saved rating and omits it when unchanged', async () => {
 		render(<MovieLogForm />);
 		await waitFor(() => expect(score(8)).toBeChecked());
-		expect(getMovieRating).toHaveBeenCalledWith(550);
+		expect(getMovieRating).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000550'
+		);
 		submit();
 		await waitFor(() => expect(createLog).toHaveBeenCalledOnce());
 		expect(vi.mocked(createLog).mock.calls[0][0]).not.toHaveProperty('rating');
@@ -112,7 +116,10 @@ describe('movie-level rating in the log form', () => {
 		submit();
 		await waitFor(() =>
 			expect(createLog).toHaveBeenCalledWith(
-				expect.objectContaining({ tmdbId: 550, rating: 10 })
+				expect.objectContaining({
+					movieId: 'a0000000-0000-4000-8000-000000000550',
+					rating: 10,
+				})
 			)
 		);
 	});
@@ -228,7 +235,7 @@ describe('movie-level rating in the log form', () => {
 		render(<MovieLogForm />);
 		await userEvent.selectOptions(
 			screen.getByLabelText('MovieLogForm.movieLabel'),
-			'13'
+			'a0000000-0000-4000-8000-000000000013'
 		);
 		await waitFor(() => expect(score(1)).toBeEnabled());
 		await userEvent.click(score(4));
@@ -239,7 +246,10 @@ describe('movie-level rating in the log form', () => {
 		submit();
 		await waitFor(() =>
 			expect(createLog).toHaveBeenCalledWith(
-				expect.objectContaining({ tmdbId: 13, rating: 4 })
+				expect.objectContaining({
+					movieId: 'a0000000-0000-4000-8000-000000000013',
+					rating: 4,
+				})
 			)
 		);
 	});
@@ -250,12 +260,14 @@ describe('movie-level rating in the log form', () => {
 		vi.mocked(getMovieRating).mockResolvedValue(undefined);
 		await userEvent.selectOptions(
 			screen.getByLabelText('MovieLogForm.movieLabel'),
-			'13'
+			'a0000000-0000-4000-8000-000000000013'
 		);
 		await waitFor(() => expect(score(10)).not.toBeChecked());
 		submit();
 		await waitFor(() => expect(createLog).toHaveBeenCalledOnce());
-		expect(vi.mocked(createLog).mock.calls[0][0]).toMatchObject({ tmdbId: 13 });
+		expect(vi.mocked(createLog).mock.calls[0][0]).toMatchObject({
+			movieId: 'a0000000-0000-4000-8000-000000000013',
+		});
 		expect(vi.mocked(createLog).mock.calls[0][0]).not.toHaveProperty('rating');
 	});
 	it('keeps the form and selected score after a failed write', async () => {

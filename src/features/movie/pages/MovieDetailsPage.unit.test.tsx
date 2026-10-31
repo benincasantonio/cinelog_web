@@ -8,6 +8,7 @@ let activeLocale = 'en-US';
 const movieDetailsState = {
 	movieDetails: undefined as
 		| {
+				id: string;
 				title: string;
 				posterPath: string | null;
 				backdropPath: string | null;
@@ -133,7 +134,9 @@ describe('MovieDetailsPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		activeLocale = 'en-US';
-		mockUseParams.mockReturnValue({ tmdbId: '10' });
+		mockUseParams.mockReturnValue({
+			movieId: 'a0000000-0000-4000-8000-000000000010',
+		});
 		movieDetailsState.movieDetails = undefined;
 		movieDetailsState.movieRating = undefined;
 		movieDetailsState.isLoading = false;
@@ -146,8 +149,12 @@ describe('MovieDetailsPage', () => {
 		render(<MovieDetailsPage />);
 
 		expect(screen.getByText('MovieDetailsPage.loading')).toBeInTheDocument();
-		expect(movieDetailsState.loadMovieDetails).toHaveBeenCalledWith(10);
-		expect(movieDetailsState.loadMovieRating).toHaveBeenCalledWith(10);
+		expect(movieDetailsState.loadMovieDetails).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000010'
+		);
+		expect(movieDetailsState.loadMovieRating).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000010'
+		);
 	});
 
 	it('renders not-found state and go-back action', () => {
@@ -160,6 +167,7 @@ describe('MovieDetailsPage', () => {
 
 	it('renders details and actions for rating/logging movie', async () => {
 		movieDetailsState.movieDetails = {
+			id: 'a0000000-0000-4000-8000-000000000010',
 			title: 'Inception',
 			posterPath: '/p.jpg',
 			backdropPath: '/b.jpg',
@@ -178,11 +186,16 @@ describe('MovieDetailsPage', () => {
 		);
 		expect(screen.getByText('MovieDetailsPage.noOverview')).toBeInTheDocument();
 		fireEvent.click(screen.getByText('MovieDetailsPage.rate'));
-		expect(movieRatingState.openModal).toHaveBeenCalledWith('10');
+		expect(movieRatingState.openModal).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000010'
+		);
 
 		fireEvent.click(screen.getByText('MovieDetailsPage.logMovie'));
 		expect(movieLogDialogState.open).toHaveBeenCalledWith({
-			prefilledMovie: { tmdbId: 10, title: 'Inception' },
+			prefilledMovie: {
+				movieId: 'a0000000-0000-4000-8000-000000000010',
+				title: 'Inception',
+			},
 		});
 
 		fireEvent.click(screen.getByTestId('rate-modal-success'));
@@ -195,6 +208,7 @@ describe('MovieDetailsPage', () => {
 
 	it('renders user rating path and opens edit modal from vote click', () => {
 		movieDetailsState.movieDetails = {
+			id: 'a0000000-0000-4000-8000-000000000010',
 			title: 'Interstellar',
 			posterPath: '/p.jpg',
 			backdropPath: '/b.jpg',
@@ -210,14 +224,18 @@ describe('MovieDetailsPage', () => {
 		render(<MovieDetailsPage />);
 
 		fireEvent.click(screen.getByTestId('movie-vote-user'));
-		expect(movieRatingState.openModal).toHaveBeenCalledWith('10', {
-			rating: 7,
-		});
+		expect(movieRatingState.openModal).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000010',
+			{
+				rating: 7,
+			}
+		);
 	});
 
-	it('handles missing tmdbId and rating loading branch', () => {
+	it('handles missing movieId and rating loading branch', () => {
 		mockUseParams.mockReturnValue({});
 		movieDetailsState.movieDetails = {
+			id: 'a0000000-0000-4000-8000-000000000010',
 			title: 'No Id',
 			posterPath: '/p.jpg',
 			backdropPath: '/b.jpg',
@@ -234,13 +252,13 @@ describe('MovieDetailsPage', () => {
 		render(<MovieDetailsPage />);
 
 		expect(movieDetailsState.loadMovieDetails).not.toHaveBeenCalled();
-		expect(screen.getByTestId('skeleton')).toBeInTheDocument();
-		fireEvent.click(screen.getByTestId('rate-modal-success'));
+		expect(screen.getByText('MovieDetailsPage.notFound')).toBeInTheDocument();
 		expect(movieDetailsState.setMovieRating).not.toHaveBeenCalled();
 	});
 
 	it('renders user vote with zero rating fallback', () => {
 		movieDetailsState.movieDetails = {
+			id: 'a0000000-0000-4000-8000-000000000010',
 			title: 'Zero Vote',
 			posterPath: '/p.jpg',
 			backdropPath: '/b.jpg',
@@ -266,7 +284,9 @@ describe('MovieDetailsPage', () => {
 		activeLocale = 'it-IT';
 		rerender(<MovieDetailsPage />);
 
-		expect(movieDetailsState.loadMovieDetails).toHaveBeenCalledWith(10);
+		expect(movieDetailsState.loadMovieDetails).toHaveBeenCalledWith(
+			'a0000000-0000-4000-8000-000000000010'
+		);
 		expect(movieDetailsState.loadMovieRating).not.toHaveBeenCalled();
 	});
 });
@@ -276,5 +296,22 @@ it('reloads the movie rating after a successful log write', () => {
 	movieDetailsState.loadMovieRating.mockClear();
 	movieLogDialogState.triggerCount++;
 	rerender(<MovieDetailsPage />);
-	expect(movieDetailsState.loadMovieRating).toHaveBeenCalledWith(10);
+	expect(movieDetailsState.loadMovieRating).toHaveBeenCalledWith(
+		'a0000000-0000-4000-8000-000000000010'
+	);
+});
+
+it.each([
+	'11304',
+	'not-a-uuid',
+	undefined,
+])('rejects route %s without detail or rating calls', (movieId) => {
+	vi.clearAllMocks();
+	mockUseParams.mockReturnValue({ movieId });
+	movieDetailsState.movieDetails = undefined;
+	movieDetailsState.isLoading = false;
+	render(<MovieDetailsPage />);
+	expect(screen.getByText('MovieDetailsPage.notFound')).toBeInTheDocument();
+	expect(movieDetailsState.loadMovieDetails).not.toHaveBeenCalled();
+	expect(movieDetailsState.loadMovieRating).not.toHaveBeenCalled();
 });

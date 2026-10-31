@@ -10,13 +10,17 @@ import { MovieRuntime } from '../components/MovieRuntime';
 import { MovieVote } from '../components/MovieVote';
 import { RateMovieModal } from '../components/RateMovieModal';
 import type { MovieRatingResponse } from '../models';
+import { movieIdSchema } from '../schemas/movie-id.schema';
 import { useMovieDetailsStore } from '../stores/useMovieDetailsStore';
 import { useMovieRatingStore } from '../stores/useMovieRatingStore';
 
 const MovieDetailsPage = () => {
 	const { t, i18n } = useTranslation();
 	const activeLocale = i18n.resolvedLanguage ?? i18n.language;
-	const { tmdbId } = useParams<{ tmdbId: string }>();
+	const { movieId: routeMovieId } = useParams<{ movieId: string }>();
+	const movieId = movieIdSchema.safeParse(routeMovieId).success
+		? routeMovieId
+		: undefined;
 	const navigate = useNavigate();
 	const movieDetails = useMovieDetailsStore((state) => state.movieDetails);
 	const movieRating = useMovieDetailsStore((state) => state.movieRating);
@@ -39,31 +43,32 @@ const MovieDetailsPage = () => {
 	const logRefreshCount = useMovieLogDialogStore((state) => state.triggerCount);
 
 	useEffect(() => {
-		if (tmdbId && activeLocale) {
-			loadMovieDetails(Number(tmdbId));
+		if (movieId && activeLocale) {
+			loadMovieDetails(movieId);
 		}
-	}, [tmdbId, activeLocale, loadMovieDetails]);
+	}, [movieId, activeLocale, loadMovieDetails]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: Successful log writes invalidate the displayed movie rating.
 	useEffect(() => {
-		if (tmdbId) {
-			loadMovieRating(Number(tmdbId));
+		if (movieId) {
+			loadMovieRating(movieId);
 		}
-	}, [tmdbId, loadMovieRating, logRefreshCount]);
+	}, [movieId, loadMovieRating, logRefreshCount]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Route changes invalidate both detail and rating requests.
 	useEffect(() => {
 		return () => {
 			resetMovieDetails();
 		};
-	}, [resetMovieDetails]);
+	}, [resetMovieDetails, movieId]);
 
 	const onRateMovieUpdated = (movieRating: MovieRatingResponse) => {
-		if (tmdbId) {
+		if (movieId) {
 			setMovieRating(movieRating);
 		}
 	};
 
-	if (isLoading) {
+	if (movieId && isLoading) {
 		return (
 			<div className="flex justify-center items-center h-full">
 				<div className="text-lg text-gray-600">
@@ -73,7 +78,7 @@ const MovieDetailsPage = () => {
 		);
 	}
 
-	if (!movieDetails) {
+	if (!movieId || !movieDetails || movieDetails.id !== movieId) {
 		return (
 			<div className="flex flex-col items-center justify-center h-full gap-4">
 				<div className="text-lg text-gray-600">
@@ -131,7 +136,7 @@ const MovieDetailsPage = () => {
 
 						{!isMovieRatingLoading && !movieRating && (
 							<button
-								onClick={() => tmdbId && openRateModal(tmdbId)}
+								onClick={() => movieId && openRateModal(movieId)}
 								className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium cursor-pointer"
 							>
 								<Star className="w-4 h-4" />
@@ -144,16 +149,16 @@ const MovieDetailsPage = () => {
 								className="cursor-pointer"
 								vote={movieRating?.rating || 0}
 								source="user"
-								onClick={() => tmdbId && openRateModal(tmdbId, movieRating)}
+								onClick={() => movieId && openRateModal(movieId, movieRating)}
 							/>
 						)}
 						<MovieGenres genres={genres} />
 
 						<button
 							onClick={() =>
-								tmdbId &&
+								movieId &&
 								openLogDialog({
-									prefilledMovie: { tmdbId: Number(tmdbId), title },
+									prefilledMovie: { movieId: movieId, title },
 								})
 							}
 							className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-600/10 text-green-600 hover:bg-green-600/20 transition-colors font-medium cursor-pointer"

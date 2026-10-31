@@ -244,7 +244,10 @@
 		"searching": "Recherche de films...",
 		"startTyping": "Commencez à taper pour rechercher des films.",
 		"noMoviesFound": "Aucun film trouvé. Essayez de rechercher quelque chose !",
-		"topResults": "Meilleurs Résultats"
+		"topResults": "Meilleurs Résultats",
+		"loadMore": "Charger plus",
+		"moreResults": "Aucun résultat sur cette page. D’autres résultats sont disponibles.",
+		"loadError": "Impossible de charger d’autres films. Réessayez."
 	},
 	"Navbar": {
 		"home": "Accueil",
@@ -397,5 +400,14 @@
 				"noActor": "Votre demande d'abonnement a été acceptée"
 			}
 		}
+	},
+	"MovieSelection": {
+		"resolving": "Ouverture du film…",
+		"temporary": "Impossible d’ouvrir ce film. Réessayez.",
+		"invalidReference": "Ce résultat n’est plus valide. Relancez la recherche pour sélectionner le film.",
+		"invalidCursor": "Ces résultats ne sont plus valides. Relancez la recherche.",
+		"unavailable": "Ce film n’est plus disponible. Choisissez un autre film.",
+		"retry": "Réessayer",
+		"searchAgain": "Relancer la recherche"
 	}
 }

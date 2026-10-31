@@ -73,7 +73,7 @@ export const AppRoutes = () => {
 							element={<MovieSearchPage />}
 						/>
 						<Route
-							path="/movies/:tmdbId"
+							path="/movies/:movieId"
 							id="movie-details"
 							element={<MovieDetailsPage />}
 						/>

@@ -1,9 +1,10 @@
 import { z } from 'zod';
+import { movieIdSchema } from '@/features/movie/schemas/movie-id.schema';
 import { WATCHED_WHERE_VALUES } from '../models';
 
 export const logFormSchema = z
 	.object({
-		tmdbId: z.number().int().positive(),
+		movieId: movieIdSchema,
 		rating: z.number().int().min(1).max(10).nullable().optional(),
 		dateWatched: z.string(),
 		viewingNotes: z.string().nullable().optional(),

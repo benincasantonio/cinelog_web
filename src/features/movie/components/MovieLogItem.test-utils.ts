@@ -5,8 +5,7 @@ export const createMockLog = (
 	overrides?: Partial<LogListItem>
 ): LogListItem => ({
 	id: '1',
-	movieId: 'movie-1',
-	tmdbId: 550,
+	movieId: '9ae7de0a-bbaf-53e3-a9e3-bd4e86da7c40',
 	dateWatched: '2024-01-09',
 	posterPath: '/path/to/poster.jpg',
 	watchedWhere: 'cinema',
@@ -14,7 +13,6 @@ export const createMockLog = (
 	movie: {
 		id: 'movie-1',
 		title: 'Fight Club',
-		tmdbId: 550,
 		posterPath: '/path/to/poster.jpg',
 		releaseDate: '1999-10-15',
 		overview:

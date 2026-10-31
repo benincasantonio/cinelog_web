@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { LogListItem } from '../models';
 
 type PrefilledMovie = {
-	tmdbId: number;
+	movieId: string;
 	title: string;
 } | null;
 
