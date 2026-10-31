@@ -52,7 +52,15 @@ describe('useMoviesStore', () => {
 		});
 
 		it('should set results and searched after successful search', async () => {
-			const results = { results: [{ id: 1, title: 'Inception' }] };
+			const results = {
+				results: [
+					{
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
+						title: 'Inception',
+					},
+				],
+			};
 			mockSearch.mockResolvedValueOnce(results);
 
 			await useMoviesStore.getState().loadMovieSearchResults('Inception');
@@ -72,10 +80,7 @@ describe('useMoviesStore', () => {
 			await useMoviesStore.getState().loadMovieSearchResults('test');
 
 			expect(useMoviesStore.getState().isLoading).toBe(false);
-			expect(consoleSpy).toHaveBeenCalledWith(
-				'Error loading movie search results:',
-				expect.any(Error)
-			);
+			expect(useMoviesStore.getState().searchError).toBe('temporary');
 			consoleSpy.mockRestore();
 		});
 
@@ -101,13 +106,35 @@ describe('useMoviesStore', () => {
 				.getState()
 				.loadMovieSearchResults('new');
 
-			resolveSecond!({ results: [{ id: 2, title: 'New locale' }] });
+			resolveSecond!({
+				results: [
+					{
+						id: 'a0000000-0000-4000-8000-000000000002',
+						movieRef: null,
+						title: 'New locale',
+					},
+				],
+			});
 			await secondRequest;
-			resolveFirst!({ results: [{ id: 1, title: 'Old locale' }] });
+			resolveFirst!({
+				results: [
+					{
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
+						title: 'Old locale',
+					},
+				],
+			});
 			await firstRequest;
 
 			expect(useMoviesStore.getState().movieSearchResult).toEqual({
-				results: [{ id: 2, title: 'New locale' }],
+				results: [
+					{
+						id: 'a0000000-0000-4000-8000-000000000002',
+						movieRef: null,
+						title: 'New locale',
+					},
+				],
 			});
 		});
 	});
@@ -115,7 +142,11 @@ describe('useMoviesStore', () => {
 	describe('resetMovieSearchResults', () => {
 		it('should clear movieSearchResult', () => {
 			useMoviesStore.setState({
-				movieSearchResult: { results: [{ id: 1 }] } as never,
+				movieSearchResult: {
+					results: [
+						{ id: 'a0000000-0000-4000-8000-000000000001', movieRef: null },
+					],
+				} as never,
 			});
 
 			useMoviesStore.getState().resetMovieSearchResults();

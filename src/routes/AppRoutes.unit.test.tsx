@@ -175,7 +175,7 @@ describe('AppRoutes', () => {
 
 		const cases: Array<[string, string]> = [
 			['/search', 'movie-search-page'],
-			['/movies/1', 'movie-details-page'],
+			['/movies/a0000000-0000-4000-8000-000000000001', 'movie-details-page'],
 			['/profile/neo', 'profile-overview-page'],
 			['/profile/neo/movie-watched', 'profile-movies-page'],
 			['/profile/neo/stats', 'profile-stats-page'],

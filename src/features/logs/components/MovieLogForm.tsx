@@ -21,6 +21,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { MovieRatingField } from '@/features/movie/components/MovieRatingField';
 import { getMovieRating } from '@/features/movie/repositories/movie-rating-repository';
+import { movieIdSchema } from '@/features/movie/schemas/movie-id.schema';
 import './MovieLogForm.css';
 import { search } from '@/features/movie-search/repositories';
 import { WATCHED_WHERE_VALUES } from '../models';
@@ -32,12 +33,14 @@ interface MovieLogFormProps {
 	formId?: string;
 	showSubmitButton?: boolean;
 	onSuccess?: () => void;
+	onReadyChange?: (ready: boolean) => void;
 }
 
 export const MovieLogForm = ({
 	formId,
 	showSubmitButton = true,
 	onSuccess,
+	onReadyChange,
 }: MovieLogFormProps) => {
 	const { t } = useTranslation();
 	const prefilledMovie = useMovieLogDialogStore(
@@ -57,7 +60,7 @@ export const MovieLogForm = ({
 
 	const formValue = useMemo(
 		() => ({
-			tmdbId: movieToEdit?.tmdbId ?? prefilledMovie?.tmdbId ?? undefined,
+			movieId: movieToEdit?.movieId ?? prefilledMovie?.movieId ?? undefined,
 			dateWatched: movieToEdit?.dateWatched ?? '',
 			viewingNotes: movieToEdit?.viewingNotes ?? undefined,
 			watchedWhere: movieToEdit?.watchedWhere ?? undefined,
@@ -80,25 +83,29 @@ export const MovieLogForm = ({
 		mode: 'onBlur',
 	});
 
-	const tmdbId = form.watch('tmdbId');
+	const movieId = form.watch('movieId');
+	const identityReady = movieIdSchema.safeParse(movieId).success;
+	useEffect(() => {
+		onReadyChange?.(identityReady);
+	}, [identityReady, onReadyChange]);
 	const selectedRating = form.watch('rating');
 	const { setValue } = form;
 	const [ratingRetry, setRatingRetry] = useState(0);
 	const [ratingLookup, setRatingLookup] = useState<{
-		tmdbId?: number;
+		movieId?: string;
 		rating: number | null;
 		status: 'loading' | 'ready' | 'error';
 	}>({ rating: null, status: 'loading' });
 	const ratingReady =
 		!!movieToEdit ||
-		(ratingLookup.tmdbId === tmdbId && ratingLookup.status === 'ready');
+		(ratingLookup.movieId === movieId && ratingLookup.status === 'ready');
 	const ratingLoading =
 		!movieToEdit &&
-		!!tmdbId &&
-		(ratingLookup.tmdbId !== tmdbId || ratingLookup.status === 'loading');
+		!!movieId &&
+		(ratingLookup.movieId !== movieId || ratingLookup.status === 'loading');
 	const ratingFailed =
 		!movieToEdit &&
-		ratingLookup.tmdbId === tmdbId &&
+		ratingLookup.movieId === movieId &&
 		ratingLookup.status === 'error';
 	const initialRating = movieToEdit
 		? (movieToEdit.movieRating ?? null)
@@ -109,25 +116,25 @@ export const MovieLogForm = ({
 		if (movieToEdit) return;
 		let active = true;
 		setValue('rating', null);
-		setRatingLookup({ tmdbId, rating: null, status: 'loading' });
-		if (tmdbId) {
-			getMovieRating(tmdbId).then(
+		setRatingLookup({ movieId, rating: null, status: 'loading' });
+		if (movieId) {
+			getMovieRating(movieId).then(
 				(result) => {
 					if (!active) return;
 					const rating = result?.rating ?? null;
 					setValue('rating', rating);
-					setRatingLookup({ tmdbId, rating, status: 'ready' });
+					setRatingLookup({ movieId, rating, status: 'ready' });
 				},
 				() => {
 					if (active)
-						setRatingLookup({ tmdbId, rating: null, status: 'error' });
+						setRatingLookup({ movieId, rating: null, status: 'error' });
 				}
 			);
 		}
 		return () => {
 			active = false;
 		};
-	}, [tmdbId, movieToEdit, ratingRetry, setValue]);
+	}, [movieId, movieToEdit, ratingRetry, setValue]);
 
 	const [searchItems, setSearchItems] = useState<
 		Array<{ label: string; value: string }>
@@ -138,8 +145,7 @@ export const MovieLogForm = ({
 			return;
 		}
 		const label = movieToEdit?.movie?.title ?? prefilledMovie?.title;
-		const value =
-			movieToEdit?.tmdbId?.toString() ?? prefilledMovie?.tmdbId?.toString();
+		const value = movieToEdit?.movieId ?? prefilledMovie?.movieId;
 
 		setSearchItems([
 			{
@@ -159,7 +165,7 @@ export const MovieLogForm = ({
 
 		const items = results.results.map((movie) => ({
 			label: movie.title,
-			value: movie.id.toString(),
+			value: movie.id ?? movie.movieRef,
 		}));
 
 		setSearchItems(items);
@@ -167,11 +173,14 @@ export const MovieLogForm = ({
 
 	const onValueChange = (value: string) => {
 		if (!value) {
-			form.setValue('tmdbId', 0);
+			form.setValue('movieId', '');
 			return;
 		}
 
-		form.setValue('tmdbId', parseInt(value, 10));
+		form.setValue(
+			'movieId',
+			movieIdSchema.safeParse(value).success ? value : ''
+		);
 	};
 
 	const handleSubmit = async (data: LogFormSchema) => {
@@ -212,7 +221,7 @@ export const MovieLogForm = ({
 
 				<FormField
 					control={form.control}
-					name="tmdbId"
+					name="movieId"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>{t('MovieLogForm.movieLabel')}</FormLabel>
@@ -221,7 +230,7 @@ export const MovieLogForm = ({
 									<Input readOnly value={movieToEdit.movie?.title ?? ''} />
 								) : (
 									<Autocomplete
-										value={field.value?.toString() ?? ''}
+										value={field.value ?? ''}
 										items={searchItems}
 										onFilterChange={onFilterChange}
 										onValueChange={onValueChange}
@@ -289,7 +298,7 @@ export const MovieLogForm = ({
 									label={t('MovieLogForm.ratingLabel')}
 									description={t('MovieLogForm.ratingHint')}
 									error={form.formState.errors.rating?.message}
-									disabled={!tmdbId || !ratingReady || isLoading}
+									disabled={!movieId || !ratingReady || isLoading}
 								>
 									{ratingLoading && (
 										<div className="movie-log-rating-skeleton">
@@ -360,7 +369,7 @@ export const MovieLogForm = ({
 				/>
 
 				{showSubmitButton && (
-					<Button type="submit" disabled={isLoading}>
+					<Button type="submit" disabled={isLoading || !identityReady}>
 						{isLoading ? submittingText : submitText}
 					</Button>
 				)}

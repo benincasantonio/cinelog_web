@@ -91,7 +91,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 			<button
 				type="button"
 				data-testid="select-movie-99"
-				onClick={() => onValueChange('99')}
+				onClick={() => onValueChange('a0000000-0000-4000-8000-000000000099')}
 			/>
 			<select
 				data-testid="autocomplete-select"
@@ -322,7 +322,7 @@ describe('MovieLogForm', () => {
 			mockMovieLogDialogStore.setState({
 				movieToEdit: {
 					id: '1',
-					tmdbId: 123,
+					movieId: 'a0000000-0000-4000-8000-000000000123',
 					movie: { title: 'Test Movie' },
 					dateWatched: '2024-01-01',
 					viewingNotes: null,
@@ -339,7 +339,7 @@ describe('MovieLogForm', () => {
 			mockMovieLogDialogStore.setState({
 				movieToEdit: {
 					id: '1',
-					tmdbId: 123,
+					movieId: 'a0000000-0000-4000-8000-000000000123',
 					movie: { title: 'Test Movie' },
 					dateWatched: '2024-01-01',
 					viewingNotes: null,
@@ -363,7 +363,13 @@ describe('MovieLogForm', () => {
 			expect(screen.getByTestId('submit-button')).toBeDisabled();
 		});
 
-		it('should enable submit button when not loading', () => {
+		it('enables submission for a canonical prefilled movie', () => {
+			mockMovieLogDialogStore.setState({
+				prefilledMovie: {
+					movieId: 'a0000000-0000-4000-8000-000000000550',
+					title: 'Fight Club',
+				},
+			});
 			mockMovieLogStore.setState({ isLoading: false });
 
 			render(<MovieLogForm />);
@@ -413,7 +419,10 @@ describe('MovieLogForm', () => {
 	describe('Prefilled Movie', () => {
 		it('should populate autocomplete when prefilledMovie is set', async () => {
 			mockMovieLogDialogStore.setState({
-				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				prefilledMovie: {
+					movieId: 'a0000000-0000-4000-8000-000000000123',
+					title: 'Test Movie',
+				},
 				movieToEdit: null,
 			});
 
@@ -428,15 +437,20 @@ describe('MovieLogForm', () => {
 			// Verify the movie option is available in the autocomplete
 			await waitFor(() => {
 				expect(
-					screen.getByTestId('autocomplete-option-123')
+					screen.getByTestId(
+						'autocomplete-option-a0000000-0000-4000-8000-000000000123'
+					)
 				).toBeInTheDocument();
 				expect(screen.getByText('Test Movie')).toBeInTheDocument();
 			});
 		});
 
-		it('should have correct tmdbId value in autocomplete when prefilledMovie is set', async () => {
+		it('should have correct movieId value in autocomplete when prefilledMovie is set', async () => {
 			mockMovieLogDialogStore.setState({
-				prefilledMovie: { tmdbId: 456, title: 'Another Movie' },
+				prefilledMovie: {
+					movieId: 'a0000000-0000-4000-8000-000000000456',
+					title: 'Another Movie',
+				},
 				movieToEdit: null,
 			});
 
@@ -444,7 +458,9 @@ describe('MovieLogForm', () => {
 
 			await waitFor(() => {
 				expect(
-					screen.getByTestId('autocomplete-option-456')
+					screen.getByTestId(
+						'autocomplete-option-a0000000-0000-4000-8000-000000000456'
+					)
 				).toBeInTheDocument();
 			});
 		});
@@ -452,9 +468,9 @@ describe('MovieLogForm', () => {
 		it('should fallback to empty option label/value when prefilledMovie fields are missing', async () => {
 			mockMovieLogDialogStore.setState({
 				prefilledMovie: {
-					tmdbId: undefined,
+					movieId: undefined,
 					title: undefined,
-				} as unknown as { tmdbId: number; title: string },
+				} as unknown as { movieId: number; title: string },
 				movieToEdit: null,
 			});
 
@@ -469,7 +485,7 @@ describe('MovieLogForm', () => {
 	describe('Edit Mode', () => {
 		const mockMovieToEdit = {
 			id: '1',
-			tmdbId: 456,
+			movieId: 'a0000000-0000-4000-8000-000000000456',
 			movie: { title: 'Movie to Edit' },
 			dateWatched: '2024-01-15',
 			viewingNotes: 'Great movie!',
@@ -591,8 +607,16 @@ describe('MovieLogForm', () => {
 			// wires up the onFilterChange callback to the search function.
 			mockSearch.mockResolvedValue({
 				results: [
-					{ id: 1, title: 'Inception' },
-					{ id: 2, title: 'Interstellar' },
+					{
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
+						title: 'Inception',
+					},
+					{
+						id: 'a0000000-0000-4000-8000-000000000002',
+						movieRef: null,
+						title: 'Interstellar',
+					},
 				],
 			});
 			const user = userEvent.setup();
@@ -627,7 +651,13 @@ describe('MovieLogForm', () => {
 
 		it('should clear search items when filter value becomes empty', async () => {
 			mockSearch.mockResolvedValue({
-				results: [{ id: 1, title: 'Inception' }],
+				results: [
+					{
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
+						title: 'Inception',
+					},
+				],
 			});
 
 			render(<MovieLogForm />);
@@ -638,7 +668,11 @@ describe('MovieLogForm', () => {
 			});
 
 			await waitFor(() => {
-				expect(screen.getByTestId('autocomplete-option-1')).toBeInTheDocument();
+				expect(
+					screen.getByTestId(
+						'autocomplete-option-a0000000-0000-4000-8000-000000000001'
+					)
+				).toBeInTheDocument();
 			});
 
 			// Use the dedicated clear button to call onFilterChange('') directly,
@@ -647,7 +681,9 @@ describe('MovieLogForm', () => {
 
 			await waitFor(() => {
 				expect(
-					screen.queryByTestId('autocomplete-option-1')
+					screen.queryByTestId(
+						'autocomplete-option-a0000000-0000-4000-8000-000000000001'
+					)
 				).not.toBeInTheDocument();
 			});
 		});
@@ -655,8 +691,16 @@ describe('MovieLogForm', () => {
 		it('should populate search items with results from the search API', async () => {
 			mockSearch.mockResolvedValue({
 				results: [
-					{ id: 10, title: 'The Matrix' },
-					{ id: 20, title: 'The Matrix Reloaded' },
+					{
+						id: 'a0000000-0000-4000-8000-000000000010',
+						movieRef: null,
+						title: 'The Matrix',
+					},
+					{
+						id: 'a0000000-0000-4000-8000-000000000020',
+						movieRef: null,
+						title: 'The Matrix Reloaded',
+					},
 				],
 			});
 			const user = userEvent.setup();
@@ -668,10 +712,14 @@ describe('MovieLogForm', () => {
 
 			await waitFor(() => {
 				expect(
-					screen.getByTestId('autocomplete-option-10')
+					screen.getByTestId(
+						'autocomplete-option-a0000000-0000-4000-8000-000000000010'
+					)
 				).toBeInTheDocument();
 				expect(
-					screen.getByTestId('autocomplete-option-20')
+					screen.getByTestId(
+						'autocomplete-option-a0000000-0000-4000-8000-000000000020'
+					)
 				).toBeInTheDocument();
 				expect(screen.getByText('The Matrix')).toBeInTheDocument();
 				expect(screen.getByText('The Matrix Reloaded')).toBeInTheDocument();
@@ -680,17 +728,17 @@ describe('MovieLogForm', () => {
 	});
 
 	describe('onValueChange (movie selection)', () => {
-		it('should set tmdbId to parsed int when a value is selected — component must not throw', () => {
+		it('keeps the selected UUID unchanged — component must not throw', () => {
 			render(<MovieLogForm />);
 
-			// Directly call onValueChange('99') via the helper button
+			// Directly call onValueChange('a0000000-0000-4000-8000-000000000099') via the helper button
 			fireEvent.click(screen.getByTestId('select-movie-99'));
 
 			// Component remains stable after setValue call
 			expect(screen.getByTestId('autocomplete')).toBeInTheDocument();
 		});
 
-		it('should handle empty value selection (sets tmdbId to 0) — component must not throw', async () => {
+		it('should handle empty value selection (clears movieId) — component must not throw', async () => {
 			render(<MovieLogForm />);
 
 			const select = screen.getByTestId('autocomplete-select');
@@ -719,7 +767,10 @@ describe('MovieLogForm', () => {
 	describe('Form Submission', () => {
 		it('should call createLog on submit in create mode', async () => {
 			mockMovieLogDialogStore.setState({
-				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				prefilledMovie: {
+					movieId: 'a0000000-0000-4000-8000-000000000123',
+					title: 'Test Movie',
+				},
 				movieToEdit: null,
 				clearPrefilledMovie: vi.fn(),
 			});
@@ -740,7 +791,7 @@ describe('MovieLogForm', () => {
 				prefilledMovie: null,
 				movieToEdit: {
 					id: '1',
-					tmdbId: 456,
+					movieId: 'a0000000-0000-4000-8000-000000000456',
 					movie: { title: 'Movie to Edit' },
 					dateWatched: '2024-01-15',
 					viewingNotes: 'Great movie!',
@@ -770,7 +821,10 @@ describe('MovieLogForm', () => {
 			const onSuccess = vi.fn();
 			const clearPrefilledMovie = vi.fn();
 			mockMovieLogDialogStore.setState({
-				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				prefilledMovie: {
+					movieId: 'a0000000-0000-4000-8000-000000000123',
+					title: 'Test Movie',
+				},
 				movieToEdit: null,
 				clearPrefilledMovie,
 			});
@@ -793,7 +847,10 @@ describe('MovieLogForm', () => {
 				clearError: vi.fn(),
 			});
 			mockMovieLogDialogStore.setState({
-				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				prefilledMovie: {
+					movieId: 'a0000000-0000-4000-8000-000000000123',
+					title: 'Test Movie',
+				},
 				movieToEdit: null,
 				clearPrefilledMovie: vi.fn(),
 			});
@@ -811,7 +868,10 @@ describe('MovieLogForm', () => {
 
 		it('should call clearError before submission', async () => {
 			mockMovieLogDialogStore.setState({
-				prefilledMovie: { tmdbId: 123, title: 'Test Movie' },
+				prefilledMovie: {
+					movieId: 'a0000000-0000-4000-8000-000000000123',
+					title: 'Test Movie',
+				},
 				movieToEdit: null,
 				clearPrefilledMovie: vi.fn(),
 			});

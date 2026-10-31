@@ -44,9 +44,11 @@ describe('MovieLogItem Integration Tests', () => {
 			expect(titleElement).toHaveClass('cursor-pointer');
 		});
 
-		it('should navigate when title is clicked with valid tmdbId', async () => {
+		it('should navigate when title is clicked with valid movieId', async () => {
 			const user = userEvent.setup();
-			const log = createMockLog({ tmdbId: 550 });
+			const log = createMockLog({
+				movieId: 'a0000000-0000-4000-8000-000000000550',
+			});
 			render(<TestWrapper log={log} />);
 
 			const titleElement = screen.getByRole('button', { name: /Fight Club/i });
@@ -61,7 +63,7 @@ describe('MovieLogItem Integration Tests', () => {
 		it('should allow multiple navigations from same page', async () => {
 			const user = userEvent.setup();
 			const log1 = createMockLog({
-				tmdbId: 550,
+				movieId: 'a0000000-0000-4000-8000-000000000550',
 				movie: { ...createMockLog().movie!, title: 'Fight Club' },
 			});
 			const { rerender } = render(<TestWrapper log={log1} />);
@@ -71,7 +73,7 @@ describe('MovieLogItem Integration Tests', () => {
 
 			// Simulate navigating back to list and clicking another movie
 			const log2 = createMockLog({
-				tmdbId: 278,
+				movieId: 'a0000000-0000-4000-8000-000000000278',
 				movie: { ...createMockLog().movie!, title: 'Shawshank Redemption' },
 			});
 			rerender(<TestWrapper log={log2} />);
@@ -116,7 +118,7 @@ describe('MovieLogItem Integration Tests', () => {
 
 			// Simulate route change and coming back
 			const newLog = createMockLog({
-				tmdbId: 550,
+				movieId: 'a0000000-0000-4000-8000-000000000550',
 				movie: { ...createMockLog().movie, title: 'Fight Club' },
 			});
 			rerender(<TestWrapper log={newLog} />);
@@ -141,21 +143,21 @@ describe('MovieLogItem Integration Tests', () => {
 	});
 
 	describe('T4.1.5: Error Scenarios with Router', () => {
-		it('should handle missing tmdbId gracefully without navigation error', async () => {
+		it('should handle missing movieId gracefully without navigation error', async () => {
 			const user = userEvent.setup();
-			const log = createMockLog({ tmdbId: 0 });
+			const log = createMockLog({ movieId: '' });
 			render(<TestWrapper log={log} />);
 
 			const titleElement = screen.getByRole('button');
 
-			// Should not throw error when clicking without tmdbId
+			// Should not throw error when clicking without movieId
 			await user.click(titleElement);
 			expect(titleElement).toBeInTheDocument();
 		});
 
-		it('should handle undefined tmdbId in router context', () => {
+		it('should handle undefined movieId in router context', () => {
 			const log = createMockLog();
-			const modifiedLog = { ...log, tmdbId: undefined };
+			const modifiedLog = { ...log, movieId: undefined };
 
 			// Should render without error
 			render(<TestWrapper log={modifiedLog as LogListItem} />);
@@ -165,8 +167,7 @@ describe('MovieLogItem Integration Tests', () => {
 		it('should render correctly with minimal log data in router', () => {
 			const minimalLog: LogListItem = {
 				id: '1',
-				movieId: 'movie-1',
-				tmdbId: 1,
+				movieId: '9ae7de0a-bbaf-53e3-a9e3-bd4e86da7c40',
 				dateWatched: '2024-01-09',
 			};
 
@@ -190,7 +191,7 @@ describe('MovieLogItem Integration Tests', () => {
 
 		it('should handle re-renders with different log data', () => {
 			const log1 = createMockLog({
-				tmdbId: 550,
+				movieId: 'a0000000-0000-4000-8000-000000000550',
 				movie: { ...createMockLog().movie!, title: 'Fight Club' },
 			});
 			const { rerender } = render(<TestWrapper log={log1} />);
@@ -198,7 +199,7 @@ describe('MovieLogItem Integration Tests', () => {
 			expect(screen.getByText('Fight Club')).toBeInTheDocument();
 
 			const log2 = createMockLog({
-				tmdbId: 278,
+				movieId: 'a0000000-0000-4000-8000-000000000278',
 				movie: { ...createMockLog().movie!, title: 'Shawshank Redemption' },
 			});
 			rerender(<TestWrapper log={log2} />);
@@ -377,8 +378,7 @@ describe('MovieLogItem Integration Tests', () => {
 			it('should render when all optional fields are missing except core fields', () => {
 				const minimalLog: LogListItem = {
 					id: '1',
-					movieId: 'movie-1',
-					tmdbId: 1,
+					movieId: '9ae7de0a-bbaf-53e3-a9e3-bd4e86da7c40',
 					dateWatched: '2024-01-09',
 				};
 				render(<TestWrapper log={minimalLog} />);

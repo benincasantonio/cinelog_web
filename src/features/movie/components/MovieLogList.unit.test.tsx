@@ -40,7 +40,6 @@ describe('MovieLogList', () => {
 			(_, index) => ({
 				id: String(index),
 				movieId: String(index % uniqueTitles),
-				tmdbId: index % uniqueTitles,
 				dateWatched: '2026-01-01',
 			})
 		);

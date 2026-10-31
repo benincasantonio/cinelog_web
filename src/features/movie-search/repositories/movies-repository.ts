@@ -1,10 +1,13 @@
 import { apiClient } from '@/lib/api/client';
-import type { TMDBMovieSearchResult } from '../models/tmdb-movie-search-result';
+import type { MovieSearchResult } from '../models';
 
-export const search = async (query: string): Promise<TMDBMovieSearchResult> => {
+export const search = async (
+	query: string,
+	cursor?: string
+): Promise<MovieSearchResult> => {
 	return apiClient
 		.get('v1/movies/search', {
-			searchParams: { query },
+			searchParams: cursor ? { query, cursor } : { query },
 		})
 		.json();
 };

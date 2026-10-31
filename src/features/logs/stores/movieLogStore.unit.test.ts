@@ -54,7 +54,7 @@ describe('useMovieLogStore', () => {
 
 	describe('createLog', () => {
 		const mockLogData = {
-			tmdbId: 550,
+			movieId: 'a0000000-0000-4000-8000-000000000550',
 			dateWatched: '2024-01-09',
 			watchedWhere: 'cinema' as const,
 		};
@@ -309,7 +309,7 @@ describe('useMovieLogStore', () => {
 			await act(async () => {
 				try {
 					await result.current.createLog({
-						tmdbId: 550,
+						movieId: 'a0000000-0000-4000-8000-000000000550',
 						dateWatched: '2024-01-09',
 					});
 				} catch {

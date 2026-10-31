@@ -96,8 +96,7 @@ vi.mock('@antoniobenincasa/ui', () => ({
 // Create mock log data factory
 const createMockLog = (overrides?: Partial<LogListItem>): LogListItem => ({
 	id: '1',
-	movieId: 'movie-1',
-	tmdbId: 550,
+	movieId: 'a0000000-0000-4000-8000-000000000550',
 	dateWatched: '2024-01-09',
 	posterPath: '/path/to/poster.jpg',
 	watchedWhere: 'cinema',
@@ -105,7 +104,6 @@ const createMockLog = (overrides?: Partial<LogListItem>): LogListItem => ({
 	movie: {
 		id: 'movie-1',
 		title: 'Fight Club',
-		tmdbId: 550,
 		posterPath: '/path/to/poster.jpg',
 		releaseDate: '1999-10-15',
 		overview:
@@ -164,69 +162,88 @@ describe('MovieLogItem', () => {
 	describe('T3.1.3: Click Handler Calls Navigate with Correct Route', () => {
 		it('should call navigate with correct route when title is clicked', async () => {
 			const user = userEvent.setup();
-			const log = createMockLog({ tmdbId: 550 });
+			const log = createMockLog({
+				movieId: 'a0000000-0000-4000-8000-000000000550',
+			});
 			render(<MovieLogItem log={log} />);
 
 			const titleElement = screen.getByRole('button', { name: /Fight Club/i });
 			await user.click(titleElement);
 
-			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
+			expect(mockNavigate).toHaveBeenCalledWith(
+				'/movies/a0000000-0000-4000-8000-000000000550'
+			);
 		});
 
-		it('should call navigate with different tmdbId when provided', async () => {
+		it('should call navigate with different movieId when provided', async () => {
 			const user = userEvent.setup();
-			const log = createMockLog({ tmdbId: 278 });
+			const log = createMockLog({
+				movieId: 'a0000000-0000-4000-8000-000000000278',
+			});
 			render(<MovieLogItem log={log} />);
 
 			const titleElement = screen.getByTestId('movie-title-link');
 			await user.click(titleElement);
 
-			expect(mockNavigate).toHaveBeenCalledWith('/movies/278');
+			expect(mockNavigate).toHaveBeenCalledWith(
+				'/movies/a0000000-0000-4000-8000-000000000278'
+			);
 		});
 
 		it.each([
-			{ tmdbId: 550, title: 'Fight Club' },
-			{ tmdbId: 278, title: 'The Shawshank Redemption' },
-			{ tmdbId: 1, title: 'Dinosaur Planet' },
-			{ tmdbId: 999999, title: 'Unknown Movie' },
-		])('should navigate to /movies/$tmdbId for various valid tmdbIds', async ({
-			tmdbId,
+			{ movieId: 'a0000000-0000-4000-8000-000000000550', title: 'Fight Club' },
+			{
+				movieId: 'a0000000-0000-4000-8000-000000000278',
+				title: 'The Shawshank Redemption',
+			},
+			{
+				movieId: 'a0000000-0000-4000-8000-000000000001',
+				title: 'Dinosaur Planet',
+			},
+			{
+				movieId: 'a0000000-0000-4000-8000-000000999999',
+				title: 'Unknown Movie',
+			},
+		])('should navigate to /movies/$movieId for various valid movieIds', async ({
+			movieId,
 			title,
 		}) => {
 			const user = userEvent.setup();
 			const log = createMockLog({
-				tmdbId,
+				movieId,
 				movie: { ...createMockLog().movie, title },
 			});
 			render(<MovieLogItem log={log} />);
 
 			await user.click(screen.getByTestId('movie-title-link'));
-			expect(mockNavigate).toHaveBeenCalledWith(`/movies/${tmdbId}`);
+			expect(mockNavigate).toHaveBeenCalledWith(`/movies/${movieId}`);
 		});
 	});
 
-	describe('T3.1.4: Navigate Called Only When tmdbId Exists', () => {
-		it('should call navigate when tmdbId is defined', async () => {
+	describe('T3.1.4: Navigate Called Only When movieId Exists', () => {
+		it('should call navigate when movieId is defined', async () => {
 			const user = userEvent.setup();
-			const log = createMockLog({ tmdbId: 550 });
+			const log = createMockLog({
+				movieId: 'a0000000-0000-4000-8000-000000000550',
+			});
 			render(<MovieLogItem log={log} />);
 
 			await user.click(screen.getByTestId('movie-title-link'));
 			expect(mockNavigate).toHaveBeenCalled();
 		});
 
-		it('should not call navigate when tmdbId is 0', async () => {
+		it('should not call navigate when movieId is 0', async () => {
 			const user = userEvent.setup();
-			const log = createMockLog({ tmdbId: 0 });
+			const log = createMockLog({ movieId: '' });
 			render(<MovieLogItem log={log} />);
 
 			await user.click(screen.getByTestId('movie-title-link'));
 			expect(mockNavigate).not.toHaveBeenCalled();
 		});
 
-		it('should handle tmdbId gracefully when missing', () => {
+		it('should handle movieId gracefully when missing', () => {
 			const log = createMockLog();
-			const modifiedLog = { ...log, tmdbId: undefined };
+			const modifiedLog = { ...log, movieId: undefined };
 			render(<MovieLogItem log={modifiedLog as LogListItem} />);
 			expect(screen.getByTestId('movie-title-link')).toBeInTheDocument();
 		});
@@ -388,8 +405,7 @@ describe('MovieLogItem', () => {
 		it('should render with minimal log data', () => {
 			const minimalLog: LogListItem = {
 				id: '1',
-				movieId: 'movie-1',
-				tmdbId: 1,
+				movieId: 'a0000000-0000-4000-8000-000000000550',
 				dateWatched: '2024-01-09',
 			};
 			render(<MovieLogItem log={minimalLog} />);
@@ -403,7 +419,9 @@ describe('MovieLogItem', () => {
 			render(<MovieLogItem log={log} />);
 
 			await user.click(screen.getByTestId('movie-title-link'));
-			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
+			expect(mockNavigate).toHaveBeenCalledWith(
+				'/movies/a0000000-0000-4000-8000-000000000550'
+			);
 		});
 
 		it('should handle very long movie titles', () => {
@@ -469,7 +487,9 @@ describe('MovieLogItem', () => {
 			render(<MovieLogItem log={log} />);
 
 			await user.click(screen.getByTestId('movie-title-link'));
-			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
+			expect(mockNavigate).toHaveBeenCalledWith(
+				'/movies/a0000000-0000-4000-8000-000000000550'
+			);
 		});
 
 		it('should navigate even when movie data is incomplete', async () => {
@@ -483,7 +503,9 @@ describe('MovieLogItem', () => {
 			render(<MovieLogItem log={log} />);
 
 			await user.click(screen.getByTestId('movie-title-link'));
-			expect(mockNavigate).toHaveBeenCalledWith('/movies/550');
+			expect(mockNavigate).toHaveBeenCalledWith(
+				'/movies/a0000000-0000-4000-8000-000000000550'
+			);
 		});
 	});
 });

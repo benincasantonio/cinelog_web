@@ -33,8 +33,8 @@ export const MovieLogItem = ({
 	const { deleteLog } = useMovieLogStore();
 
 	const handleTitleClick = () => {
-		if (log.tmdbId) {
-			navigate(`/movies/${log.tmdbId}`);
+		if (log.movieId) {
+			navigate(`/movies/${log.movieId}`);
 		}
 	};
 
@@ -75,6 +75,12 @@ export const MovieLogItem = ({
 			<div className="flex flex-col flex-1 min-w-0">
 				<h4
 					onClick={handleTitleClick}
+					onKeyDown={(event) => {
+						if (event.key === 'Enter' || event.key === ' ') {
+							event.preventDefault();
+							handleTitleClick();
+						}
+					}}
 					role="button"
 					tabIndex={0}
 					aria-label={`View ${log.movie?.title || t('MovieLogItem.unknownTitle')} details`}

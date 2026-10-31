@@ -1,5 +1,5 @@
-export interface MovieRatingCreateUpdateRequest {
-	tmdbId: string;
+export type MovieRatingCreateUpdateRequest = {
+	movieId: string;
 	rating: number;
 	comment?: string | null;
-}
+};

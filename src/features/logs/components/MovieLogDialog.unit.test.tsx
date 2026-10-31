@@ -223,7 +223,7 @@ describe('CreateMovieLogDialog', () => {
 			mockMovieLogDialogStore.setState({ isOpen: true });
 		});
 
-		it('should show submit text when not loading', () => {
+		it('shows submit text but waits for the form to report a valid movie', () => {
 			mockMovieLogStore.setState({ isLoading: false });
 
 			render(<CreateMovieLogDialog />);
@@ -232,7 +232,7 @@ describe('CreateMovieLogDialog', () => {
 				name: 'CreateMovieLogDialog.submitCreate',
 			});
 			expect(submitButton).toBeInTheDocument();
-			expect(submitButton).not.toBeDisabled();
+			expect(submitButton).toBeDisabled();
 		});
 
 		it('should show submitting text when loading', () => {
@@ -320,7 +320,7 @@ describe('CreateMovieLogDialog', () => {
 				isOpen: true,
 				movieToEdit: {
 					id: '1',
-					tmdbId: 123,
+					movieId: 'a0000000-0000-4000-8000-000000000123',
 					movie: { title: 'Test Movie' },
 					dateWatched: '2024-01-01',
 					viewingNotes: null,

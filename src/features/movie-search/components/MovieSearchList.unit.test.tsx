@@ -10,6 +10,8 @@ const { mockMoviesStore } = vi.hoisted(() => {
 		movieSearchResult: null,
 		isLoading: false,
 		searched: false,
+		selectMovie: vi.fn(),
+		cancelMovieSelection: vi.fn(),
 	}));
 
 	return { mockMoviesStore };
@@ -40,6 +42,8 @@ describe('MovieSearchList', () => {
 			movieSearchResult: null,
 			isLoading: false,
 			searched: false,
+			selectMovie: vi.fn(),
+			cancelMovieSelection: vi.fn(),
 		});
 	});
 
@@ -89,7 +93,8 @@ describe('MovieSearchList', () => {
 			movieSearchResult: {
 				results: [
 					{
-						id: 1,
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
 						title: 'Inception',
 						releaseDate: '2010-07-16',
 						voteAverage: 8.4,
@@ -114,7 +119,8 @@ describe('MovieSearchList', () => {
 			movieSearchResult: {
 				results: [
 					{
-						id: 42,
+						id: 'a0000000-0000-4000-8000-000000000042',
+						movieRef: null,
 						title: 'The Matrix',
 						releaseDate: '1999-03-31',
 						voteAverage: 8.7,
@@ -128,7 +134,9 @@ describe('MovieSearchList', () => {
 
 		await user.click(screen.getByText('The Matrix'));
 
-		expect(mockNavigate).toHaveBeenCalledWith('/movies/42');
+		expect(mockMoviesStore.getState().selectMovie).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 'a0000000-0000-4000-8000-000000000042' })
+		);
 	});
 
 	it('should show N/A when releaseDate is missing', () => {
@@ -137,7 +145,8 @@ describe('MovieSearchList', () => {
 			movieSearchResult: {
 				results: [
 					{
-						id: 1,
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
 						title: 'Unknown Movie',
 						releaseDate: null,
 						voteAverage: 0,
@@ -158,7 +167,8 @@ describe('MovieSearchList', () => {
 			movieSearchResult: {
 				results: [
 					{
-						id: 1,
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
 						title: 'No Votes',
 						releaseDate: '2024-01-01',
 						voteAverage: 0,
@@ -179,7 +189,8 @@ describe('MovieSearchList', () => {
 			movieSearchResult: {
 				results: [
 					{
-						id: 1,
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
 						title: 'No Poster',
 						releaseDate: '2024-01-01',
 						voteAverage: 5.0,
@@ -200,7 +211,8 @@ describe('MovieSearchList', () => {
 			movieSearchResult: {
 				results: [
 					{
-						id: 1,
+						id: 'a0000000-0000-4000-8000-000000000001',
+						movieRef: null,
 						title: 'Has Poster',
 						releaseDate: '2024-01-01',
 						voteAverage: 5.0,
