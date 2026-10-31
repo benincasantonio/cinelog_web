@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { LogListItem } from '../models';
+import { useMovieLogStore } from './movieLogStore';
 
 type PrefilledMovie = {
 	movieId: string;
@@ -8,6 +9,7 @@ type PrefilledMovie = {
 
 type MovieLogDialogStore = {
 	isOpen: boolean;
+	sessionId: number;
 	/**
 	 * This is the movie that will be prefilled in the dialog.
 	 * It can be used only in create mode.
@@ -32,6 +34,7 @@ type MovieDialogOptions = {
 
 export const useMovieLogDialogStore = create<MovieLogDialogStore>((set) => ({
 	isOpen: false,
+	sessionId: 0,
 	prefilledMovie: null,
 	movieToEdit: null,
 	open: (options?: MovieDialogOptions) => {
@@ -41,13 +44,23 @@ export const useMovieLogDialogStore = create<MovieLogDialogStore>((set) => ({
 			);
 		}
 
-		set({
+		useMovieLogStore.getState().reset();
+		set((state) => ({
+			sessionId: state.sessionId + 1,
 			isOpen: true,
 			prefilledMovie: options?.prefilledMovie || null,
 			movieToEdit: options?.movieToEdit || null,
-		});
+		}));
 	},
-	close: () => set({ isOpen: false, prefilledMovie: null, movieToEdit: null }),
+	close: () => {
+		useMovieLogStore.getState().reset();
+		set((state) => ({
+			sessionId: state.sessionId + 1,
+			isOpen: false,
+			prefilledMovie: null,
+			movieToEdit: null,
+		}));
+	},
 	clearPrefilledMovie: () => set({ prefilledMovie: null }),
 	triggerCount: 0,
 	triggerUpdate: () => {

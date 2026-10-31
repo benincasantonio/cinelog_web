@@ -16,14 +16,15 @@ import {
 	Textarea,
 } from '@antoniobenincasa/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { MovieRatingField } from '@/features/movie/components/MovieRatingField';
 import { getMovieRating } from '@/features/movie/repositories/movie-rating-repository';
 import { movieIdSchema } from '@/features/movie/schemas/movie-id.schema';
 import './MovieLogForm.css';
-import { search } from '@/features/movie-search/repositories';
+import { createLatestRequestGuard } from '@/lib/utilities/latest-request-guard';
+import { useLogMovieSelection } from '../hooks/useLogMovieSelection';
 import { WATCHED_WHERE_VALUES } from '../models';
 import { type LogFormSchema, logFormSchema } from '../schemas';
 import { useMovieLogDialogStore } from '../stores';
@@ -42,7 +43,12 @@ export const MovieLogForm = ({
 	onSuccess,
 	onReadyChange,
 }: MovieLogFormProps) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const sessionId = useMovieLogDialogStore((state) => state.sessionId);
+	const triggerUpdate = useMovieLogDialogStore((state) => state.triggerUpdate);
+	const saveGuard = useRef(createLatestRequestGuard()).current;
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Each dialog session owns its completion callback.
+	useEffect(() => () => saveGuard.invalidate(), [saveGuard, sessionId]);
 	const prefilledMovie = useMovieLogDialogStore(
 		(state) => state.prefilledMovie
 	);
@@ -136,54 +142,17 @@ export const MovieLogForm = ({
 		};
 	}, [movieId, movieToEdit, ratingRetry, setValue]);
 
-	const [searchItems, setSearchItems] = useState<
-		Array<{ label: string; value: string }>
-	>([]);
-
-	useEffect(() => {
-		if (!movieToEdit && !prefilledMovie) {
-			return;
-		}
-		const label = movieToEdit?.movie?.title ?? prefilledMovie?.title;
-		const value = movieToEdit?.movieId ?? prefilledMovie?.movieId;
-
-		setSearchItems([
-			{
-				label: label ?? '',
-				value: value ?? '',
-			},
-		]);
-	}, [movieToEdit, prefilledMovie]);
-
-	const onFilterChange = async (value: string) => {
-		if (!value) {
-			setSearchItems([]);
-			return;
-		}
-
-		const results = await search(value);
-
-		const items = results.results.map((movie) => ({
-			label: movie.title,
-			value: movie.id ?? movie.movieRef,
-		}));
-
-		setSearchItems(items);
-	};
-
-	const onValueChange = (value: string) => {
-		if (!value) {
-			form.setValue('movieId', '');
-			return;
-		}
-
-		form.setValue(
-			'movieId',
-			movieIdSchema.safeParse(value).success ? value : ''
-		);
-	};
+	const selection = useLogMovieSelection(
+		movieToEdit
+			? { movieId: movieToEdit.movieId, title: movieToEdit.movie?.title ?? '' }
+			: prefilledMovie,
+		(id) => setValue('movieId', id),
+		i18n?.resolvedLanguage ?? i18n?.language
+	);
 
 	const handleSubmit = async (data: LogFormSchema) => {
+		if (selection.isResolving || !identityReady || isLoading) return;
+		const requestId = saveGuard.start();
 		clearError();
 		const { rating, ...logData } = data;
 		const ratingChange =
@@ -202,6 +171,8 @@ export const MovieLogForm = ({
 				await createLog({ ...logData, ...ratingChange });
 			}
 
+			triggerUpdate();
+			if (saveGuard.isStale(requestId)) return;
 			form.reset();
 			clearPrefilledMovie();
 			onSuccess?.();
@@ -222,7 +193,7 @@ export const MovieLogForm = ({
 				<FormField
 					control={form.control}
 					name="movieId"
-					render={({ field }) => (
+					render={() => (
 						<FormItem>
 							<FormLabel>{t('MovieLogForm.movieLabel')}</FormLabel>
 							<FormControl>
@@ -230,13 +201,72 @@ export const MovieLogForm = ({
 									<Input readOnly value={movieToEdit.movie?.title ?? ''} />
 								) : (
 									<Autocomplete
-										value={field.value ?? ''}
-										items={searchItems}
-										onFilterChange={onFilterChange}
-										onValueChange={onValueChange}
+										value={selection.selectedKey}
+										items={selection.items}
+										onFilterChange={selection.filter}
+										onValueChange={selection.select}
+										isLoading={selection.isSearching || selection.isResolving}
+										disabled={isLoading}
+										placeholder={t('MovieSelection.choose')}
+										filterPlaceholder={t('MovieSearchPage.searchPlaceholder')}
+										emptyMessage={t(
+											selection.hasMore
+												? 'MovieSearchList.moreResults'
+												: 'MovieSearchList.noMoviesFound'
+										)}
 									/>
 								)}
 							</FormControl>
+							{selection.isResolving && (
+								<p role="status">{t('MovieSelection.resolving')}</p>
+							)}
+							{selection.selectionError && (
+								<div>
+									<p role="alert">
+										{t(`MovieSelection.${selection.selectionError}`)}
+									</p>
+									{selection.selectionError === 'temporary' && (
+										<Button
+											type="button"
+											variant="outline"
+											onClick={selection.retry}
+										>
+											{t('MovieSelection.retry')}
+										</Button>
+									)}
+									{selection.selectionError === 'invalidReference' && (
+										<Button
+											type="button"
+											variant="outline"
+											onClick={selection.searchAgain}
+										>
+											{t('MovieSelection.searchAgain')}
+										</Button>
+									)}
+								</div>
+							)}
+							{selection.searchError && (
+								<div>
+									<p role="alert">{t('MovieSearchList.loadError')}</p>
+									<Button
+										type="button"
+										variant="outline"
+										onClick={selection.searchAgain}
+									>
+										{t('MovieSelection.searchAgain')}
+									</Button>
+								</div>
+							)}
+							{!movieToEdit && selection.selectedKey && (
+								<Button
+									type="button"
+									variant="ghost"
+									disabled={isLoading}
+									onClick={() => selection.select('')}
+								>
+									{t('MovieSelection.clear')}
+								</Button>
+							)}
 							<FormMessage />
 						</FormItem>
 					)}

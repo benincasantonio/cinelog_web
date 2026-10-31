@@ -54,7 +54,12 @@ describe('useMovieRatingStore', () => {
 		useMovieRatingStore
 			.getState()
 			.openModal('a0000000-0000-4000-8000-000000000550');
-		const response = { id: '1', rating: 9, comment: 'great' };
+		const response = {
+			id: '1',
+			movieId: 'a0000000-0000-4000-8000-000000000550',
+			rating: 9,
+			comment: 'great',
+		};
 		mockCreateOrUpdateRating.mockResolvedValueOnce(response);
 
 		const result = await useMovieRatingStore
@@ -83,10 +88,7 @@ describe('useMovieRatingStore', () => {
 		await useMovieRatingStore.getState().submitRating(1);
 
 		expect(useMovieRatingStore.getState().isLoading).toBe(false);
-		expect(consoleSpy).toHaveBeenCalledWith(
-			'Failed to rate movie',
-			expect.any(Error)
-		);
+		expect(useMovieRatingStore.getState().error).toBe('temporary');
 		consoleSpy.mockRestore();
 	});
 });

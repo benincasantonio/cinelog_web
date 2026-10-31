@@ -1,3 +1,7 @@
+vi.mock('@/features/movie/repositories/movies-repository', () => ({
+	resolveMovie: vi.fn(),
+}));
+
 import {
 	act,
 	fireEvent,
@@ -11,6 +15,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MoviesWatched } from '@/features/movie/components/MoviesWatched';
 import type { MovieRatingResponse } from '@/features/movie/models';
 import { getMovieRating } from '@/features/movie/repositories/movie-rating-repository';
+import { searchMovie } from '@/features/movie-search/models/movie-search.test-utils';
+import { search } from '@/features/movie-search/repositories';
 import type { LogListItem } from '../models';
 import { createLog, getLogs, updateLog } from '../repositories';
 import { useMovieLogDialogStore } from '../stores/movieLogDialogStore';
@@ -39,17 +45,23 @@ vi.mock('@antoniobenincasa/ui', async (importOriginal) => ({
 	Autocomplete: ({
 		value,
 		onValueChange,
+		onFilterChange,
 		id,
 	}: {
 		value: string;
 		id?: string;
 		onValueChange: (value: string) => void;
+		onFilterChange: (value: string) => Promise<void>;
 	}) => (
 		<select
 			id={id}
 			aria-label="MovieLogForm.movieLabel"
 			value={value}
-			onChange={(event) => onValueChange(event.target.value)}
+			onChange={async (event) => {
+				const value = event.target.value;
+				await onFilterChange('film');
+				onValueChange(value);
+			}}
 		>
 			<option value="">Choose</option>
 			<option value="a0000000-0000-4000-8000-000000000550">Fight Club</option>
@@ -75,6 +87,19 @@ const submit = () =>
 
 beforeEach(() => {
 	vi.resetAllMocks();
+	vi.mocked(search).mockResolvedValue({
+		results: [
+			searchMovie({
+				id: 'a0000000-0000-4000-8000-000000000550',
+				movieRef: null,
+			}),
+			searchMovie({
+				id: 'a0000000-0000-4000-8000-000000000013',
+				movieRef: null,
+			}),
+		],
+		nextCursor: null,
+	});
 	useMovieLogDialogStore.setState({
 		isOpen: true,
 		movieToEdit: null,

@@ -31,6 +31,7 @@ const movieDetailsState = {
 
 const movieRatingState = {
 	openModal: vi.fn(),
+	closeModal: vi.fn(),
 };
 
 const movieLogDialogState = {

@@ -19,6 +19,7 @@ describe('useMovieDetailsStore', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		useMovieDetailsStore.setState({
+			activeMovieId: 'a0000000-0000-4000-8000-000000000001',
 			movieDetails: undefined,
 			movieRating: undefined,
 			isLoading: false,
@@ -93,7 +94,11 @@ describe('useMovieDetailsStore', () => {
 	});
 
 	it('sets and resets movie rating state', () => {
-		const movieRating = { rating: 8, comment: 'great' };
+		const movieRating = {
+			movieId: 'a0000000-0000-4000-8000-000000000001',
+			rating: 8,
+			comment: 'great',
+		};
 		useMovieDetailsStore.getState().setMovieRating(movieRating as never);
 		expect(useMovieDetailsStore.getState().movieRating).toEqual(movieRating);
 
@@ -103,7 +108,11 @@ describe('useMovieDetailsStore', () => {
 	});
 
 	it('loads movie rating successfully', async () => {
-		const rating = { rating: 9, comment: 'top' };
+		const rating = {
+			movieId: 'a0000000-0000-4000-8000-000000000010',
+			rating: 9,
+			comment: 'top',
+		};
 		mockGetMovieRating.mockResolvedValueOnce(rating);
 
 		await useMovieDetailsStore
@@ -193,11 +202,16 @@ describe('rating request ordering', () => {
 				.loadMovieRating('a0000000-0000-4000-8000-000000000001');
 			if (reset) useMovieDetailsStore.getState().resetMovieDetails();
 			else
-				useMovieDetailsStore.getState().setMovieRating({ rating: 10 } as never);
+				useMovieDetailsStore.getState().setMovieRating({
+					movieId: 'a0000000-0000-4000-8000-000000000001',
+					rating: 10,
+				} as never);
 			resolve({ rating: 1 });
 			await request;
 			expect(useMovieDetailsStore.getState().movieRating).toEqual(
-				reset ? undefined : { rating: 10 }
+				reset
+					? undefined
+					: { movieId: 'a0000000-0000-4000-8000-000000000001', rating: 10 }
 			);
 			expect(useMovieDetailsStore.getState().isMovieRatingLoading).toBe(false);
 		}

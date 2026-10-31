@@ -102,7 +102,8 @@
 		"save": "Save Rating",
 		"validation": {
 			"rating": "Please select a rating"
-		}
+		},
+		"saveError": "Could not save your rating. Please try again."
 	},
 	"LoginPage": {
 		"pageTitle": "Cinelog - Login",
@@ -408,6 +409,8 @@
 		"invalidCursor": "These search results are no longer valid. Start the search again.",
 		"unavailable": "This movie is no longer available. Choose another movie.",
 		"retry": "Retry",
-		"searchAgain": "Search again"
+		"searchAgain": "Search again",
+		"choose": "Choose a movie",
+		"clear": "Clear selection"
 	}
 }

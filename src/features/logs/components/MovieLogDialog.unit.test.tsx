@@ -279,7 +279,7 @@ describe('CreateMovieLogDialog', () => {
 			expect(form).toHaveAttribute('id', 'log-movie-form');
 		});
 
-		it('should close dialog and trigger update on form success', () => {
+		it('closes the dialog without repeating the form-owned list invalidation', () => {
 			render(<CreateMovieLogDialog />);
 
 			const triggerSuccessButton = screen.getByTestId('trigger-success');
@@ -288,7 +288,7 @@ describe('CreateMovieLogDialog', () => {
 			expect(mockMovieLogDialogStore.getState().close).toHaveBeenCalled();
 			expect(
 				mockMovieLogDialogStore.getState().triggerUpdate
-			).toHaveBeenCalled();
+			).not.toHaveBeenCalled();
 		});
 	});
 
